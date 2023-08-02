@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="118px" height="118px" viewBox="0 0 118 118" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Group</title>
+    <g id="CURRENT-PHASE" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="3.3" transform="translate(-129.000000, -108.000000)">
+            <g id="Group" transform="translate(129.000000, 108.000000)">
+                <circle id="Oval" fill="#E2EFE8" opacity="0.485142299" cx="59" cy="59" r="50"></circle>
+                <g id="Untitled-1" fill="#E2EFE8" opacity="0.55291748">
+                    <circle id="Oval" cx="59" cy="59" r="59"></circle>
+                </g>
+                <g id="Untitled-1" transform="translate(17.000000, 17.000000)" fill="#E2EFE8">
+                    <circle id="Oval" cx="42" cy="42" r="42"></circle>
+                </g>
+                <g id="Group-3" transform="translate(38.000000, 44.000000)" fill="#00A768">
+                    <path d="M12.8322033,30.4583333 C12.8235306,30.4583333 12.814858,30.4583333 12.8061854,30.4579 C12.4601472,30.4509672 12.1310207,30.3062434 11.891656,30.0562265 L0.360520559,17.997789 C-0.135987792,17.4791233 -0.117341627,16.6558443 0.402149207,16.1601436 C0.92120641,15.6631431 1.74510673,15.6822085 2.24161508,16.2021742 L12.869062,27.3155741 L40.7953802,0.364886068 C41.3122692,-0.134280989 42.1361695,-0.119115323 42.634846,0.396950618 C43.1339562,0.913016559 43.1196463,1.73629556 42.6027573,2.23502931 L13.7358918,30.0934907 C13.493058,30.3274753 13.1691351,30.4583333 12.8322033,30.4583333" id="Fill-1"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
