@@ -1,6 +1,8 @@
-const Map<String, String> msMY = { 
-  "The number (@enquiryNumber) entered is not in the database." :"Nombor (@enquiryNumber) yang dimasukkan tiada dalam pangkalan data.",
-  "Please enter an quantity that does not exceed the stock.": "Sila masukkan kuantiti tidak melebihi stok.",
+const Map<String, String> msMY = {
+  "The number (@enquiryNumber) entered is not in the database.":
+      "Nombor (@enquiryNumber) yang dimasukkan tiada dalam pangkalan data.",
+  "Please enter an quantity that does not exceed the stock.":
+      "Sila masukkan kuantiti tidak melebihi stok.",
   "List": "Senarai",
   "Reassign": "Penugasan Semula",
   "Please rate your experience with this application.":
@@ -822,6 +824,8 @@ const Map<String, String> msMY = {
   "List of Bills Without Amount to be Paid":
       "Senarai Bil Tanpa Amaun Perlu Dibayar",
   "List of @service": "Senarai @service",
+  "You have @count bill(s) to be paid.":
+      "Anda mempunyai @count bil yang perlu dibayar.",
   "List of Members": "Senarai Ahli",
   "Lng": "Longitud",
   "Load more data": "Memuatkan pertanyaan selebihnya",

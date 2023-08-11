@@ -6,7 +6,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 // import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutterbase/api/api.dart';
@@ -93,8 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _getData() async {
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => showAlertDialogTnc(context));
+    // SchedulerBinding.instance
+    //     .addPostFrameCallback((_) => showAlertDialogTnc(context));
     _enquiryModel2 = await api.GetFavBills();
     if (mounted) {
       setState(() {

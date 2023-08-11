@@ -8,21 +8,20 @@ import 'package:flutterbase/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../../models/bills/bills.dart';
 import 'checkout.dart';
 import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class PreCheckout extends StatefulWidget {
-  final enquiryModel3;
-  const PreCheckout(this.enquiryModel3, {super.key});
+  final billItem;
+  const PreCheckout(this.billItem, {super.key});
 
   @override
   State<PreCheckout> createState() => _PreCheckoutState();
 }
 
 class _PreCheckoutState extends State<PreCheckout> {
-  // GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  // var _formKey = GlobalKey<FormState>();
-  Map a = {};
+  Map roundingValue = {};
   List realcart2 = [];
   bool case1 = false;
   bool case2 = false;
@@ -39,14 +38,10 @@ class _PreCheckoutState extends State<PreCheckout> {
     });
 
     setState(() {
-      realcart2 = widget.enquiryModel3;
+      realcart2 = widget.billItem;
     });
     print("realcart2.length");
     print(realcart2.length);
-    print('--------');
-    for (var i = 0; i < realcart2.length; i++) {
-      print(i.toString());
-    }
     print('--------');
     for (var i = 0; i < realcart2.length; i++) {
       print(realcart2[i].billTypeId);
@@ -78,8 +73,6 @@ class _PreCheckoutState extends State<PreCheckout> {
                 realcart2[i].amount = "";
               });
             }
-            // _formKey.currentState?.dispose();
-            // _formKey.currentState?.deactivate();
             Future.delayed(const Duration(seconds: 1)).then(
               (value) => setState(
                 () {
@@ -121,108 +114,8 @@ class _PreCheckoutState extends State<PreCheckout> {
                     //  _organizationModel.length,
                     itemBuilder: (context, index) {
                       return realcart2[index].billTypeId.toString() == "1"
-                          ? Padding(
-                              padding: const EdgeInsets.all(1.0),
-                              child: Column(
-                                children: [
-                                  Card(
-                                    elevation: 0,
-                                    color: Color(0xFFF5F6F9),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(1),
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  realcart2[index]
-                                                      .referenceNumber!
-                                                      .toString(),
-                                                  style: styles.heading6bold,
-                                                ),
-                                                Text(
-                                                  "RM " +
-                                                      realcart2[index]
-                                                          .nettCalculations!
-                                                          .total!
-                                                          .toString(),
-                                                  style: styles.heading12bold,
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        'iPayment Bill Reference Number'
-                                                                .tr +
-                                                            ":"),
-                                                    Text('Date'.tr + ":"),
-                                                    Text('Status'.tr + ":"),
-                                                    Text(
-                                                        'Transaction Charged To'
-                                                                .tr +
-                                                            ":"),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                      realcart2[index]
-                                                          .billNumber!
-                                                          .toString(),
-                                                    ),
-                                                    realcart2[index].startAt !=
-                                                            null
-                                                        ? Text(
-                                                            DateFormat.yMd()
-                                                                .format(DateTime
-                                                                    .parse(realcart2[
-                                                                            index]
-                                                                        .startAt!))
-                                                                .toString(),
-                                                          )
-                                                        : Text("No date".tr),
-                                                    Text(
-                                                      realcart2[index]
-                                                          .status!
-                                                          .toString(),
-                                                    ),
-                                                    Text(
-                                                      realcart2[index]
-                                                          .service!
-                                                          .chargedTo
-                                                          .toString(),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          ? BillItemOne(
+                              item: realcart2[index],
                             )
                           : Container();
                     },
@@ -259,249 +152,71 @@ class _PreCheckoutState extends State<PreCheckout> {
                     //  _organizationModel.length,
                     itemBuilder: (context, index) {
                       return realcart2[index].billTypeId.toString() == "2"
-                          ? Padding(
-                              padding: const EdgeInsets.all(1.0),
-                              child: Column(
-                                children: [
-                                  Card(
-                                    elevation: 0,
-                                    color: Color(0xFFF5F6F9),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(1),
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            // for (var item in bills)
-
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  realcart2[index]
-                                                      .referenceNumber!
-                                                      .toString(),
-                                                  style: styles.heading6bold,
-                                                ),
-                                                // Text(
-                                                //   "RM " +
-                                                //       realcart2[index]
-                                                //           .nettCalculations!
-                                                //           .total!
-                                                //           .toString(),
-                                                //   style: styles.heading12bold,
-                                                // ),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                SizedBox(
-                                                  width: 220.0,
-                                                  height: 60,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            5.0),
-                                                    child: TextFormField(
-                                                      // initialValue: "0.00",
-                                                      enableSuggestions: false,
-                                                      inputFormatters: <
-                                                          TextInputFormatter>[
-                                                        CurrencyTextInputFormatter(
-                                                          decimalDigits: 2,
-                                                          symbol: '',
-                                                        ),
-                                                      ],
-                                                      // inputFormatters: [
-                                                      //   FilteringTextInputFormatter
-                                                      //       .allow(
-                                                      //     RegExp(
-                                                      //         r'^\d+\.?\d{0,2}'),
-                                                      //   ),
-                                                      // ],
-                                                      keyboardType: TextInputType
-                                                          .numberWithOptions(
-                                                              decimal: true),
-                                                      expands: false,
-                                                      autocorrect: false,
-                                                      decoration: styles
-                                                          .inputDecoration
-                                                          .copyWith(
-                                                        label: getRequiredLabel(
-                                                            'Amount (RM)'.tr),
-                                                      ),
-                                                      onChanged: (val) async {
-                                                        print("val");
-                                                        print(val);
-                                                        if (val != "" &&
-                                                            val.length >= 2) {
-                                                          val = val.replaceAll(
-                                                              ",", "");
-                                                          a = {};
-                                                          a = await api
-                                                              .GetRounding(val);
-                                                          print(
-                                                              "rounding value");
-                                                          print(a.toString());
-                                                          setState(() {
-                                                            a = a;
-                                                          });
-                                                          double test = 0.00;
-                                                          test = double.parse(
-                                                                  val) +
-                                                              a['value'];
-                                                          print(
-                                                              test.toString());
-                                                          setState(() {
-                                                            val = test
-                                                                .toStringAsFixed(
-                                                                    2)
-                                                                .toString();
-                                                            realcart2[index]
-                                                                    .amount =
-                                                                val.toString();
-                                                          });
-                                                          print(a.isNotEmpty);
-                                                          print(a['value']);
-                                                          print(realcart2[index]
-                                                              .amount);
-                                                        } else if (val.length ==
-                                                            0) {
-                                                          print("empty 2");
-                                                          Future.delayed(
-                                                                  const Duration(
-                                                                      seconds:
-                                                                          1))
-                                                              .then(
-                                                                  (value) =>
-                                                                      setState(
-                                                                          () {
-                                                                        realcart2[index].amount =
-                                                                            "";
-                                                                      }));
-                                                        } else if (val == "") {
-                                                          realcart2[index]
-                                                              .amount = "";
-                                                          setState(() {
-                                                            realcart2[index]
-                                                                .amount = "";
-                                                          });
-                                                        } else {
-                                                          realcart2[index]
-                                                              .amount = "";
-                                                          setState(() {
-                                                            realcart2[index]
-                                                                .amount = "";
-                                                          });
-                                                        }
-                                                      },
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Text('Amaun selepas dilaras :'),
-                                              ],
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Payment Total'.tr + ":",
-                                                  style: styles.heading12bold,
-                                                ),
-                                                realcart2[index].amount != ""
-                                                    ? Text(
-                                                        'RM ' +
-                                                            moneyFormat(double
-                                                                .parse(realcart2[
-                                                                        index]
-                                                                    .amount)),
-                                                        style: styles
-                                                            .heading12bold,
-                                                      )
-                                                    : Container(),
-                                              ],
-                                            ),
-                                            SizedBox(height: 10),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                        'iPayment Bill Reference Number'
-                                                                .tr +
-                                                            ":"),
-                                                    Text('Date'.tr + ":"),
-                                                    Text('Status'.tr + ":"),
-                                                    Text(
-                                                        'Transaction Charged To'
-                                                                .tr +
-                                                            ":"),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: [
-                                                    Text(
-                                                      realcart2[index]
-                                                          .billNumber!
-                                                          .toString(),
-                                                    ),
-                                                    realcart2[index].startAt !=
-                                                            null
-                                                        ? Text(
-                                                            formatDate(
-                                                              DateTime.parse(
-                                                                  realcart2[
-                                                                          index]
-                                                                      .startAt
-                                                                      .toString()),
-                                                              [
-                                                                dd,
-                                                                '/',
-                                                                mm,
-                                                                '/',
-                                                                yyyy
-                                                              ],
-                                                            ),
-                                                          )
-                                                        : Text("No date".tr),
-                                                    Text(
-                                                      realcart2[index]
-                                                          .status!
-                                                          .toString(),
-                                                    ),
-                                                    Text(
-                                                      realcart2[index]
-                                                          .service!
-                                                          .chargedTo
-                                                          .toString(),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                          ? BillItemTwo(
+                              item: realcart2[index],
+                              sixedBox: SizedBox(
+                                width: 220.0,
+                                height: 60,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: TextFormField(
+                                    enableSuggestions: false,
+                                    inputFormatters: <TextInputFormatter>[
+                                      CurrencyTextInputFormatter(
+                                        decimalDigits: 2,
+                                        symbol: '',
                                       ),
+                                    ],
+                                    keyboardType:
+                                        TextInputType.numberWithOptions(
+                                            decimal: true),
+                                    expands: false,
+                                    autocorrect: false,
+                                    decoration: styles.inputDecoration.copyWith(
+                                      label: getRequiredLabel('Amount (RM)'.tr),
                                     ),
+                                    onChanged: (val) async {
+                                      if (val != "" && val.length >= 2) {
+                                        val = val.replaceAll(",", "");
+                                        roundingValue = {};
+                                        roundingValue =
+                                            await api.GetRounding(val);
+
+                                        print(roundingValue.toString());
+                                        setState(() {
+                                          roundingValue = roundingValue;
+                                        });
+                                        double afterRounding = 0.00;
+                                        afterRounding = double.parse(val) +
+                                            roundingValue['value'];
+
+                                        setState(() {
+                                          val = afterRounding
+                                              .toStringAsFixed(2)
+                                              .toString();
+                                          realcart2[index].amount =
+                                              val.toString();
+                                        });
+                                      } else if (val.length == 0) {
+                                        Future.delayed(
+                                                const Duration(seconds: 1))
+                                            .then((value) => setState(() {
+                                                  realcart2[index].amount = "";
+                                                }));
+                                      } else if (val == "") {
+                                        realcart2[index].amount = "";
+                                        setState(() {
+                                          realcart2[index].amount = "";
+                                        });
+                                      } else {
+                                        realcart2[index].amount = "";
+                                        setState(() {
+                                          realcart2[index].amount = "";
+                                        });
+                                      }
+                                    },
                                   ),
-                                ],
+                                ),
                               ),
                             )
                           : Container();
@@ -530,8 +245,6 @@ class _PreCheckoutState extends State<PreCheckout> {
                     if (case2 == true) {
                       if (realcart2[i].amount == "" &&
                           realcart2[i].billTypeId.toString() == "2") {
-                        print(i.toString());
-                        print("its empty");
                         snack(context, "Please enter amount".tr,
                             level: SnackLevel.Error);
                         setState(() {
@@ -545,7 +258,6 @@ class _PreCheckoutState extends State<PreCheckout> {
                         test1 = double.parse(realcart2[i].amount);
 
                         if (test1 < 0.99) {
-                          print("its less than rm 1");
                           snack(context,
                               "Please enter amount more than RM1.00.".tr);
                           setState(() {
@@ -566,13 +278,11 @@ class _PreCheckoutState extends State<PreCheckout> {
                             (realcart2[i].nettCalculations!.total!.toString()));
                       }
                     }
-                    print("1 sum2.toString()");
+
                     print(sum2.toString());
                     if (case2 == true) {
-                      print("2 sum2.toString()");
                       print(sum2.toString());
                       for (var i = 0; i < realcart2.length; i++) {
-                        print(realcart2[i].amount.toString());
                         if (realcart2[i].amount.toString() != "") {
                           sum2 +=
                               double.parse((realcart2[i].amount.toString()));
@@ -595,6 +305,189 @@ class _PreCheckoutState extends State<PreCheckout> {
             )
           ],
         ),
+      ),
+    );
+  }
+}
+
+class BillItemOne extends StatelessWidget {
+  const BillItemOne({Key? key, required this.item});
+
+  final Bills item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: Column(
+        children: [
+          Card(
+            elevation: 0,
+            color: Color(0xFFF5F6F9),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(1),
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item.referenceNumber!.toString(),
+                          style: styles.heading6bold,
+                        ),
+                        Text(
+                          "RM " + item.nettCalculations!.total!.toString(),
+                          style: styles.heading12bold,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('iPayment Bill Reference Number'.tr + ":"),
+                            Text('Date'.tr + ":"),
+                            Text('Status'.tr + ":"),
+                            Text('Transaction Charged To'.tr + ":"),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              item.billNumber!.toString(),
+                            ),
+                            item.startAt != null
+                                ? Text(
+                                    DateFormat.yMd()
+                                        .format(DateTime.parse(item.startAt!))
+                                        .toString(),
+                                  )
+                                : Text("No date".tr),
+                            Text(
+                              item.status!.toString(),
+                            ),
+                            Text(
+                              item.service!.chargedTo.toString(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BillItemTwo extends StatelessWidget {
+  const BillItemTwo({Key? key, required this.item, required this.sixedBox});
+
+  final Bills item;
+  final Widget sixedBox;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: Column(
+        children: [
+          Card(
+            elevation: 0,
+            color: Color(0xFFF5F6F9),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(1),
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          item.referenceNumber!.toString(),
+                          style: styles.heading6bold,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [sixedBox],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Payment Total'.tr + ":",
+                          style: styles.heading12bold,
+                        ),
+                        item.amount != ""
+                            ? Text(
+                                'RM ' + moneyFormat(double.parse(item.amount!)),
+                                style: styles.heading12bold,
+                              )
+                            : Container(),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('iPayment Bill Reference Number'.tr + ":"),
+                            Text('Date'.tr + ":"),
+                            Text('Status'.tr + ":"),
+                            Text('Transaction Charged To'.tr + ":"),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              item.billNumber!.toString(),
+                            ),
+                            item.startAt != null
+                                ? Text(
+                                    formatDate(
+                                      DateTime.parse(item.startAt.toString()),
+                                      [dd, '/', mm, '/', yyyy],
+                                    ),
+                                  )
+                                : Text("No date".tr),
+                            Text(
+                              item.status!.toString(),
+                            ),
+                            Text(
+                              item.service!.chargedTo.toString(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

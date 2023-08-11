@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutterbase/api/api.dart';
 import 'package:flutterbase/components/primary_button.dart';
-import 'package:flutterbase/models/bill/bill.dart';
 import 'package:flutterbase/models/bills/bills.dart' as model;
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/helpers.dart';
@@ -34,14 +33,13 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-  List _enquiryModel3 = [];
+  List billItems = [];
   var inputFormat = DateFormat('dd-MM-yyyy');
   bool alreadySaved = false;
-  List<Bank> _enquiryModel4 = [];
-  List<Bill> _enquiryModel5 = [];
-  List<model.PaymentGateway> _enquiryModel6 = [];
-  List<Bank> _enquiryModel11 = [];
-  List<String> _enquiryModel12 = [];
+  List<Bank> bankList = [];
+  List<model.PaymentGateway> getwayList = [];
+  List<Bank> bankListTwo = [];
+  List<String> bankListString = [];
   String gateway = "Select Payment Method".tr;
   String bankText = "Select Bank or E-wallet".tr;
   String bank = "";
@@ -71,67 +69,67 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         .addPostFrameCallback((_) => showLoadingBar(context));
     print(widget.enquiryModel2);
     setState(() {
-      _enquiryModel3 = widget.enquiryModel2;
+      billItems = widget.enquiryModel2;
       sum3 = widget.sum;
     });
-    _enquiryModel6 = await api.GetPaymentGateway();
-    _enquiryModel4 = await api.GetPaynetBank();
+    getwayList = await api.GetPaymentGateway();
+    bankList = await api.GetPaynetBank();
     setState(() {
-      // gateway = _enquiryModel6[0].name.toString();
-      _enquiryModel4 = _enquiryModel4;
-      _enquiryModel6 = _enquiryModel6;
+      // gateway = getwayList[0].name.toString();
+      bankList = bankList;
+      getwayList = getwayList;
     });
-    _enquiryModel4.removeWhere((item) => item.redirectUrls == null);
+    bankList.removeWhere((item) => item.redirectUrls == null);
 
     setState(() {
-      _enquiryModel4 = _enquiryModel4;
+      bankList = bankList;
     });
 
-    for (var v = 0; v < _enquiryModel4.length; v++) {
-      for (var q = 0; q < _enquiryModel4[v].redirectUrls!.length - 1; q++) {
-        if (_enquiryModel4[v].redirectUrls!.length == 2) {
-          if (_enquiryModel4[v].redirectUrls![q].type ==
-                  _enquiryModel4[v].redirectUrls![q + 1].type ||
-              _enquiryModel4[v].redirectUrls![q].type == " " ||
-              _enquiryModel4[v].redirectUrls![q + 1].type == " ") {
-            _enquiryModel4[v].redirectUrls!.removeLast();
+    for (var v = 0; v < bankList.length; v++) {
+      for (var q = 0; q < bankList[v].redirectUrls!.length - 1; q++) {
+        if (bankList[v].redirectUrls!.length == 2) {
+          if (bankList[v].redirectUrls![q].type ==
+                  bankList[v].redirectUrls![q + 1].type ||
+              bankList[v].redirectUrls![q].type == " " ||
+              bankList[v].redirectUrls![q + 1].type == " ") {
+            bankList[v].redirectUrls!.removeLast();
           }
         }
       }
     }
     setState(() {
-      _enquiryModel4 = _enquiryModel4;
+      bankList = bankList;
     });
 
-    _enquiryModel4.sort((a, b) {
+    bankList.sort((a, b) {
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
 
-    for (var v = 0; v < _enquiryModel4.length; v++) {
-      for (var q = 0; q < _enquiryModel4[v].redirectUrls!.length; q++) {
-        _enquiryModel11.add(
+    for (var v = 0; v < bankList.length; v++) {
+      for (var q = 0; q < bankList[v].redirectUrls!.length; q++) {
+        bankListTwo.add(
           Bank(
             active: true,
-            code: _enquiryModel4[v].code,
-            name: _enquiryModel4[v].name +
+            code: bankList[v].code,
+            name: bankList[v].name +
                 " " +
                 // (Corporate) (Retail)
-                (_enquiryModel4[v].redirectUrls![q].type.toString() == "RET"
+                (bankList[v].redirectUrls![q].type.toString() == "RET"
                     ? "(Retail)"
                     : "(Corporate)"),
             redirectUrls: [
               RedirectUrl(
-                  type: _enquiryModel4[v].redirectUrls![q].type,
-                  url: _enquiryModel4[v].redirectUrls![q].url)
+                  type: bankList[v].redirectUrls![q].type,
+                  url: bankList[v].redirectUrls![q].url)
             ],
           ),
         );
       }
     }
 
-    for (var v = 0; v < _enquiryModel4.length; v++) {
-      for (var q = 0; q < _enquiryModel4[v].redirectUrls!.length; q++) {
-        _enquiryModel12.add(_enquiryModel4[v].name);
+    for (var v = 0; v < bankList.length; v++) {
+      for (var q = 0; q < bankList[v].redirectUrls!.length; q++) {
+        bankListString.add(bankList[v].name);
       }
     }
 
@@ -173,7 +171,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _enquiryModel3.isEmpty
+              billItems.isEmpty
                   ? Container()
                   : Padding(
                       padding: const EdgeInsets.only(top: 8.0),
@@ -181,17 +179,17 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         reverse: true,
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: _enquiryModel3.length,
+                        itemCount: billItems.length,
                         itemBuilder: (context, index) {
                           return ExpansionTile(
                             title: Text(
-                              _enquiryModel3[index].billNumber.toString(),
+                              billItems[index].billNumber.toString(),
                               style: styles.heading12bold,
                             ),
-                            subtitle: _enquiryModel3[index].billTypeId == 1
+                            subtitle: billItems[index].billTypeId == 1
                                 ? Text(
                                     "RM " +
-                                        _enquiryModel3[index]
+                                        billItems[index]
                                             .nettCalculations!
                                             .total!
                                             .toStringAsFixed(2)
@@ -201,7 +199,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 : Text(
                                     "RM " +
                                         moneyFormat(double.parse(
-                                            _enquiryModel3[index]
+                                            billItems[index]
                                                 .amount
                                                 .toString())),
                                     style: styles.heading12bold,
@@ -213,9 +211,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   style: styles.heading12bold,
                                 ),
                                 subtitle: Text(
-                                    _enquiryModel3[index]
-                                        .referenceNumber
-                                        .toString(),
+                                    billItems[index].referenceNumber.toString(),
                                     style: styles.heading12sub),
                               ),
                               ListTile(
@@ -224,7 +220,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   style: styles.heading12bold,
                                 ),
                                 subtitle: Text(
-                                    _enquiryModel3[index].billNumber.toString(),
+                                    billItems[index].billNumber.toString(),
                                     style: styles.heading12sub),
                               ),
                               ListTile(
@@ -233,31 +229,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   style: styles.heading12bold,
                                 ),
                                 subtitle: Text(
-                                    _enquiryModel3[index]
+                                    billItems[index]
                                         .service!
                                         .serviceCategory!
                                         .toString(),
                                     style: styles.heading12sub),
                               ),
-                              // ListTile(
-                              //   title: Text(
-                              //     "Payment Details".tr,
-                              //     style: styles.heading12bold,
-                              //   ),
-                              //   subtitle: Text(
-                              //       _enquiryModel3[index].detail.toString(),
-                              //       style: styles.heading12sub),
-                              // ),
                               ListTile(
                                 title: Text(
                                   "Agency Name".tr,
                                   style: styles.heading12bold,
                                 ),
                                 subtitle: Text(
-                                    _enquiryModel3[index]
-                                        .service!
-                                        .name!
-                                        .toString(),
+                                    billItems[index].service!.name!.toString(),
                                     style: styles.heading12sub),
                               ),
                               ListTile(
@@ -269,10 +253,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   padding: const EdgeInsets.fromLTRB(
                                       0, 8.0, 8.0, 8.0),
                                   child: Text(
-                                    _enquiryModel3[index].startAt.toString() !=
+                                    billItems[index].startAt.toString() !=
                                             "null"
                                         ? formatDate(
-                                            DateTime.parse(_enquiryModel3[index]
+                                            DateTime.parse(billItems[index]
                                                 .startAt
                                                 .toString()),
                                             [dd, '/', mm, '/', yyyy],
@@ -291,10 +275,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   padding: const EdgeInsets.fromLTRB(
                                       0, 8.0, 8.0, 8.0),
                                   child: Text(
-                                    _enquiryModel3[index].endAt.toString() !=
-                                            "null"
+                                    billItems[index].endAt.toString() != "null"
                                         ? formatDate(
-                                            DateTime.parse(_enquiryModel3[index]
+                                            DateTime.parse(billItems[index]
                                                 .endAt
                                                 .toString()),
                                             [dd, '/', mm, '/', yyyy],
@@ -310,71 +293,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   style: styles.heading12bold,
                                 ),
                                 subtitle: Text(
-                                    _enquiryModel3[index].customer == null
+                                    billItems[index].customer == null
                                         ? "Pelanggan"
                                         : "Kerajaan",
                                     style: styles.heading12sub),
                               ),
-                              // ListTile(
-                              //   title: Text(
-                              //     "Tarikh Rujukan Bil",
-                              //     style: styles.heading12bold,
-                              //   ),
-                              //   subtitle: Padding(
-                              //     padding: const EdgeInsets.fromLTRB(
-                              //         0, 8.0, 8.0, 8.0),
-                              //     child: _enquiryModel3[index].startAt != null
-                              //         ? Text(
-                              //             formatDate(
-                              //               DateTime.parse(_enquiryModel3[index]
-                              //                   .startAt
-                              //                   .toString()),
-                              //               [dd, '/', mm, '/', yyyy],
-                              //             ),
-                              //             style: styles.heading12sub,
-                              //           )
-                              //         : Text("No date",
-                              //             style: styles.heading12sub),
-                              //   ),
-                              // ),
-                              // ListTile(
-                              //   title: Text(
-                              //     "Tarikh Tamat",
-                              //     style: styles.heading12bold,
-                              //   ),
-                              //   subtitle: Padding(
-                              //     padding: const EdgeInsets.fromLTRB(
-                              //         0, 8.0, 8.0, 8.0),
-                              //     child: _enquiryModel3[index].endAt != null
-                              //         ? Text(
-                              //             formatDate(
-                              //               DateTime.parse(_enquiryModel3[index]
-                              //                   .endAt
-                              //                   .toString()),
-                              //               [dd, '/', mm, '/', yyyy],
-                              //             ),
-                              //             style: styles.heading12sub,
-                              //           )
-                              //         : Text("No date",
-                              //             style: styles.heading12sub),
-                              //   ),
-                              // ),
-                              // ListTile(
-                              //   title: Text(
-                              //     "Kategori Pengguna",
-                              //     style: styles.heading12bold,
-                              //   ),
-                              //   subtitle: Padding(
-                              //     padding: const EdgeInsets.fromLTRB(
-                              //         0, 8.0, 8.0, 8.0),
-                              //     child: Text(
-                              //       _enquiryModel3[index].customer == null
-                              //           ? "Pelanggan"
-                              //           : "Kerajaan",
-                              //       style: styles.heading12sub,
-                              //     ),
-                              //   ),
-                              // ),
                             ],
                           );
                         },
@@ -416,11 +339,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         child: Flex(
                           direction: Axis.horizontal,
                           children: [
-                            // Flexible(
-                            //   flex: 1,
-                            //   fit: FlexFit.tight,
-                            //   child: Icon(Icons.money),
-                            // ),
                             Flexible(
                               fit: FlexFit.tight,
                               flex: 5,
@@ -441,17 +359,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   Get.bottomSheet(
                                     ListView(
                                       children: [
-                                        // Padding(
-                                        //   padding: const EdgeInsets.symmetric(
-                                        //       vertical: 15.0),
-                                        //   child: Text(
-                                        //     "Payment Options",
-                                        //     style: TextStyle(
-                                        //       fontSize: 18,
-                                        //       fontWeight: FontWeight.w600,
-                                        //     ),
-                                        //   ),
-                                        // ),
                                         AppBar(
                                           backgroundColor:
                                               constants.secondaryColor,
@@ -475,19 +382,15 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                           physics:
                                               NeverScrollableScrollPhysics(),
                                           shrinkWrap: true,
-                                          itemCount: _enquiryModel6.length,
-                                          //  _organizationModel.length,
+                                          itemCount: getwayList.length,
                                           itemBuilder: (context, index) {
                                             return ListTile(
-                                              leading: _enquiryModel6[index]
-                                                          .logo !=
+                                              leading: getwayList[index].logo !=
                                                       null
                                                   ? Image.network(
                                                       "https://internal-ipayment.anm.gov.my/storage/" +
-                                                          _enquiryModel6[index]
+                                                          getwayList[index]
                                                               .logo!,
-                                                      // width: 60,
-                                                      // height: 50,
                                                       errorBuilder:
                                                           (BuildContext context,
                                                               Object exception,
@@ -503,22 +406,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                       width: 1,
                                                       height: 1,
                                                     ),
-                                              title: _enquiryModel6[index]
-                                                          .title !=
+                                              title: getwayList[index].title !=
                                                       ""
-                                                  ? Text(_enquiryModel6[index]
-                                                      .title!)
+                                                  ? Text(
+                                                      getwayList[index].title!)
                                                   : Text("No title"),
                                               onTap: () {
-                                                print(_enquiryModel6[index]
-                                                    .title!);
+                                                print(getwayList[index].title!);
                                                 setState(() {
-                                                  gateway =
-                                                      _enquiryModel6[index]
-                                                          .title!
-                                                          .toString();
+                                                  gateway = getwayList[index]
+                                                      .title!
+                                                      .toString();
                                                   gatewayMethod =
-                                                      _enquiryModel6[index]
+                                                      getwayList[index]
                                                           .id
                                                           .toString();
                                                 });
@@ -593,7 +493,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                               (pattern) {
                                                             return getSuggestions(
                                                                 pattern,
-                                                                _enquiryModel12);
+                                                                bankListString);
                                                           },
                                                           itemBuilder:
                                                               (context, suggestion) {
@@ -631,27 +531,25 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
                                                             for (var v = 0;
                                                                 v <
-                                                                    _enquiryModel4
+                                                                    bankList
                                                                         .length;
                                                                 v++) {
                                                               for (var q = 0;
                                                                   q <
-                                                                      _enquiryModel4[
+                                                                      bankList[
                                                                               v]
                                                                           .redirectUrls!
                                                                           .length;
                                                                   q++) {
-                                                                if (_enquiryModel4[
-                                                                            v]
+                                                                if (bankList[v]
                                                                         .name ==
                                                                     suggestion
                                                                         .toString()) {
                                                                   print("yes");
-                                                                  print(
-                                                                      _enquiryModel4[
-                                                                              v]
-                                                                          .name);
-                                                                  if (_enquiryModel4[
+                                                                  print(bankList[
+                                                                          v]
+                                                                      .name);
+                                                                  if (bankList[
                                                                               v]
                                                                           .redirectUrls![
                                                                               q]
@@ -662,19 +560,19 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                                       Bank(
                                                                         active:
                                                                             true,
-                                                                        code: _enquiryModel4[v]
+                                                                        code: bankList[v]
                                                                             .code,
-                                                                        name: _enquiryModel4[v]
+                                                                        name: bankList[v]
                                                                             .name,
                                                                         redirectUrls: [
                                                                           RedirectUrl(
-                                                                              type: _enquiryModel4[v].redirectUrls![q].type,
-                                                                              url: _enquiryModel4[v].redirectUrls![q].url)
+                                                                              type: bankList[v].redirectUrls![q].type,
+                                                                              url: bankList[v].redirectUrls![q].url)
                                                                         ],
                                                                       ),
                                                                     );
                                                                   }
-                                                                  if (_enquiryModel4[
+                                                                  if (bankList[
                                                                               v]
                                                                           .redirectUrls![
                                                                               q]
@@ -685,14 +583,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                                       Bank(
                                                                         active:
                                                                             true,
-                                                                        code: _enquiryModel4[v]
+                                                                        code: bankList[v]
                                                                             .code,
-                                                                        name: _enquiryModel4[v]
+                                                                        name: bankList[v]
                                                                             .name,
                                                                         redirectUrls: [
                                                                           RedirectUrl(
-                                                                              type: _enquiryModel4[v].redirectUrls![q].type,
-                                                                              url: _enquiryModel4[v].redirectUrls![q].url)
+                                                                              type: bankList[v].redirectUrls![q].type,
+                                                                              url: bankList[v].redirectUrls![q].url)
                                                                         ],
                                                                       ),
                                                                     );
@@ -704,12 +602,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                                 }
                                                               }
                                                             }
-                                                            print("ret.length.toString()" +
-                                                                ret.length
-                                                                    .toString());
-                                                            print("cor.length.toString()" +
-                                                                cor.length
-                                                                    .toString());
                                                           },
                                                           validator: (value) {
                                                             if (value!
@@ -733,26 +625,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                                       SizedBox(
                                                         height: 10.0,
                                                       ),
-                                                      // RaisedButton(
-                                                      //   child:
-                                                      //       Text('Submit'),
-                                                      //   onPressed: () {
-                                                      //     if (this
-                                                      //         ._formKey
-                                                      //         .currentState
-                                                      //         .validate()) {
-                                                      //       this
-                                                      //           ._formKey
-                                                      //           .currentState
-                                                      //           .save();
-                                                      //       Scaffold.of(
-                                                      //               context)
-                                                      //           .showSnackBar(SnackBar(
-                                                      //               content:
-                                                      //                   Text('Your Favorite City is ${this._selectedCity}')));
-                                                      //     }
-                                                      //   },
-                                                      // )
                                                     ],
                                                   ),
                                                 ),
@@ -895,384 +767,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                               ],
                                             ),
                                           ),
-                                          //  Text(
-                                          //   bank,
-                                          //   style: TextStyle(
-                                          //       fontSize: 16,
-                                          //       color: Colors.black38),
-                                          // ),
                                         ),
                                       ),
-                                      // Flexible(
-                                      //   flex: 1,
-                                      //   fit: FlexFit.tight,
-                                      //   child: IconButton(
-                                      //     onPressed: () {
-                                      //       Get.bottomSheet(
-                                      //         persistent: false,
-                                      //         ListView(
-                                      //           children: [
-                                      //             // Padding(
-                                      //             //   padding: const EdgeInsets.symmetric(
-                                      //             //       vertical: 15.0),
-                                      //             //   child: Text(
-                                      //             //     "Payment Options",
-                                      //             //     style: TextStyle(
-                                      //             //       fontSize: 18,
-                                      //             //       fontWeight: FontWeight.w600,
-                                      //             //     ),
-                                      //             //   ),
-                                      //             // ),
-                                      //             AppBar(
-                                      //               backgroundColor: constants
-                                      //                   .secondaryColor,
-                                      //               centerTitle: true,
-                                      //               leading: Container(),
-                                      //               title: Text(
-                                      //                 "Selection of Banks".tr,
-                                      //                 style: TextStyle(
-                                      //                   fontSize: 18,
-                                      //                   fontWeight:
-                                      //                       FontWeight.w500,
-                                      //                 ),
-                                      //               ),
-                                      //               actions: [
-                                      //                 IconButton(
-                                      //                   onPressed: () {
-                                      //                     Get.back();
-                                      //                     this
-                                      //                         ._typeAheadController
-                                      //                         .clear();
-                                      //                   },
-                                      //                   icon: Icon(Icons
-                                      //                       .close_rounded),
-                                      //                 )
-                                      //               ],
-                                      //             ),
-                                      //             Padding(
-                                      //               padding:
-                                      //                   EdgeInsets.all(10.0),
-                                      //               child: Column(
-                                      //                 children: <Widget>[
-                                      //                   TypeAheadFormField(
-                                      //                       textFieldConfiguration:
-                                      //                           TextFieldConfiguration(
-                                      //                         controller: this
-                                      //                             ._typeAheadController,
-                                      //                         decoration:
-                                      //                             InputDecoration(
-                                      //                                 labelText:
-                                      //                                     'Bank'),
-                                      //                       ),
-                                      //                       suggestionsCallback:
-                                      //                           (pattern) {
-                                      //                         return getSuggestions(
-                                      //                             pattern,
-                                      //                             _enquiryModel12);
-                                      //                       },
-                                      //                       itemBuilder: (context,
-                                      //                           suggestion) {
-                                      //                         return ListTile(
-                                      //                           title: Text(
-                                      //                             suggestion
-                                      //                                 .toString(),
-                                      //                           ),
-                                      //                         );
-                                      //                       },
-                                      //                       transitionBuilder:
-                                      //                           (context,
-                                      //                               suggestionsBox,
-                                      //                               controller) {
-                                      //                         return suggestionsBox;
-                                      //                       },
-                                      //                       onSuggestionSelected:
-                                      //                           (suggestion) {
-                                      //                         this
-                                      //                                 ._typeAheadController
-                                      //                                 .text =
-                                      //                             suggestion
-                                      //                                 .toString();
-
-                                      //                         print(" ad " +
-                                      //                             suggestion
-                                      //                                 .toString());
-                                      //                         for (var v = 0;
-                                      //                             v <
-                                      //                                 _enquiryModel4
-                                      //                                     .length;
-                                      //                             v++) {
-                                      //                           for (var q = 0;
-                                      //                               q <
-                                      //                                   _enquiryModel4[v]
-                                      //                                       .redirectUrls!
-                                      //                                       .length;
-                                      //                               q++) {
-                                      //                             if (_enquiryModel4[
-                                      //                                         v]
-                                      //                                     .name ==
-                                      //                                 suggestion
-                                      //                                     .toString()) {
-                                      //                               cor = [];
-
-                                      //                               ret = [];
-                                      //                               print(
-                                      //                                   "yes");
-                                      //                               print(_enquiryModel4[
-                                      //                                       v]
-                                      //                                   .name);
-                                      //                               if (_enquiryModel4[v]
-                                      //                                       .redirectUrls![q]
-                                      //                                       .type
-                                      //                                       .toString() ==
-                                      //                                   "RET") {
-                                      //                                 print(
-                                      //                                     "added ret");
-                                      //                                 ret.add(
-                                      //                                   Bank(
-                                      //                                     active:
-                                      //                                         true,
-                                      //                                     code:
-                                      //                                         _enquiryModel4[v].code,
-                                      //                                     name:
-                                      //                                         _enquiryModel4[v].name,
-                                      //                                     redirectUrls: [
-                                      //                                       RedirectUrl(
-                                      //                                           type: _enquiryModel4[v].redirectUrls![q].type,
-                                      //                                           url: _enquiryModel4[v].redirectUrls![q].url)
-                                      //                                     ],
-                                      //                                   ),
-                                      //                                 );
-                                      //                               }
-                                      //                               if (_enquiryModel4[v]
-                                      //                                       .redirectUrls![q]
-                                      //                                       .type
-                                      //                                       .toString() ==
-                                      //                                   "COR") {
-                                      //                                 print(
-                                      //                                     "added COR");
-                                      //                                 cor.add(
-                                      //                                   Bank(
-                                      //                                     active:
-                                      //                                         true,
-                                      //                                     code:
-                                      //                                         _enquiryModel4[v].code,
-                                      //                                     name:
-                                      //                                         _enquiryModel4[v].name,
-                                      //                                     redirectUrls: [
-                                      //                                       RedirectUrl(
-                                      //                                           type: _enquiryModel4[v].redirectUrls![q].type,
-                                      //                                           url: _enquiryModel4[v].redirectUrls![q].url)
-                                      //                                     ],
-                                      //                                   ),
-                                      //                                 );
-                                      //                               }
-                                      //                               setState(
-                                      //                                   () {
-                                      //                                 ret = ret;
-                                      //                                 cor = cor;
-                                      //                               });
-                                      //                             }
-                                      //                           }
-                                      //                         }
-                                      //                       },
-                                      //                       validator: (value) {
-                                      //                         if (value!
-                                      //                             .isEmpty) {
-                                      //                           return 'Please select a bank';
-                                      //                         }
-                                      //                         return 'Please select a bank';
-                                      //                       },
-                                      //                       onSaved: (value) {
-                                      //                         print(value
-                                      //                             .toString());
-                                      //                         setState(() {
-                                      //                           this._selectedCity =
-                                      //                               value!;
-                                      //                         });
-
-                                      //                         print(this
-                                      //                             ._selectedCity
-                                      //                             .toString());
-                                      //                       }),
-                                      //                   SizedBox(
-                                      //                     height: 10.0,
-                                      //                   ),
-                                      //                   // RaisedButton(
-                                      //                   //   child:
-                                      //                   //       Text('Submit'),
-                                      //                   //   onPressed: () {
-                                      //                   //     if (this
-                                      //                   //         ._formKey
-                                      //                   //         .currentState
-                                      //                   //         .validate()) {
-                                      //                   //       this
-                                      //                   //           ._formKey
-                                      //                   //           .currentState
-                                      //                   //           .save();
-                                      //                   //       Scaffold.of(
-                                      //                   //               context)
-                                      //                   //           .showSnackBar(SnackBar(
-                                      //                   //               content:
-                                      //                   //                   Text('Your Favorite City is ${this._selectedCity}')));
-                                      //                   //     }
-                                      //                   //   },
-                                      //                   // )
-                                      //                 ],
-                                      //               ),
-                                      //             ),
-                                      //             Row(
-                                      //               mainAxisAlignment:
-                                      //                   MainAxisAlignment
-                                      //                       .spaceEvenly,
-                                      //               children: [
-                                      //                 Column(
-                                      //                   children: [
-                                      //                     Text("ret"),
-                                      //                     Container(
-                                      //                       color: Colors.red,
-                                      //                       width: 150,
-                                      //                       child: ListView
-                                      //                           .builder(
-                                      //                         physics:
-                                      //                             NeverScrollableScrollPhysics(),
-                                      //                         shrinkWrap: true,
-                                      //                         itemCount:
-                                      //                             ret.length,
-                                      //                         //  _organizationModel.length,
-                                      //                         itemBuilder:
-                                      //                             (context,
-                                      //                                 index) {
-                                      //                           return ListTile(
-                                      //                             // leading:
-                                      //                             //  _enquiryModel6[
-                                      //                             //                 index]
-                                      //                             //             .logo !=
-                                      //                             //         ""
-                                      //                             //     ? _enquiryModel6[
-                                      //                             //             index]
-                                      //                             //         .logo
-                                      //                             //     :
-                                      //                             // Icon(Icons
-                                      //                             //     .money),
-                                      //                             title: Text(
-                                      //                                 ret[index]
-                                      //                                     .name),
-                                      //                             onTap: () {
-                                      //                               print(ret[
-                                      //                                       index]
-                                      //                                   .name);
-                                      //                               setState(
-                                      //                                   () {
-                                      //                                 bank = ret[
-                                      //                                         index]
-                                      //                                     .name
-                                      //                                     .toString();
-                                      //                                 bankCode = ret[
-                                      //                                         index]
-                                      //                                     .code
-                                      //                                     .toString();
-                                      //                                 bankLink = ret[
-                                      //                                         index]
-                                      //                                     .redirectUrls!
-                                      //                                     .last
-                                      //                                     .url
-                                      //                                     .toString();
-                                      //                                 bankType = ret[
-                                      //                                         index]
-                                      //                                     .redirectUrls!
-                                      //                                     .first
-                                      //                                     .type
-                                      //                                     .toString();
-                                      //                               });
-
-                                      //                               Get.back();
-                                      //                             },
-                                      //                           );
-                                      //                         },
-                                      //                       ),
-                                      //                     ),
-                                      //                   ],
-                                      //                 ),
-                                      //                 Column(
-                                      //                   children: [
-                                      //                     Text("cor"),
-                                      //                     Container(
-                                      //                       color:
-                                      //                           Colors.yellow,
-                                      //                       width: 150,
-                                      //                       child: ListView
-                                      //                           .builder(
-                                      //                         physics:
-                                      //                             NeverScrollableScrollPhysics(),
-                                      //                         shrinkWrap: true,
-                                      //                         itemCount:
-                                      //                             cor.length,
-                                      //                         //  _organizationModel.length,
-                                      //                         itemBuilder:
-                                      //                             (context,
-                                      //                                 index) {
-                                      //                           return ListTile(
-                                      //                             // leading:
-                                      //                             //  _enquiryModel6[
-                                      //                             //                 index]
-                                      //                             //             .logo !=
-                                      //                             //         ""
-                                      //                             //     ? _enquiryModel6[
-                                      //                             //             index]
-                                      //                             //         .logo
-                                      //                             //     :
-                                      //                             // Icon(Icons
-                                      //                             //     .money),
-                                      //                             title: Text(
-                                      //                                 cor[index]
-                                      //                                     .name),
-                                      //                             onTap: () {
-                                      //                               print(cor[
-                                      //                                       index]
-                                      //                                   .name);
-                                      //                               setState(
-                                      //                                   () {
-                                      //                                 bank = cor[
-                                      //                                         index]
-                                      //                                     .name
-                                      //                                     .toString();
-                                      //                                 bankCode = cor[
-                                      //                                         index]
-                                      //                                     .code
-                                      //                                     .toString();
-                                      //                                 bankLink = cor[
-                                      //                                         index]
-                                      //                                     .redirectUrls!
-                                      //                                     .last
-                                      //                                     .url
-                                      //                                     .toString();
-                                      //                                 bankType = cor[
-                                      //                                         index]
-                                      //                                     .redirectUrls!
-                                      //                                     .first
-                                      //                                     .type
-                                      //                                     .toString();
-                                      //                               });
-
-                                      //                               Get.back();
-                                      //                             },
-                                      //                           );
-                                      //                         },
-                                      //                       ),
-                                      //                     ),
-                                      //                   ],
-                                      //                 ),
-                                      //               ],
-                                      //             )
-                                      //           ],
-                                      //         ),
-                                      //         backgroundColor: Colors.white,
-                                      //       );
-                                      //     },
-                                      //     icon: Icon(Icons.edit_outlined),
-                                      //     color: constants.primaryColor,
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                 ),
@@ -1339,50 +835,49 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       // );
 
       if (isConfirm == true) {
-        print("_enquiryModel3.length.toString() " +
-            _enquiryModel3.length.toString());
+        print("billItems.length.toString() " + billItems.length.toString());
         // List checkout = [];
-        // for (var i = 0; i < _enquiryModel3.length; i++) {
+        // for (var i = 0; i < billItems.length; i++) {
         //   Map transactionItems = {
         //     "items": {
-        //       _enquiryModel3[i].referenceNumber: [
+        //       billItems[i].referenceNumber: [
         //         {
         //           "unit": "1",
-        //           "price": _enquiryModel3[i].billTypeId.toString() == "1"
+        //           "price": billItems[i].billTypeId.toString() == "1"
         //               ? double.parse(
-        //                   _enquiryModel3[i].nettCalculations!.total!.toString())
-        //               : double.parse(_enquiryModel3[i].amount.toString()),
+        //                   billItems[i].nettCalculations!.total!.toString())
+        //               : double.parse(billItems[i].amount.toString()),
         //           "title": "Kadar (RM)",
         //           "quantity": 1,
-        //           "total_price": _enquiryModel3[i].billTypeId.toString() == "1"
-        //               ? _enquiryModel3[i].nettCalculations!.total!.toString()
-        //               : _enquiryModel3[i].amount.toString()
+        //           "total_price": billItems[i].billTypeId.toString() == "1"
+        //               ? billItems[i].nettCalculations!.total!.toString()
+        //               : billItems[i].amount.toString()
         //         }
         //       ]
         //     },
         //     "bill_id": null,
-        //     "service_id": _enquiryModel3[i].serviceId,
-        //     "payment_description": _enquiryModel3[i].referenceNumber,
+        //     "service_id": billItems[i].serviceId,
+        //     "payment_description": billItems[i].referenceNumber,
         //     "extra_fields": {"type": "date", "value": ""},
-        //     "amount": _enquiryModel3[i].billTypeId.toString() == "1"
-        //         ? _enquiryModel3[i].nettCalculations!.total!.toString()
-        //         : _enquiryModel3[i].amount.toString()
+        //     "amount": billItems[i].billTypeId.toString() == "1"
+        //         ? billItems[i].nettCalculations!.total!.toString()
+        //         : billItems[i].amount.toString()
         //   };
         //   checkout.add(transactionItems);
         // }
 
         List a = [];
-        for (var i = 0; i < _enquiryModel3.length; i++) {
+        for (var i = 0; i < billItems.length; i++) {
           a.add({
             "service_id": null,
-            "bill_id": _enquiryModel3[i].id,
-            "amount": _enquiryModel3[i].billTypeId.toString() == "1"
-                ? _enquiryModel3[i]
+            "bill_id": billItems[i].id,
+            "amount": billItems[i].billTypeId.toString() == "1"
+                ? billItems[i]
                     .nettCalculations!
                     .total!
                     .toStringAsFixed(2)
                     .toString()
-                : _enquiryModel3[i].amount.toString(),
+                : billItems[i].amount.toString(),
             "details": {}
           });
         }
@@ -1399,10 +894,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         print(response1.isSuccessful);
         print("response1.data[cart_ids]");
         print(response1.data["cart_ids"]);
-        print("_enquiryModel3.length.toString()");
-        print(_enquiryModel3.length.toString());
+        print("billItems.length.toString()");
+        print(billItems.length.toString());
         List rawIds = [];
-        if (_enquiryModel3.length == 1) {
+        if (billItems.length == 1) {
           rawIds = [response1.data["cart_id"]];
         } else {
           rawIds = response1.data["cart_ids"];
@@ -1422,7 +917,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         );
         // ErrorResponse response = await api.payments(
         //   PaymentsRequest(
-        //     amount: _enquiryModel3.nettCalculations!.total.toString(),
+        //     amount: billItems.nettCalculations!.total.toString(),
         //     source: "mobile",
         //     transactionItems: jsonEncode([transactionItems]),
         //     paymentMethod: gatewayMethod,
@@ -1486,10 +981,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 }
 
-List<String> getSuggestions(String query, List<String> _enquiryModel12) {
-  _enquiryModel12 = _enquiryModel12.toSet().toList();
+List<String> getSuggestions(String query, List<String> bankListString) {
+  bankListString = bankListString.toSet().toList();
   List<String> matches = <String>[];
-  matches.addAll(_enquiryModel12);
+  matches.addAll(bankListString);
 
   matches.retainWhere((s) => s.toLowerCase().contains(query.toLowerCase()));
   return matches;

@@ -1376,6 +1376,7 @@ const Map<String, String> en = {
   "You are not authorized to access this page.":
       "You are not authorized to access this page.",
   "You have ": "You have ",
+  "You have @count bill(s) to be paid.": "You have @count bill(s) to be paid.",
   "You don't have bills to pay.": "You don't have bills to pay.",
   "You have :count bill(s) information records to be verify. Click the :link link to take furher action.":
       "You have :count bill(s) information records to be verify. Click the :link link to take furher action.",
