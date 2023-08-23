@@ -1,1060 +1,3758 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_phosphor_icons/flutter_phosphor_icons.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 IconData getIcon(String name) {
-  if(name.indexOf('ph-') == 0) {
+  if (name.indexOf('ph-') == 0) {
     name = name.substring(3);
   }
 
-  switch(name) {
-    case 'activity': return PhosphorIcons.activity;
-    case 'address-book': return PhosphorIcons.address_book;
-    case 'airplane': return PhosphorIcons.airplane;
-    case 'airplane-in-flight': return PhosphorIcons.airplane_in_flight;
-    case 'airplane-landing': return PhosphorIcons.airplane_landing;
-    case 'airplane-takeoff': return PhosphorIcons.airplane_takeoff;
-    case 'airplane-tilt': return PhosphorIcons.airplane_tilt;
-    case 'airplay': return PhosphorIcons.airplay;
-    case 'alarm': return PhosphorIcons.alarm;
-    case 'alien': return PhosphorIcons.alien;
-    case 'align-bottom': return PhosphorIcons.align_bottom;
-    case 'align-bottom-simple': return PhosphorIcons.align_bottom_simple;
-    case 'align-center-horizontal': return PhosphorIcons.align_center_horizontal;
-    case 'align-center-horizontal-simple': return PhosphorIcons.align_center_horizontal_simple;
-    case 'align-center-vertical': return PhosphorIcons.align_center_vertical;
-    case 'align-center-vertical-simple': return PhosphorIcons.align_center_vertical_simple;
-    case 'align-left': return PhosphorIcons.align_left;
-    case 'align-left-simple': return PhosphorIcons.align_left_simple;
-    case 'align-right': return PhosphorIcons.align_right;
-    case 'align-right-simple': return PhosphorIcons.align_right_simple;
-    case 'align-top': return PhosphorIcons.align_top;
-    case 'align-top-simple': return PhosphorIcons.align_top_simple;
-    case 'anchor': return PhosphorIcons.anchor;
-    case 'anchor-simple': return PhosphorIcons.anchor_simple;
-    case 'android-logo': return PhosphorIcons.android_logo;
-    case 'angular-logo': return PhosphorIcons.angular_logo;
-    case 'aperture': return PhosphorIcons.aperture;
-    case 'app-store-logo': return PhosphorIcons.app_store_logo;
-    case 'app-window': return PhosphorIcons.app_window;
-    case 'apple-logo': return PhosphorIcons.apple_logo;
-    case 'apple-podcasts-logo': return PhosphorIcons.apple_podcasts_logo;
-    case 'archive': return PhosphorIcons.archive;
-    case 'archive-box': return PhosphorIcons.archive_box;
-    case 'archive-tray': return PhosphorIcons.archive_tray;
-    case 'armchair': return PhosphorIcons.armchair;
-    case 'arrow-arc-left': return PhosphorIcons.arrow_arc_left;
-    case 'arrow-arc-right': return PhosphorIcons.arrow_arc_right;
-    case 'arrow-bend-double-up-left': return PhosphorIcons.arrow_bend_double_up_left;
-    case 'arrow-bend-double-up-right': return PhosphorIcons.arrow_bend_double_up_right;
-    case 'arrow-bend-down-left': return PhosphorIcons.arrow_bend_down_left;
-    case 'arrow-bend-down-right': return PhosphorIcons.arrow_bend_down_right;
-    case 'arrow-bend-left-down': return PhosphorIcons.arrow_bend_left_down;
-    case 'arrow-bend-left-up': return PhosphorIcons.arrow_bend_left_up;
-    case 'arrow-bend-right-down': return PhosphorIcons.arrow_bend_right_down;
-    case 'arrow-bend-right-up': return PhosphorIcons.arrow_bend_right_up;
-    case 'arrow-bend-up-left': return PhosphorIcons.arrow_bend_up_left;
-    case 'arrow-bend-up-right': return PhosphorIcons.arrow_bend_up_right;
-    case 'arrow-circle-down': return PhosphorIcons.arrow_circle_down;
-    case 'arrow-circle-down-left': return PhosphorIcons.arrow_circle_down_left;
-    case 'arrow-circle-down-right': return PhosphorIcons.arrow_circle_down_right;
-    case 'arrow-circle-left': return PhosphorIcons.arrow_circle_left;
-    case 'arrow-circle-right': return PhosphorIcons.arrow_circle_right;
-    case 'arrow-circle-up': return PhosphorIcons.arrow_circle_up;
-    case 'arrow-circle-up-left': return PhosphorIcons.arrow_circle_up_left;
-    case 'arrow-circle-up-right': return PhosphorIcons.arrow_circle_up_right;
-    case 'arrow-clockwise': return PhosphorIcons.arrow_clockwise;
-    case 'arrow-counter-clockwise': return PhosphorIcons.arrow_counter_clockwise;
-    case 'arrow-down': return PhosphorIcons.arrow_down;
-    case 'arrow-down-left': return PhosphorIcons.arrow_down_left;
-    case 'arrow-down-right': return PhosphorIcons.arrow_down_right;
-    case 'arrow-elbow-down-left': return PhosphorIcons.arrow_elbow_down_left;
-    case 'arrow-elbow-down-right': return PhosphorIcons.arrow_elbow_down_right;
-    case 'arrow-elbow-left': return PhosphorIcons.arrow_elbow_left;
-    case 'arrow-elbow-left-down': return PhosphorIcons.arrow_elbow_left_down;
-    case 'arrow-elbow-left-up': return PhosphorIcons.arrow_elbow_left_up;
-    case 'arrow-elbow-right': return PhosphorIcons.arrow_elbow_right;
-    case 'arrow-elbow-right-down': return PhosphorIcons.arrow_elbow_right_down;
-    case 'arrow-elbow-right-up': return PhosphorIcons.arrow_elbow_right_up;
-    case 'arrow-elbow-up-left': return PhosphorIcons.arrow_elbow_up_left;
-    case 'arrow-elbow-up-right': return PhosphorIcons.arrow_elbow_up_right;
-    case 'arrow-fat-down': return PhosphorIcons.arrow_fat_down;
-    case 'arrow-fat-left': return PhosphorIcons.arrow_fat_left;
-    case 'arrow-fat-line-down': return PhosphorIcons.arrow_fat_line_down;
-    case 'arrow-fat-line-left': return PhosphorIcons.arrow_fat_line_left;
-    case 'arrow-fat-line-right': return PhosphorIcons.arrow_fat_line_right;
-    case 'arrow-fat-line-up': return PhosphorIcons.arrow_fat_line_up;
-    case 'arrow-fat-lines-down': return PhosphorIcons.arrow_fat_lines_down;
-    case 'arrow-fat-lines-left': return PhosphorIcons.arrow_fat_lines_left;
-    case 'arrow-fat-lines-right': return PhosphorIcons.arrow_fat_lines_right;
-    case 'arrow-fat-lines-up': return PhosphorIcons.arrow_fat_lines_up;
-    case 'arrow-fat-right': return PhosphorIcons.arrow_fat_right;
-    case 'arrow-fat-up': return PhosphorIcons.arrow_fat_up;
-    case 'arrow-left': return PhosphorIcons.arrow_left;
-    case 'arrow-line-down': return PhosphorIcons.arrow_line_down;
-    case 'arrow-line-down-left': return PhosphorIcons.arrow_line_down_left;
-    case 'arrow-line-down-right': return PhosphorIcons.arrow_line_down_right;
-    case 'arrow-line-left': return PhosphorIcons.arrow_line_left;
-    case 'arrow-line-right': return PhosphorIcons.arrow_line_right;
-    case 'arrow-line-up': return PhosphorIcons.arrow_line_up;
-    case 'arrow-line-up-left': return PhosphorIcons.arrow_line_up_left;
-    case 'arrow-line-up-right': return PhosphorIcons.arrow_line_up_right;
-    case 'arrow-right': return PhosphorIcons.arrow_right;
-    case 'arrow-square-down': return PhosphorIcons.arrow_square_down;
-    case 'arrow-square-down-left': return PhosphorIcons.arrow_square_down_left;
-    case 'arrow-square-down-right': return PhosphorIcons.arrow_square_down_right;
-    case 'arrow-square-in': return PhosphorIcons.arrow_square_in;
-    case 'arrow-square-left': return PhosphorIcons.arrow_square_left;
-    case 'arrow-square-out': return PhosphorIcons.arrow_square_out;
-    case 'arrow-square-right': return PhosphorIcons.arrow_square_right;
-    case 'arrow-square-up': return PhosphorIcons.arrow_square_up;
-    case 'arrow-square-up-left': return PhosphorIcons.arrow_square_up_left;
-    case 'arrow-square-up-right': return PhosphorIcons.arrow_square_up_right;
-    case 'arrow-u-down-left': return PhosphorIcons.arrow_u_down_left;
-    case 'arrow-u-down-right': return PhosphorIcons.arrow_u_down_right;
-    case 'arrow-u-left-down': return PhosphorIcons.arrow_u_left_down;
-    case 'arrow-u-left-up': return PhosphorIcons.arrow_u_left_up;
-    case 'arrow-u-right-down': return PhosphorIcons.arrow_u_right_down;
-    case 'arrow-u-right-up': return PhosphorIcons.arrow_u_right_up;
-    case 'arrow-u-up-left': return PhosphorIcons.arrow_u_up_left;
-    case 'arrow-u-up-right': return PhosphorIcons.arrow_u_up_right;
-    case 'arrow-up': return PhosphorIcons.arrow_up;
-    case 'arrow-up-left': return PhosphorIcons.arrow_up_left;
-    case 'arrow-up-right': return PhosphorIcons.arrow_up_right;
-    case 'arrows-clockwise': return PhosphorIcons.arrows_clockwise;
-    case 'arrows-counter-clockwise': return PhosphorIcons.arrows_counter_clockwise;
-    case 'arrows-down-up': return PhosphorIcons.arrows_down_up;
-    case 'arrows-horizontal': return PhosphorIcons.arrows_horizontal;
-    case 'arrows-in': return PhosphorIcons.arrows_in;
-    case 'arrows-in-cardinal': return PhosphorIcons.arrows_in_cardinal;
-    case 'arrows-in-line-horizontal': return PhosphorIcons.arrows_in_line_horizontal;
-    case 'arrows-in-line-vertical': return PhosphorIcons.arrows_in_line_vertical;
-    case 'arrows-in-simple': return PhosphorIcons.arrows_in_simple;
-    case 'arrows-left-right': return PhosphorIcons.arrows_left_right;
-    case 'arrows-out': return PhosphorIcons.arrows_out;
-    case 'arrows-out-cardinal': return PhosphorIcons.arrows_out_cardinal;
-    case 'arrows-out-line-horizontal': return PhosphorIcons.arrows_out_line_horizontal;
-    case 'arrows-out-line-vertical': return PhosphorIcons.arrows_out_line_vertical;
-    case 'arrows-out-simple': return PhosphorIcons.arrows_out_simple;
-    case 'arrows-vertical': return PhosphorIcons.arrows_vertical;
-    case 'article': return PhosphorIcons.article;
-    case 'article-medium': return PhosphorIcons.article_medium;
-    case 'article-ny-times': return PhosphorIcons.article_ny_times;
-    case 'asterisk': return PhosphorIcons.asterisk;
-    case 'asterisk-simple': return PhosphorIcons.asterisk_simple;
-    case 'at': return PhosphorIcons.at;
-    case 'atom': return PhosphorIcons.atom;
-    case 'baby': return PhosphorIcons.baby;
-    case 'backpack': return PhosphorIcons.backpack;
-    case 'backspace': return PhosphorIcons.backspace;
-    case 'bag': return PhosphorIcons.bag;
-    case 'bag-simple': return PhosphorIcons.bag_simple;
-    case 'balloon': return PhosphorIcons.balloon;
-    case 'bandaids': return PhosphorIcons.bandaids;
-    case 'bank': return PhosphorIcons.bank;
-    case 'barbell': return PhosphorIcons.barbell;
-    case 'barcode': return PhosphorIcons.barcode;
-    case 'barricade': return PhosphorIcons.barricade;
-    case 'baseball': return PhosphorIcons.baseball;
-    case 'basketball': return PhosphorIcons.basketball;
-    case 'bathtub': return PhosphorIcons.bathtub;
-    case 'battery-charging': return PhosphorIcons.battery_charging;
-    case 'battery-charging-vertical': return PhosphorIcons.battery_charging_vertical;
-    case 'battery-empty': return PhosphorIcons.battery_empty;
-    case 'battery-full': return PhosphorIcons.battery_full;
-    case 'battery-high': return PhosphorIcons.battery_high;
-    case 'battery-low': return PhosphorIcons.battery_low;
-    case 'battery-medium': return PhosphorIcons.battery_medium;
-    case 'battery-plus': return PhosphorIcons.battery_plus;
-    case 'battery-warning': return PhosphorIcons.battery_warning;
-    case 'battery-warning-vertical': return PhosphorIcons.battery_warning_vertical;
-    case 'bed': return PhosphorIcons.bed;
-    case 'beer-bottle': return PhosphorIcons.beer_bottle;
-    case 'behance-logo': return PhosphorIcons.behance_logo;
-    case 'bell': return PhosphorIcons.bell;
-    case 'bell-ringing': return PhosphorIcons.bell_ringing;
-    case 'bell-simple': return PhosphorIcons.bell_simple;
-    case 'bell-simple-ringing': return PhosphorIcons.bell_simple_ringing;
-    case 'bell-simple-slash': return PhosphorIcons.bell_simple_slash;
-    case 'bell-simple-z': return PhosphorIcons.bell_simple_z;
-    case 'bell-slash': return PhosphorIcons.bell_slash;
-    case 'bell-z': return PhosphorIcons.bell_z;
-    case 'bezier-curve': return PhosphorIcons.bezier_curve;
-    case 'bicycle': return PhosphorIcons.bicycle;
-    case 'binoculars': return PhosphorIcons.binoculars;
-    case 'bird': return PhosphorIcons.bird;
-    case 'bluetooth': return PhosphorIcons.bluetooth;
-    case 'bluetooth-connected': return PhosphorIcons.bluetooth_connected;
-    case 'bluetooth-slash': return PhosphorIcons.bluetooth_slash;
-    case 'bluetooth-x': return PhosphorIcons.bluetooth_x;
-    case 'boat': return PhosphorIcons.boat;
-    case 'book': return PhosphorIcons.book;
-    case 'book-bookmark': return PhosphorIcons.book_bookmark;
-    case 'book-open': return PhosphorIcons.book_open;
-    case 'bookmark': return PhosphorIcons.bookmark;
-    case 'bookmark-simple': return PhosphorIcons.bookmark_simple;
-    case 'bookmarks': return PhosphorIcons.bookmarks;
-    case 'bookmarks-simple': return PhosphorIcons.bookmarks_simple;
-    case 'books': return PhosphorIcons.books;
-    case 'bounding-box': return PhosphorIcons.bounding_box;
-    case 'brackets-angle': return PhosphorIcons.brackets_angle;
-    case 'brackets-curly': return PhosphorIcons.brackets_curly;
-    case 'brackets-round': return PhosphorIcons.brackets_round;
-    case 'brackets-square': return PhosphorIcons.brackets_square;
-    case 'brain': return PhosphorIcons.brain;
-    case 'brandy': return PhosphorIcons.brandy;
-    case 'briefcase': return PhosphorIcons.briefcase;
-    case 'briefcase-metal': return PhosphorIcons.briefcase_metal;
-    case 'broadcast': return PhosphorIcons.broadcast;
-    case 'browser': return PhosphorIcons.browser;
-    case 'browsers': return PhosphorIcons.browsers;
-    case 'bug': return PhosphorIcons.bug;
-    case 'bug-beetle': return PhosphorIcons.bug_beetle;
-    case 'bug-droid': return PhosphorIcons.bug_droid;
-    case 'buildings': return PhosphorIcons.buildings;
-    case 'bus': return PhosphorIcons.bus;
-    case 'butterfly': return PhosphorIcons.butterfly;
-    case 'cactus': return PhosphorIcons.cactus;
-    case 'cake': return PhosphorIcons.cake;
-    case 'calculator': return PhosphorIcons.calculator;
-    case 'calendar': return PhosphorIcons.calendar;
-    case 'calendar-blank': return PhosphorIcons.calendar_blank;
-    case 'calendar-check': return PhosphorIcons.calendar_check;
-    case 'calendar-plus': return PhosphorIcons.calendar_plus;
-    case 'calendar-x': return PhosphorIcons.calendar_x;
-    case 'camera': return PhosphorIcons.camera;
-    case 'camera-rotate': return PhosphorIcons.camera_rotate;
-    case 'camera-slash': return PhosphorIcons.camera_slash;
-    case 'campfire': return PhosphorIcons.campfire;
-    case 'car': return PhosphorIcons.car;
-    case 'car-simple': return PhosphorIcons.car_simple;
-    case 'cardholder': return PhosphorIcons.cardholder;
-    case 'cards': return PhosphorIcons.cards;
-    case 'caret-circle-double-down': return PhosphorIcons.caret_circle_double_down;
-    case 'caret-circle-double-left': return PhosphorIcons.caret_circle_double_left;
-    case 'caret-circle-double-right': return PhosphorIcons.caret_circle_double_right;
-    case 'caret-circle-double-up': return PhosphorIcons.caret_circle_double_up;
-    case 'caret-circle-down': return PhosphorIcons.caret_circle_down;
-    case 'caret-circle-left': return PhosphorIcons.caret_circle_left;
-    case 'caret-circle-right': return PhosphorIcons.caret_circle_right;
-    case 'caret-circle-up': return PhosphorIcons.caret_circle_up;
-    case 'caret-double-down': return PhosphorIcons.caret_double_down;
-    case 'caret-double-left': return PhosphorIcons.caret_double_left;
-    case 'caret-double-right': return PhosphorIcons.caret_double_right;
-    case 'caret-double-up': return PhosphorIcons.caret_double_up;
-    case 'caret-down': return PhosphorIcons.caret_down;
-    case 'caret-left': return PhosphorIcons.caret_left;
-    case 'caret-right': return PhosphorIcons.caret_right;
-    case 'caret-up': return PhosphorIcons.caret_up;
-    case 'cat': return PhosphorIcons.cat;
-    case 'cell-signal-full': return PhosphorIcons.cell_signal_full;
-    case 'cell-signal-high': return PhosphorIcons.cell_signal_high;
-    case 'cell-signal-low': return PhosphorIcons.cell_signal_low;
-    case 'cell-signal-medium': return PhosphorIcons.cell_signal_medium;
-    case 'cell-signal-none': return PhosphorIcons.cell_signal_none;
-    case 'cell-signal-slash': return PhosphorIcons.cell_signal_slash;
-    case 'cell-signal-x': return PhosphorIcons.cell_signal_x;
-    case 'chalkboard': return PhosphorIcons.chalkboard;
-    case 'chalkboard-simple': return PhosphorIcons.chalkboard_simple;
-    case 'chalkboard-teacher': return PhosphorIcons.chalkboard_teacher;
-    case 'chart-bar': return PhosphorIcons.chart_bar;
-    case 'chart-bar-horizontal': return PhosphorIcons.chart_bar_horizontal;
-    case 'chart-line': return PhosphorIcons.chart_line;
-    case 'chart-line-up': return PhosphorIcons.chart_line_up;
-    case 'chart-pie': return PhosphorIcons.chart_pie;
-    case 'chart-pie-slice': return PhosphorIcons.chart_pie_slice;
-    case 'chat': return PhosphorIcons.chat;
-    case 'chat-centered': return PhosphorIcons.chat_centered;
-    case 'chat-centered-dots': return PhosphorIcons.chat_centered_dots;
-    case 'chat-centered-text': return PhosphorIcons.chat_centered_text;
-    case 'chat-circle': return PhosphorIcons.chat_circle;
-    case 'chat-circle-dots': return PhosphorIcons.chat_circle_dots;
-    case 'chat-circle-text': return PhosphorIcons.chat_circle_text;
-    case 'chat-dots': return PhosphorIcons.chat_dots;
-    case 'chat-teardrop': return PhosphorIcons.chat_teardrop;
-    case 'chat-teardrop-dots': return PhosphorIcons.chat_teardrop_dots;
-    case 'chat-teardrop-text': return PhosphorIcons.chat_teardrop_text;
-    case 'chat-text': return PhosphorIcons.chat_text;
-    case 'chats': return PhosphorIcons.chats;
-    case 'chats-circle': return PhosphorIcons.chats_circle;
-    case 'chats-teardrop': return PhosphorIcons.chats_teardrop;
-    case 'check': return PhosphorIcons.check;
-    case 'check-circle': return PhosphorIcons.check_circle;
-    case 'check-square': return PhosphorIcons.check_square;
-    case 'check-square-offset': return PhosphorIcons.check_square_offset;
-    case 'checks': return PhosphorIcons.checks;
-    case 'circle': return PhosphorIcons.circle;
-    case 'circle-dashed': return PhosphorIcons.circle_dashed;
-    case 'circle-half': return PhosphorIcons.circle_half;
-    case 'circle-half-tilt': return PhosphorIcons.circle_half_tilt;
-    case 'circle-notch': return PhosphorIcons.circle_notch;
-    case 'circle-wavy': return PhosphorIcons.circle_wavy;
-    case 'circle-wavy-check': return PhosphorIcons.circle_wavy_check;
-    case 'circle-wavy-question': return PhosphorIcons.circle_wavy_question;
-    case 'circle-wavy-warning': return PhosphorIcons.circle_wavy_warning;
-    case 'circles-four': return PhosphorIcons.circles_four;
-    case 'circles-three': return PhosphorIcons.circles_three;
-    case 'circles-three-plus': return PhosphorIcons.circles_three_plus;
-    case 'clipboard': return PhosphorIcons.clipboard;
-    case 'clipboard-text': return PhosphorIcons.clipboard_text;
-    case 'clock': return PhosphorIcons.clock;
-    case 'clock-afternoon': return PhosphorIcons.clock_afternoon;
-    case 'clock-clockwise': return PhosphorIcons.clock_clockwise;
-    case 'clock-counter-clockwise': return PhosphorIcons.clock_counter_clockwise;
-    case 'closed-captioning': return PhosphorIcons.closed_captioning;
-    case 'cloud': return PhosphorIcons.cloud;
-    case 'cloud-arrow-down': return PhosphorIcons.cloud_arrow_down;
-    case 'cloud-arrow-up': return PhosphorIcons.cloud_arrow_up;
-    case 'cloud-check': return PhosphorIcons.cloud_check;
-    case 'cloud-fog': return PhosphorIcons.cloud_fog;
-    case 'cloud-lightning': return PhosphorIcons.cloud_lightning;
-    case 'cloud-moon': return PhosphorIcons.cloud_moon;
-    case 'cloud-rain': return PhosphorIcons.cloud_rain;
-    case 'cloud-slash': return PhosphorIcons.cloud_slash;
-    case 'cloud-snow': return PhosphorIcons.cloud_snow;
-    case 'cloud-sun': return PhosphorIcons.cloud_sun;
-    case 'club': return PhosphorIcons.club;
-    case 'coat-hanger': return PhosphorIcons.coat_hanger;
-    case 'code': return PhosphorIcons.code;
-    case 'code-simple': return PhosphorIcons.code_simple;
-    case 'codepen-logo': return PhosphorIcons.codepen_logo;
-    case 'codesandbox-logo': return PhosphorIcons.codesandbox_logo;
-    case 'coffee': return PhosphorIcons.coffee;
-    case 'coin': return PhosphorIcons.coin;
-    case 'coin-vertical': return PhosphorIcons.coin_vertical;
-    case 'coins': return PhosphorIcons.coins;
-    case 'columns': return PhosphorIcons.columns;
-    case 'command': return PhosphorIcons.command;
-    case 'compass': return PhosphorIcons.compass;
-    case 'computer-tower': return PhosphorIcons.computer_tower;
-    case 'confetti': return PhosphorIcons.confetti;
-    case 'cookie': return PhosphorIcons.cookie;
-    case 'cooking-pot': return PhosphorIcons.cooking_pot;
-    case 'copy': return PhosphorIcons.copy;
-    case 'copy-simple': return PhosphorIcons.copy_simple;
-    case 'copyleft': return PhosphorIcons.copyleft;
-    case 'copyright': return PhosphorIcons.copyright;
-    case 'corners-in': return PhosphorIcons.corners_in;
-    case 'corners-out': return PhosphorIcons.corners_out;
-    case 'cpu': return PhosphorIcons.cpu;
-    case 'credit-card': return PhosphorIcons.credit_card;
-    case 'crop': return PhosphorIcons.crop;
-    case 'crosshair': return PhosphorIcons.crosshair;
-    case 'crosshair-simple': return PhosphorIcons.crosshair_simple;
-    case 'crown': return PhosphorIcons.crown;
-    case 'crown-simple': return PhosphorIcons.crown_simple;
-    case 'cube': return PhosphorIcons.cube;
-    case 'currency-btc': return PhosphorIcons.currency_btc;
-    case 'currency-circle-dollar': return PhosphorIcons.currency_circle_dollar;
-    case 'currency-cny': return PhosphorIcons.currency_cny;
-    case 'currency-dollar': return PhosphorIcons.currency_dollar;
-    case 'currency-dollar-simple': return PhosphorIcons.currency_dollar_simple;
-    case 'currency-eth': return PhosphorIcons.currency_eth;
-    case 'currency-eur': return PhosphorIcons.currency_eur;
-    case 'currency-gbp': return PhosphorIcons.currency_gbp;
-    case 'currency-inr': return PhosphorIcons.currency_inr;
-    case 'currency-jpy': return PhosphorIcons.currency_jpy;
-    case 'currency-krw': return PhosphorIcons.currency_krw;
-    case 'currency-kzt': return PhosphorIcons.currency_kzt;
-    case 'currency-ngn': return PhosphorIcons.currency_ngn;
-    case 'currency-rub': return PhosphorIcons.currency_rub;
-    case 'cursor': return PhosphorIcons.cursor;
-    case 'cursor-text': return PhosphorIcons.cursor_text;
-    case 'cylinder': return PhosphorIcons.cylinder;
-    case 'database': return PhosphorIcons.database;
-    case 'desktop': return PhosphorIcons.desktop;
-    case 'desktop-tower': return PhosphorIcons.desktop_tower;
-    case 'detective': return PhosphorIcons.detective;
-    case 'device-mobile': return PhosphorIcons.device_mobile;
-    case 'device-mobile-camera': return PhosphorIcons.device_mobile_camera;
-    case 'device-mobile-speaker': return PhosphorIcons.device_mobile_speaker;
-    case 'device-tablet': return PhosphorIcons.device_tablet;
-    case 'device-tablet-camera': return PhosphorIcons.device_tablet_camera;
-    case 'device-tablet-speaker': return PhosphorIcons.device_tablet_speaker;
-    case 'diamond': return PhosphorIcons.diamond;
-    case 'diamonds-four': return PhosphorIcons.diamonds_four;
-    case 'dice-five': return PhosphorIcons.dice_five;
-    case 'dice-four': return PhosphorIcons.dice_four;
-    case 'dice-one': return PhosphorIcons.dice_one;
-    case 'dice-six': return PhosphorIcons.dice_six;
-    case 'dice-three': return PhosphorIcons.dice_three;
-    case 'dice-two': return PhosphorIcons.dice_two;
-    case 'disc': return PhosphorIcons.disc;
-    case 'discord-logo': return PhosphorIcons.discord_logo;
-    case 'divide': return PhosphorIcons.divide;
-    case 'dog': return PhosphorIcons.dog;
-    case 'door': return PhosphorIcons.door;
-    case 'dots-nine': return PhosphorIcons.dots_nine;
-    case 'dots-six': return PhosphorIcons.dots_six;
-    case 'dots-six-vertical': return PhosphorIcons.dots_six_vertical;
-    case 'dots-three': return PhosphorIcons.dots_three;
-    case 'dots-three-circle': return PhosphorIcons.dots_three_circle;
-    case 'dots-three-circle-vertical': return PhosphorIcons.dots_three_circle_vertical;
-    case 'dots-three-outline': return PhosphorIcons.dots_three_outline;
-    case 'dots-three-outline-vertical': return PhosphorIcons.dots_three_outline_vertical;
-    case 'dots-three-vertical': return PhosphorIcons.dots_three_vertical;
-    case 'download': return PhosphorIcons.download;
-    case 'download-simple': return PhosphorIcons.download_simple;
-    case 'dribbble-logo': return PhosphorIcons.dribbble_logo;
-    case 'drop': return PhosphorIcons.drop;
-    case 'drop-half': return PhosphorIcons.drop_half;
-    case 'drop-half-bottom': return PhosphorIcons.drop_half_bottom;
-    case 'ear': return PhosphorIcons.ear;
-    case 'ear-slash': return PhosphorIcons.ear_slash;
-    case 'egg': return PhosphorIcons.egg;
-    case 'egg-crack': return PhosphorIcons.egg_crack;
-    case 'eject': return PhosphorIcons.eject;
-    case 'eject-simple': return PhosphorIcons.eject_simple;
-    case 'envelope': return PhosphorIcons.envelope;
-    case 'envelope-open': return PhosphorIcons.envelope_open;
-    case 'envelope-simple': return PhosphorIcons.envelope_simple;
-    case 'envelope-simple-open': return PhosphorIcons.envelope_simple_open;
-    case 'equalizer': return PhosphorIcons.equalizer;
-    case 'equals': return PhosphorIcons.equals;
-    case 'eraser': return PhosphorIcons.eraser;
-    case 'exam': return PhosphorIcons.exam;
-    case 'export': return PhosphorIcons.export;
-    case 'eye': return PhosphorIcons.eye;
-    case 'eye-closed': return PhosphorIcons.eye_closed;
-    case 'eye-slash': return PhosphorIcons.eye_slash;
-    case 'eyedropper': return PhosphorIcons.eyedropper;
-    case 'eyedropper-sample': return PhosphorIcons.eyedropper_sample;
-    case 'eyeglasses': return PhosphorIcons.eyeglasses;
-    case 'face-mask': return PhosphorIcons.face_mask;
-    case 'facebook-logo': return PhosphorIcons.facebook_logo;
-    case 'factory': return PhosphorIcons.factory;
-    case 'faders': return PhosphorIcons.faders;
-    case 'faders-horizontal': return PhosphorIcons.faders_horizontal;
-    case 'fast-forward': return PhosphorIcons.fast_forward;
-    case 'fast-forward-circle': return PhosphorIcons.fast_forward_circle;
-    case 'figma-logo': return PhosphorIcons.figma_logo;
-    case 'file': return PhosphorIcons.file;
-    case 'file-arrow-down': return PhosphorIcons.file_arrow_down;
-    case 'file-arrow-up': return PhosphorIcons.file_arrow_up;
-    case 'file-audio': return PhosphorIcons.file_audio;
-    case 'file-cloud': return PhosphorIcons.file_cloud;
-    case 'file-code': return PhosphorIcons.file_code;
-    case 'file-css': return PhosphorIcons.file_css;
-    case 'file-csv': return PhosphorIcons.file_csv;
-    case 'file-doc': return PhosphorIcons.file_doc;
-    case 'file-dotted': return PhosphorIcons.file_dotted;
-    case 'file-html': return PhosphorIcons.file_html;
-    case 'file-image': return PhosphorIcons.file_image;
-    case 'file-jpg': return PhosphorIcons.file_jpg;
-    case 'file-js': return PhosphorIcons.file_js;
-    case 'file-jsx': return PhosphorIcons.file_jsx;
-    case 'file-lock': return PhosphorIcons.file_lock;
-    case 'file-minus': return PhosphorIcons.file_minus;
-    case 'file-pdf': return PhosphorIcons.file_pdf;
-    case 'file-plus': return PhosphorIcons.file_plus;
-    case 'file-png': return PhosphorIcons.file_png;
-    case 'file-ppt': return PhosphorIcons.file_ppt;
-    case 'file-rs': return PhosphorIcons.file_rs;
-    case 'file-search': return PhosphorIcons.file_search;
-    case 'file-text': return PhosphorIcons.file_text;
-    case 'file-ts': return PhosphorIcons.file_ts;
-    case 'file-tsx': return PhosphorIcons.file_tsx;
-    case 'file-video': return PhosphorIcons.file_video;
-    case 'file-vue': return PhosphorIcons.file_vue;
-    case 'file-x': return PhosphorIcons.file_x;
-    case 'file-xls': return PhosphorIcons.file_xls;
-    case 'file-zip': return PhosphorIcons.file_zip;
-    case 'files': return PhosphorIcons.files;
-    case 'film-script': return PhosphorIcons.film_script;
-    case 'film-slate': return PhosphorIcons.film_slate;
-    case 'film-strip': return PhosphorIcons.film_strip;
-    case 'fingerprint': return PhosphorIcons.fingerprint;
-    case 'fingerprint-simple': return PhosphorIcons.fingerprint_simple;
-    case 'finn-the-human': return PhosphorIcons.finn_the_human;
-    case 'fire': return PhosphorIcons.fire;
-    case 'fire-simple': return PhosphorIcons.fire_simple;
-    case 'first-aid': return PhosphorIcons.first_aid;
-    case 'first-aid-kit': return PhosphorIcons.first_aid_kit;
-    case 'fish': return PhosphorIcons.fish;
-    case 'fish-simple': return PhosphorIcons.fish_simple;
-    case 'flag': return PhosphorIcons.flag;
-    case 'flag-banner': return PhosphorIcons.flag_banner;
-    case 'flag-checkered': return PhosphorIcons.flag_checkered;
-    case 'flame': return PhosphorIcons.flame;
-    case 'flashlight': return PhosphorIcons.flashlight;
-    case 'flask': return PhosphorIcons.flask;
-    case 'floppy-disk': return PhosphorIcons.floppy_disk;
-    case 'floppy-disk-back': return PhosphorIcons.floppy_disk_back;
-    case 'flow-arrow': return PhosphorIcons.flow_arrow;
-    case 'flower': return PhosphorIcons.flower;
-    case 'flower-lotus': return PhosphorIcons.flower_lotus;
-    case 'flying-saucer': return PhosphorIcons.flying_saucer;
-    case 'folder': return PhosphorIcons.folder;
-    case 'folder-dotted': return PhosphorIcons.folder_dotted;
-    case 'folder-lock': return PhosphorIcons.folder_lock;
-    case 'folder-minus': return PhosphorIcons.folder_minus;
-    case 'folder-notch': return PhosphorIcons.folder_notch;
-    case 'folder-notch-minus': return PhosphorIcons.folder_notch_minus;
-    case 'folder-notch-open': return PhosphorIcons.folder_notch_open;
-    case 'folder-notch-plus': return PhosphorIcons.folder_notch_plus;
-    case 'folder-open': return PhosphorIcons.folder_open;
-    case 'folder-plus': return PhosphorIcons.folder_plus;
-    case 'folder-simple': return PhosphorIcons.folder_simple;
-    case 'folder-simple-dotted': return PhosphorIcons.folder_simple_dotted;
-    case 'folder-simple-lock': return PhosphorIcons.folder_simple_lock;
-    case 'folder-simple-minus': return PhosphorIcons.folder_simple_minus;
-    case 'folder-simple-plus': return PhosphorIcons.folder_simple_plus;
-    case 'folder-simple-star': return PhosphorIcons.folder_simple_star;
-    case 'folder-simple-user': return PhosphorIcons.folder_simple_user;
-    case 'folder-star': return PhosphorIcons.folder_star;
-    case 'folder-user': return PhosphorIcons.folder_user;
-    case 'folders': return PhosphorIcons.folders;
-    case 'football': return PhosphorIcons.football;
-    case 'fork-knife': return PhosphorIcons.fork_knife;
-    case 'frame-corners': return PhosphorIcons.frame_corners;
-    case 'framer-logo': return PhosphorIcons.framer_logo;
-    case 'function': return PhosphorIcons.function;
-    case 'funnel': return PhosphorIcons.funnel;
-    case 'funnel-simple': return PhosphorIcons.funnel_simple;
-    case 'game-controller': return PhosphorIcons.game_controller;
-    case 'gas-pump': return PhosphorIcons.gas_pump;
-    case 'gauge': return PhosphorIcons.gauge;
-    case 'gear': return PhosphorIcons.gear;
-    case 'gear-six': return PhosphorIcons.gear_six;
-    case 'gender-female': return PhosphorIcons.gender_female;
-    case 'gender-intersex': return PhosphorIcons.gender_intersex;
-    case 'gender-male': return PhosphorIcons.gender_male;
-    case 'gender-neuter': return PhosphorIcons.gender_neuter;
-    case 'gender-nonbinary': return PhosphorIcons.gender_nonbinary;
-    case 'gender-transgender': return PhosphorIcons.gender_transgender;
-    case 'ghost': return PhosphorIcons.ghost;
-    case 'gif': return PhosphorIcons.gif;
-    case 'gift': return PhosphorIcons.gift;
-    case 'git-branch': return PhosphorIcons.git_branch;
-    case 'git-commit': return PhosphorIcons.git_commit;
-    case 'git-diff': return PhosphorIcons.git_diff;
-    case 'git-fork': return PhosphorIcons.git_fork;
-    case 'git-merge': return PhosphorIcons.git_merge;
-    case 'git-pull-request': return PhosphorIcons.git_pull_request;
-    case 'github-logo': return PhosphorIcons.github_logo;
-    case 'gitlab-logo': return PhosphorIcons.gitlab_logo;
-    case 'gitlab-logo-simple': return PhosphorIcons.gitlab_logo_simple;
-    case 'globe': return PhosphorIcons.globe;
-    case 'globe-hemisphere-east': return PhosphorIcons.globe_hemisphere_east;
-    case 'globe-hemisphere-west': return PhosphorIcons.globe_hemisphere_west;
-    case 'globe-simple': return PhosphorIcons.globe_simple;
-    case 'globe-stand': return PhosphorIcons.globe_stand;
-    case 'google-chrome-logo': return PhosphorIcons.google_chrome_logo;
-    case 'google-logo': return PhosphorIcons.google_logo;
-    case 'google-photos-logo': return PhosphorIcons.google_photos_logo;
-    case 'google-play-logo': return PhosphorIcons.google_play_logo;
-    case 'google-podcasts-logo': return PhosphorIcons.google_podcasts_logo;
-    case 'gradient': return PhosphorIcons.gradient;
-    case 'graduation-cap': return PhosphorIcons.graduation_cap;
-    case 'graph': return PhosphorIcons.graph;
-    case 'grid-four': return PhosphorIcons.grid_four;
-    case 'hamburger': return PhosphorIcons.hamburger;
-    case 'hand': return PhosphorIcons.hand;
-    case 'hand-eye': return PhosphorIcons.hand_eye;
-    case 'hand-fist': return PhosphorIcons.hand_fist;
-    case 'hand-grabbing': return PhosphorIcons.hand_grabbing;
-    case 'hand-palm': return PhosphorIcons.hand_palm;
-    case 'hand-pointing': return PhosphorIcons.hand_pointing;
-    case 'hand-soap': return PhosphorIcons.hand_soap;
-    case 'hand-waving': return PhosphorIcons.hand_waving;
-    case 'handbag': return PhosphorIcons.handbag;
-    case 'handbag-simple': return PhosphorIcons.handbag_simple;
-    case 'hands-clapping': return PhosphorIcons.hands_clapping;
-    case 'handshake': return PhosphorIcons.handshake;
-    case 'hard-drive': return PhosphorIcons.hard_drive;
-    case 'hard-drives': return PhosphorIcons.hard_drives;
-    case 'hash': return PhosphorIcons.hash;
-    case 'hash-straight': return PhosphorIcons.hash_straight;
-    case 'headlights': return PhosphorIcons.headlights;
-    case 'headphones': return PhosphorIcons.headphones;
-    case 'headset': return PhosphorIcons.headset;
-    case 'heart': return PhosphorIcons.heart;
-    case 'heart-break': return PhosphorIcons.heart_break;
-    case 'heart-straight': return PhosphorIcons.heart_straight;
-    case 'heart-straight-break': return PhosphorIcons.heart_straight_break;
-    case 'heartbeat': return PhosphorIcons.heartbeat;
-    case 'hexagon': return PhosphorIcons.hexagon;
-    case 'highlighter-circle': return PhosphorIcons.highlighter_circle;
-    case 'horse': return PhosphorIcons.horse;
-    case 'hourglass': return PhosphorIcons.hourglass;
-    case 'hourglass-high': return PhosphorIcons.hourglass_high;
-    case 'hourglass-low': return PhosphorIcons.hourglass_low;
-    case 'hourglass-medium': return PhosphorIcons.hourglass_medium;
-    case 'hourglass-simple': return PhosphorIcons.hourglass_simple;
-    case 'hourglass-simple-high': return PhosphorIcons.hourglass_simple_high;
-    case 'hourglass-simple-low': return PhosphorIcons.hourglass_simple_low;
-    case 'hourglass-simple-medium': return PhosphorIcons.hourglass_simple_medium;
-    case 'house': return PhosphorIcons.house;
-    case 'house-line': return PhosphorIcons.house_line;
-    case 'house-simple': return PhosphorIcons.house_simple;
-    case 'identification-badge': return PhosphorIcons.identification_badge;
-    case 'identification-card': return PhosphorIcons.identification_card;
-    case 'image': return PhosphorIcons.image;
-    case 'image-square': return PhosphorIcons.image_square;
-    case 'infinity': return PhosphorIcons.infinity;
-    case 'info': return PhosphorIcons.info;
-    case 'instagram-logo': return PhosphorIcons.instagram_logo;
-    case 'intersect': return PhosphorIcons.intersect;
-    case 'jeep': return PhosphorIcons.jeep;
-    case 'kanban': return PhosphorIcons.kanban;
-    case 'key': return PhosphorIcons.key;
-    case 'key-return': return PhosphorIcons.key_return;
-    case 'keyboard': return PhosphorIcons.keyboard;
-    case 'keyhole': return PhosphorIcons.keyhole;
-    case 'knife': return PhosphorIcons.knife;
-    case 'ladder': return PhosphorIcons.ladder;
-    case 'ladder-simple': return PhosphorIcons.ladder_simple;
-    case 'lamp': return PhosphorIcons.lamp;
-    case 'laptop': return PhosphorIcons.laptop;
-    case 'layout': return PhosphorIcons.layout;
-    case 'leaf': return PhosphorIcons.leaf;
-    case 'lifebuoy': return PhosphorIcons.lifebuoy;
-    case 'lightbulb': return PhosphorIcons.lightbulb;
-    case 'lightbulb-filament': return PhosphorIcons.lightbulb_filament;
-    case 'lightning': return PhosphorIcons.lightning;
-    case 'lightning-slash': return PhosphorIcons.lightning_slash;
-    case 'line-segment': return PhosphorIcons.line_segment;
-    case 'line-segments': return PhosphorIcons.line_segments;
-    case 'link': return PhosphorIcons.link;
-    case 'link-break': return PhosphorIcons.link_break;
-    case 'link-simple': return PhosphorIcons.link_simple;
-    case 'link-simple-break': return PhosphorIcons.link_simple_break;
-    case 'link-simple-horizontal': return PhosphorIcons.link_simple_horizontal;
-    case 'link-simple-horizontal-break': return PhosphorIcons.link_simple_horizontal_break;
-    case 'linkedin-logo': return PhosphorIcons.linkedin_logo;
-    case 'linux-logo': return PhosphorIcons.linux_logo;
-    case 'list': return PhosphorIcons.list;
-    case 'list-bullets': return PhosphorIcons.list_bullets;
-    case 'list-checks': return PhosphorIcons.list_checks;
-    case 'list-dashes': return PhosphorIcons.list_dashes;
-    case 'list-numbers': return PhosphorIcons.list_numbers;
-    case 'list-plus': return PhosphorIcons.list_plus;
-    case 'lock': return PhosphorIcons.lock;
-    case 'lock-key': return PhosphorIcons.lock_key;
-    case 'lock-key-open': return PhosphorIcons.lock_key_open;
-    case 'lock-laminated': return PhosphorIcons.lock_laminated;
-    case 'lock-laminated-open': return PhosphorIcons.lock_laminated_open;
-    case 'lock-open': return PhosphorIcons.lock_open;
-    case 'lock-simple': return PhosphorIcons.lock_simple;
-    case 'lock-simple-open': return PhosphorIcons.lock_simple_open;
-    case 'magic-wand': return PhosphorIcons.magic_wand;
-    case 'magnet': return PhosphorIcons.magnet;
-    case 'magnet-straight': return PhosphorIcons.magnet_straight;
-    case 'magnifying-glass': return PhosphorIcons.magnifying_glass;
-    case 'magnifying-glass-minus': return PhosphorIcons.magnifying_glass_minus;
-    case 'magnifying-glass-plus': return PhosphorIcons.magnifying_glass_plus;
-    case 'map-pin': return PhosphorIcons.map_pin;
-    case 'map-pin-line': return PhosphorIcons.map_pin_line;
-    case 'map-trifold': return PhosphorIcons.map_trifold;
-    case 'marker-circle': return PhosphorIcons.marker_circle;
-    case 'martini': return PhosphorIcons.martini;
-    case 'mask-happy': return PhosphorIcons.mask_happy;
-    case 'mask-sad': return PhosphorIcons.mask_sad;
-    case 'math-operations': return PhosphorIcons.math_operations;
-    case 'medal': return PhosphorIcons.medal;
-    case 'medium-logo': return PhosphorIcons.medium_logo;
-    case 'megaphone': return PhosphorIcons.megaphone;
-    case 'megaphone-simple': return PhosphorIcons.megaphone_simple;
-    case 'messenger-logo': return PhosphorIcons.messenger_logo;
-    case 'microphone': return PhosphorIcons.microphone;
-    case 'microphone-slash': return PhosphorIcons.microphone_slash;
-    case 'microphone-stage': return PhosphorIcons.microphone_stage;
-    case 'microsoft-excel-logo': return PhosphorIcons.microsoft_excel_logo;
-    case 'microsoft-powerpoint-logo': return PhosphorIcons.microsoft_powerpoint_logo;
-    case 'microsoft-teams-logo': return PhosphorIcons.microsoft_teams_logo;
-    case 'microsoft-word-logo': return PhosphorIcons.microsoft_word_logo;
-    case 'minus': return PhosphorIcons.minus;
-    case 'minus-circle': return PhosphorIcons.minus_circle;
-    case 'money': return PhosphorIcons.money;
-    case 'monitor': return PhosphorIcons.monitor;
-    case 'monitor-play': return PhosphorIcons.monitor_play;
-    case 'moon': return PhosphorIcons.moon;
-    case 'moon-stars': return PhosphorIcons.moon_stars;
-    case 'mountains': return PhosphorIcons.mountains;
-    case 'mouse': return PhosphorIcons.mouse;
-    case 'mouse-simple': return PhosphorIcons.mouse_simple;
-    case 'music-note': return PhosphorIcons.music_note;
-    case 'music-note-simple': return PhosphorIcons.music_note_simple;
-    case 'music-notes': return PhosphorIcons.music_notes;
-    case 'music-notes-plus': return PhosphorIcons.music_notes_plus;
-    case 'music-notes-simple': return PhosphorIcons.music_notes_simple;
-    case 'navigation-arrow': return PhosphorIcons.navigation_arrow;
-    case 'needle': return PhosphorIcons.needle;
-    case 'newspaper': return PhosphorIcons.newspaper;
-    case 'newspaper-clipping': return PhosphorIcons.newspaper_clipping;
-    case 'note': return PhosphorIcons.note;
-    case 'note-blank': return PhosphorIcons.note_blank;
-    case 'note-pencil': return PhosphorIcons.note_pencil;
-    case 'notebook': return PhosphorIcons.notebook;
-    case 'notepad': return PhosphorIcons.notepad;
-    case 'notification': return PhosphorIcons.notification;
-    case 'number-circle-eight': return PhosphorIcons.number_circle_eight;
-    case 'number-circle-five': return PhosphorIcons.number_circle_five;
-    case 'number-circle-four': return PhosphorIcons.number_circle_four;
-    case 'number-circle-nine': return PhosphorIcons.number_circle_nine;
-    case 'number-circle-one': return PhosphorIcons.number_circle_one;
-    case 'number-circle-seven': return PhosphorIcons.number_circle_seven;
-    case 'number-circle-six': return PhosphorIcons.number_circle_six;
-    case 'number-circle-three': return PhosphorIcons.number_circle_three;
-    case 'number-circle-two': return PhosphorIcons.number_circle_two;
-    case 'number-circle-zero': return PhosphorIcons.number_circle_zero;
-    case 'number-eight': return PhosphorIcons.number_eight;
-    case 'number-five': return PhosphorIcons.number_five;
-    case 'number-four': return PhosphorIcons.number_four;
-    case 'number-nine': return PhosphorIcons.number_nine;
-    case 'number-one': return PhosphorIcons.number_one;
-    case 'number-seven': return PhosphorIcons.number_seven;
-    case 'number-six': return PhosphorIcons.number_six;
-    case 'number-square-eight': return PhosphorIcons.number_square_eight;
-    case 'number-square-five': return PhosphorIcons.number_square_five;
-    case 'number-square-four': return PhosphorIcons.number_square_four;
-    case 'number-square-nine': return PhosphorIcons.number_square_nine;
-    case 'number-square-one': return PhosphorIcons.number_square_one;
-    case 'number-square-seven': return PhosphorIcons.number_square_seven;
-    case 'number-square-six': return PhosphorIcons.number_square_six;
-    case 'number-square-three': return PhosphorIcons.number_square_three;
-    case 'number-square-two': return PhosphorIcons.number_square_two;
-    case 'number-square-zero': return PhosphorIcons.number_square_zero;
-    case 'number-three': return PhosphorIcons.number_three;
-    case 'number-two': return PhosphorIcons.number_two;
-    case 'number-zero': return PhosphorIcons.number_zero;
-    case 'nut': return PhosphorIcons.nut;
-    case 'ny-times-logo': return PhosphorIcons.ny_times_logo;
-    case 'octagon': return PhosphorIcons.octagon;
-    case 'option': return PhosphorIcons.option;
-    case 'package': return PhosphorIcons.package;
-    case 'paint-brush': return PhosphorIcons.paint_brush;
-    case 'paint-brush-broad': return PhosphorIcons.paint_brush_broad;
-    case 'paint-brush-household': return PhosphorIcons.paint_brush_household;
-    case 'paint-bucket': return PhosphorIcons.paint_bucket;
-    case 'paint-roller': return PhosphorIcons.paint_roller;
-    case 'palette': return PhosphorIcons.palette;
-    case 'paper-plane': return PhosphorIcons.paper_plane;
-    case 'paper-plane-right': return PhosphorIcons.paper_plane_right;
-    case 'paper-plane-tilt': return PhosphorIcons.paper_plane_tilt;
-    case 'paperclip': return PhosphorIcons.paperclip;
-    case 'paperclip-horizontal': return PhosphorIcons.paperclip_horizontal;
-    case 'parachute': return PhosphorIcons.parachute;
-    case 'password': return PhosphorIcons.password;
-    case 'path': return PhosphorIcons.path;
-    case 'pause': return PhosphorIcons.pause;
-    case 'pause-circle': return PhosphorIcons.pause_circle;
-    case 'paw-print': return PhosphorIcons.paw_print;
-    case 'peace': return PhosphorIcons.peace;
-    case 'pen': return PhosphorIcons.pen;
-    case 'pen-nib': return PhosphorIcons.pen_nib;
-    case 'pen-nib-straight': return PhosphorIcons.pen_nib_straight;
-    case 'pencil': return PhosphorIcons.pencil;
-    case 'pencil-circle': return PhosphorIcons.pencil_circle;
-    case 'pencil-line': return PhosphorIcons.pencil_line;
-    case 'pencil-simple': return PhosphorIcons.pencil_simple;
-    case 'pencil-simple-line': return PhosphorIcons.pencil_simple_line;
-    case 'percent': return PhosphorIcons.percent;
-    case 'person': return PhosphorIcons.person;
-    case 'person-simple': return PhosphorIcons.person_simple;
-    case 'person-simple-run': return PhosphorIcons.person_simple_run;
-    case 'person-simple-walk': return PhosphorIcons.person_simple_walk;
-    case 'perspective': return PhosphorIcons.perspective;
-    case 'phone': return PhosphorIcons.phone;
-    case 'phone-call': return PhosphorIcons.phone_call;
-    case 'phone-disconnect': return PhosphorIcons.phone_disconnect;
-    case 'phone-incoming': return PhosphorIcons.phone_incoming;
-    case 'phone-outgoing': return PhosphorIcons.phone_outgoing;
-    case 'phone-slash': return PhosphorIcons.phone_slash;
-    case 'phone-x': return PhosphorIcons.phone_x;
-    case 'phosphor-logo': return PhosphorIcons.phosphor_logo;
-    case 'piano-keys': return PhosphorIcons.piano_keys;
-    case 'picture-in-picture': return PhosphorIcons.picture_in_picture;
-    case 'pill': return PhosphorIcons.pill;
-    case 'pinterest-logo': return PhosphorIcons.pinterest_logo;
-    case 'pinwheel': return PhosphorIcons.pinwheel;
-    case 'pizza': return PhosphorIcons.pizza;
-    case 'placeholder': return PhosphorIcons.placeholder;
-    case 'planet': return PhosphorIcons.planet;
-    case 'play': return PhosphorIcons.play;
-    case 'play-circle': return PhosphorIcons.play_circle;
-    case 'playlist': return PhosphorIcons.playlist;
-    case 'plug': return PhosphorIcons.plug;
-    case 'plugs': return PhosphorIcons.plugs;
-    case 'plugs-connected': return PhosphorIcons.plugs_connected;
-    case 'plus': return PhosphorIcons.plus;
-    case 'plus-circle': return PhosphorIcons.plus_circle;
-    case 'plus-minus': return PhosphorIcons.plus_minus;
-    case 'poker-chip': return PhosphorIcons.poker_chip;
-    case 'police-car': return PhosphorIcons.police_car;
-    case 'polygon': return PhosphorIcons.polygon;
-    case 'popcorn': return PhosphorIcons.popcorn;
-    case 'power': return PhosphorIcons.power;
-    case 'prescription': return PhosphorIcons.prescription;
-    case 'presentation': return PhosphorIcons.presentation;
-    case 'presentation-chart': return PhosphorIcons.presentation_chart;
-    case 'printer': return PhosphorIcons.printer;
-    case 'prohibit': return PhosphorIcons.prohibit;
-    case 'prohibit-inset': return PhosphorIcons.prohibit_inset;
-    case 'projector-screen': return PhosphorIcons.projector_screen;
-    case 'projector-screen-chart': return PhosphorIcons.projector_screen_chart;
-    case 'push-pin': return PhosphorIcons.push_pin;
-    case 'push-pin-simple': return PhosphorIcons.push_pin_simple;
-    case 'push-pin-simple-slash': return PhosphorIcons.push_pin_simple_slash;
-    case 'push-pin-slash': return PhosphorIcons.push_pin_slash;
-    case 'puzzle-piece': return PhosphorIcons.puzzle_piece;
-    case 'qr-code': return PhosphorIcons.qr_code;
-    case 'question': return PhosphorIcons.question;
-    case 'queue': return PhosphorIcons.queue;
-    case 'quotes': return PhosphorIcons.quotes;
-    case 'radical': return PhosphorIcons.radical;
-    case 'radio': return PhosphorIcons.radio;
-    case 'radio-button': return PhosphorIcons.radio_button;
-    case 'rainbow': return PhosphorIcons.rainbow;
-    case 'rainbow-cloud': return PhosphorIcons.rainbow_cloud;
-    case 'receipt': return PhosphorIcons.receipt;
-    case 'record': return PhosphorIcons.record;
-    case 'rectangle': return PhosphorIcons.rectangle;
-    case 'recycle': return PhosphorIcons.recycle;
-    case 'reddit-logo': return PhosphorIcons.reddit_logo;
-    case 'repeat': return PhosphorIcons.repeat;
-    case 'repeat-once': return PhosphorIcons.repeat_once;
-    case 'rewind': return PhosphorIcons.rewind;
-    case 'rewind-circle': return PhosphorIcons.rewind_circle;
-    case 'robot': return PhosphorIcons.robot;
-    case 'rocket': return PhosphorIcons.rocket;
-    case 'rocket-launch': return PhosphorIcons.rocket_launch;
-    case 'rows': return PhosphorIcons.rows;
-    case 'rss': return PhosphorIcons.rss;
-    case 'rss-simple': return PhosphorIcons.rss_simple;
-    case 'rug': return PhosphorIcons.rug;
-    case 'ruler': return PhosphorIcons.ruler;
-    case 'scales': return PhosphorIcons.scales;
-    case 'scan': return PhosphorIcons.scan;
-    case 'scissors': return PhosphorIcons.scissors;
-    case 'screencast': return PhosphorIcons.screencast;
-    case 'scribble-loop': return PhosphorIcons.scribble_loop;
-    case 'scroll': return PhosphorIcons.scroll;
-    case 'selection': return PhosphorIcons.selection;
-    case 'selection-all': return PhosphorIcons.selection_all;
-    case 'selection-background': return PhosphorIcons.selection_background;
-    case 'selection-foreground': return PhosphorIcons.selection_foreground;
-    case 'selection-inverse': return PhosphorIcons.selection_inverse;
-    case 'selection-plus': return PhosphorIcons.selection_plus;
-    case 'selection-slash': return PhosphorIcons.selection_slash;
-    case 'share': return PhosphorIcons.share;
-    case 'share-network': return PhosphorIcons.share_network;
-    case 'shield': return PhosphorIcons.shield;
-    case 'shield-check': return PhosphorIcons.shield_check;
-    case 'shield-checkered': return PhosphorIcons.shield_checkered;
-    case 'shield-chevron': return PhosphorIcons.shield_chevron;
-    case 'shield-plus': return PhosphorIcons.shield_plus;
-    case 'shield-slash': return PhosphorIcons.shield_slash;
-    case 'shield-star': return PhosphorIcons.shield_star;
-    case 'shield-warning': return PhosphorIcons.shield_warning;
-    case 'shopping-bag': return PhosphorIcons.shopping_bag;
-    case 'shopping-bag-open': return PhosphorIcons.shopping_bag_open;
-    case 'shopping-cart': return PhosphorIcons.shopping_cart;
-    case 'shopping-cart-simple': return PhosphorIcons.shopping_cart_simple;
-    case 'shower': return PhosphorIcons.shower;
-    case 'shuffle': return PhosphorIcons.shuffle;
-    case 'shuffle-angular': return PhosphorIcons.shuffle_angular;
-    case 'shuffle-simple': return PhosphorIcons.shuffle_simple;
-    case 'sidebar': return PhosphorIcons.sidebar;
-    case 'sidebar-simple': return PhosphorIcons.sidebar_simple;
-    case 'sign-in': return PhosphorIcons.sign_in;
-    case 'sign-out': return PhosphorIcons.sign_out;
-    case 'signpost': return PhosphorIcons.signpost;
-    case 'sim-card': return PhosphorIcons.sim_card;
-    case 'sketch-logo': return PhosphorIcons.sketch_logo;
-    case 'skip-back': return PhosphorIcons.skip_back;
-    case 'skip-back-circle': return PhosphorIcons.skip_back_circle;
-    case 'skip-forward': return PhosphorIcons.skip_forward;
-    case 'skip-forward-circle': return PhosphorIcons.skip_forward_circle;
-    case 'skull': return PhosphorIcons.skull;
-    case 'slack-logo': return PhosphorIcons.slack_logo;
-    case 'sliders': return PhosphorIcons.sliders;
-    case 'sliders-horizontal': return PhosphorIcons.sliders_horizontal;
-    case 'smiley': return PhosphorIcons.smiley;
-    case 'smiley-blank': return PhosphorIcons.smiley_blank;
-    case 'smiley-meh': return PhosphorIcons.smiley_meh;
-    case 'smiley-nervous': return PhosphorIcons.smiley_nervous;
-    case 'smiley-sad': return PhosphorIcons.smiley_sad;
-    case 'smiley-sticker': return PhosphorIcons.smiley_sticker;
-    case 'smiley-wink': return PhosphorIcons.smiley_wink;
-    case 'smiley-x-eyes': return PhosphorIcons.smiley_x_eyes;
-    case 'snapchat-logo': return PhosphorIcons.snapchat_logo;
-    case 'snowflake': return PhosphorIcons.snowflake;
-    case 'soccer-ball': return PhosphorIcons.soccer_ball;
-    case 'sort-ascending': return PhosphorIcons.sort_ascending;
-    case 'sort-descending': return PhosphorIcons.sort_descending;
-    case 'spade': return PhosphorIcons.spade;
-    case 'sparkle': return PhosphorIcons.sparkle;
-    case 'speaker-high': return PhosphorIcons.speaker_high;
-    case 'speaker-low': return PhosphorIcons.speaker_low;
-    case 'speaker-none': return PhosphorIcons.speaker_none;
-    case 'speaker-simple-high': return PhosphorIcons.speaker_simple_high;
-    case 'speaker-simple-low': return PhosphorIcons.speaker_simple_low;
-    case 'speaker-simple-none': return PhosphorIcons.speaker_simple_none;
-    case 'speaker-simple-slash': return PhosphorIcons.speaker_simple_slash;
-    case 'speaker-simple-x': return PhosphorIcons.speaker_simple_x;
-    case 'speaker-slash': return PhosphorIcons.speaker_slash;
-    case 'speaker-x': return PhosphorIcons.speaker_x;
-    case 'spinner': return PhosphorIcons.spinner;
-    case 'spinner-gap': return PhosphorIcons.spinner_gap;
-    case 'spiral': return PhosphorIcons.spiral;
-    case 'spotify-logo': return PhosphorIcons.spotify_logo;
-    case 'square': return PhosphorIcons.square;
-    case 'square-half': return PhosphorIcons.square_half;
-    case 'square-half-bottom': return PhosphorIcons.square_half_bottom;
-    case 'square-logo': return PhosphorIcons.square_logo;
-    case 'squares-four': return PhosphorIcons.squares_four;
-    case 'stack': return PhosphorIcons.stack;
-    case 'stack-overflow-logo': return PhosphorIcons.stack_overflow_logo;
-    case 'stack-simple': return PhosphorIcons.stack_simple;
-    case 'stamp': return PhosphorIcons.stamp;
-    case 'star': return PhosphorIcons.star;
-    case 'star-four': return PhosphorIcons.star_four;
-    case 'star-half': return PhosphorIcons.star_half;
-    case 'sticker': return PhosphorIcons.sticker;
-    case 'stop': return PhosphorIcons.stop;
-    case 'stop-circle': return PhosphorIcons.stop_circle;
-    case 'storefront': return PhosphorIcons.storefront;
-    case 'strategy': return PhosphorIcons.strategy;
-    case 'stripe-logo': return PhosphorIcons.stripe_logo;
-    case 'student': return PhosphorIcons.student;
-    case 'suitcase': return PhosphorIcons.suitcase;
-    case 'suitcase-simple': return PhosphorIcons.suitcase_simple;
-    case 'sun': return PhosphorIcons.sun;
-    case 'sun-dim': return PhosphorIcons.sun_dim;
-    case 'sun-horizon': return PhosphorIcons.sun_horizon;
-    case 'sunglasses': return PhosphorIcons.sunglasses;
-    case 'swap': return PhosphorIcons.swap;
-    case 'swatches': return PhosphorIcons.swatches;
-    case 'sword': return PhosphorIcons.sword;
-    case 'syringe': return PhosphorIcons.syringe;
-    case 't-shirt': return PhosphorIcons.t_shirt;
-    case 'table': return PhosphorIcons.table;
-    case 'tabs': return PhosphorIcons.tabs;
-    case 'tag': return PhosphorIcons.tag;
-    case 'tag-chevron': return PhosphorIcons.tag_chevron;
-    case 'tag-simple': return PhosphorIcons.tag_simple;
-    case 'target': return PhosphorIcons.target;
-    case 'taxi': return PhosphorIcons.taxi;
-    case 'telegram-logo': return PhosphorIcons.telegram_logo;
-    case 'television': return PhosphorIcons.television;
-    case 'television-simple': return PhosphorIcons.television_simple;
-    case 'tennis-ball': return PhosphorIcons.tennis_ball;
-    case 'terminal': return PhosphorIcons.terminal;
-    case 'terminal-window': return PhosphorIcons.terminal_window;
-    case 'test-tube': return PhosphorIcons.test_tube;
-    case 'text-aa': return PhosphorIcons.text_aa;
-    case 'text-align-center': return PhosphorIcons.text_align_center;
-    case 'text-align-justify': return PhosphorIcons.text_align_justify;
-    case 'text-align-left': return PhosphorIcons.text_align_left;
-    case 'text-align-right': return PhosphorIcons.text_align_right;
-    case 'text-bolder': return PhosphorIcons.text_bolder;
-    case 'text-h': return PhosphorIcons.text_h;
-    case 'text-h-five': return PhosphorIcons.text_h_five;
-    case 'text-h-four': return PhosphorIcons.text_h_four;
-    case 'text-h-one': return PhosphorIcons.text_h_one;
-    case 'text-h-six': return PhosphorIcons.text_h_six;
-    case 'text-h-three': return PhosphorIcons.text_h_three;
-    case 'text-h-two': return PhosphorIcons.text_h_two;
-    case 'text-indent': return PhosphorIcons.text_indent;
-    case 'text-italic': return PhosphorIcons.text_italic;
-    case 'text-outdent': return PhosphorIcons.text_outdent;
-    case 'text-strikethrough': return PhosphorIcons.text_strikethrough;
-    case 'text-t': return PhosphorIcons.text_t;
-    case 'text-underline': return PhosphorIcons.text_underline;
-    case 'textbox': return PhosphorIcons.textbox;
-    case 'thermometer': return PhosphorIcons.thermometer;
-    case 'thermometer-cold': return PhosphorIcons.thermometer_cold;
-    case 'thermometer-hot': return PhosphorIcons.thermometer_hot;
-    case 'thermometer-simple': return PhosphorIcons.thermometer_simple;
-    case 'thumbs-down': return PhosphorIcons.thumbs_down;
-    case 'thumbs-up': return PhosphorIcons.thumbs_up;
-    case 'ticket': return PhosphorIcons.ticket;
-    case 'tiktok-logo': return PhosphorIcons.tiktok_logo;
-    case 'timer': return PhosphorIcons.timer;
-    case 'toggle-left': return PhosphorIcons.toggle_left;
-    case 'toggle-right': return PhosphorIcons.toggle_right;
-    case 'toilet': return PhosphorIcons.toilet;
-    case 'toilet-paper': return PhosphorIcons.toilet_paper;
-    case 'tote': return PhosphorIcons.tote;
-    case 'tote-simple': return PhosphorIcons.tote_simple;
-    case 'trademark-registered': return PhosphorIcons.trademark_registered;
-    case 'traffic-cone': return PhosphorIcons.traffic_cone;
-    case 'traffic-sign': return PhosphorIcons.traffic_sign;
-    case 'traffic-signal': return PhosphorIcons.traffic_signal;
-    case 'train': return PhosphorIcons.train;
-    case 'train-regional': return PhosphorIcons.train_regional;
-    case 'train-simple': return PhosphorIcons.train_simple;
-    case 'translate': return PhosphorIcons.translate;
-    case 'trash': return PhosphorIcons.trash;
-    case 'trash-simple': return PhosphorIcons.trash_simple;
-    case 'tray': return PhosphorIcons.tray;
-    case 'tree': return PhosphorIcons.tree;
-    case 'tree-evergreen': return PhosphorIcons.tree_evergreen;
-    case 'tree-structure': return PhosphorIcons.tree_structure;
-    case 'trend-down': return PhosphorIcons.trend_down;
-    case 'trend-up': return PhosphorIcons.trend_up;
-    case 'triangle': return PhosphorIcons.triangle;
-    case 'trophy': return PhosphorIcons.trophy;
-    case 'truck': return PhosphorIcons.truck;
-    case 'twitch-logo': return PhosphorIcons.twitch_logo;
-    case 'twitter-logo': return PhosphorIcons.twitter_logo;
-    case 'umbrella': return PhosphorIcons.umbrella;
-    case 'umbrella-simple': return PhosphorIcons.umbrella_simple;
-    case 'upload': return PhosphorIcons.upload;
-    case 'upload-simple': return PhosphorIcons.upload_simple;
-    case 'user': return PhosphorIcons.user;
-    case 'user-circle': return PhosphorIcons.user_circle;
-    case 'user-circle-gear': return PhosphorIcons.user_circle_gear;
-    case 'user-circle-minus': return PhosphorIcons.user_circle_minus;
-    case 'user-circle-plus': return PhosphorIcons.user_circle_plus;
-    case 'user-focus': return PhosphorIcons.user_focus;
-    case 'user-gear': return PhosphorIcons.user_gear;
-    case 'user-list': return PhosphorIcons.user_list;
-    case 'user-minus': return PhosphorIcons.user_minus;
-    case 'user-plus': return PhosphorIcons.user_plus;
-    case 'user-rectangle': return PhosphorIcons.user_rectangle;
-    case 'user-square': return PhosphorIcons.user_square;
-    case 'user-switch': return PhosphorIcons.user_switch;
-    case 'users': return PhosphorIcons.users;
-    case 'users-four': return PhosphorIcons.users_four;
-    case 'users-three': return PhosphorIcons.users_three;
-    case 'vault': return PhosphorIcons.vault;
-    case 'vibrate': return PhosphorIcons.vibrate;
-    case 'video-camera': return PhosphorIcons.video_camera;
-    case 'video-camera-slash': return PhosphorIcons.video_camera_slash;
-    case 'vignette': return PhosphorIcons.vignette;
-    case 'voicemail': return PhosphorIcons.voicemail;
-    case 'volleyball': return PhosphorIcons.volleyball;
-    case 'wall': return PhosphorIcons.wall;
-    case 'wallet': return PhosphorIcons.wallet;
-    case 'warning': return PhosphorIcons.warning;
-    case 'warning-circle': return PhosphorIcons.warning_circle;
-    case 'warning-octagon': return PhosphorIcons.warning_octagon;
-    case 'watch': return PhosphorIcons.watch;
-    case 'wave-sawtooth': return PhosphorIcons.wave_sawtooth;
-    case 'wave-sine': return PhosphorIcons.wave_sine;
-    case 'wave-square': return PhosphorIcons.wave_square;
-    case 'wave-triangle': return PhosphorIcons.wave_triangle;
-    case 'waves': return PhosphorIcons.waves;
-    case 'webcam': return PhosphorIcons.webcam;
-    case 'whatsapp-logo': return PhosphorIcons.whatsapp_logo;
-    case 'wheelchair': return PhosphorIcons.wheelchair;
-    case 'wifi-high': return PhosphorIcons.wifi_high;
-    case 'wifi-low': return PhosphorIcons.wifi_low;
-    case 'wifi-medium': return PhosphorIcons.wifi_medium;
-    case 'wifi-none': return PhosphorIcons.wifi_none;
-    case 'wifi-slash': return PhosphorIcons.wifi_slash;
-    case 'wifi-x': return PhosphorIcons.wifi_x;
-    case 'wind': return PhosphorIcons.wind;
-    case 'windows-logo': return PhosphorIcons.windows_logo;
-    case 'wine': return PhosphorIcons.wine;
-    case 'wrench': return PhosphorIcons.wrench;
-    case 'x': return PhosphorIcons.x;
-    case 'x-circle': return PhosphorIcons.x_circle;
-    case 'x-square': return PhosphorIcons.x_square;
-    case 'yin-yang': return PhosphorIcons.yin_yang;
-    case 'youtube-logo': return PhosphorIcons.youtube_logo;
-    default: return PhosphorIcons.info;
+  // Convert hyphen-separated words to camelCase
+  name = name.replaceAllMapped(
+      RegExp(r'-(\w)'), (match) => match.group(1)!.toUpperCase());
+
+  switch (name) {
+    case 'addressBook':
+      return PhosphorIcons.regular.addressBook;
+
+    case 'airTrafficControl':
+      return PhosphorIcons.regular.airTrafficControl;
+
+    case 'airplane':
+      return PhosphorIcons.regular.airplane;
+
+    case 'airplaneInFlight':
+      return PhosphorIcons.regular.airplaneInFlight;
+
+    case 'airplaneLanding':
+      return PhosphorIcons.regular.airplaneLanding;
+
+    case 'airplaneTakeoff':
+      return PhosphorIcons.regular.airplaneTakeoff;
+
+    case 'airplaneTilt':
+      return PhosphorIcons.regular.airplaneTilt;
+
+    case 'airplay':
+      return PhosphorIcons.regular.airplay;
+
+    case 'alarm':
+      return PhosphorIcons.regular.alarm;
+
+    case 'alien':
+      return PhosphorIcons.regular.alien;
+
+    case 'alignBottom':
+      return PhosphorIcons.regular.alignBottom;
+
+    case 'alignBottomSimple':
+      return PhosphorIcons.regular.alignBottomSimple;
+
+    case 'alignCenterHorizontal':
+      return PhosphorIcons.regular.alignCenterHorizontal;
+
+    case 'alignCenterHorizontalSimple':
+      return PhosphorIcons.regular.alignCenterHorizontalSimple;
+
+    case 'alignCenterVertical':
+      return PhosphorIcons.regular.alignCenterVertical;
+
+    case 'alignCenterVerticalSimple':
+      return PhosphorIcons.regular.alignCenterVerticalSimple;
+
+    case 'alignLeft':
+      return PhosphorIcons.regular.alignLeft;
+
+    case 'alignLeftSimple':
+      return PhosphorIcons.regular.alignLeftSimple;
+
+    case 'alignRight':
+      return PhosphorIcons.regular.alignRight;
+
+    case 'alignRightSimple':
+      return PhosphorIcons.regular.alignRightSimple;
+
+    case 'alignTop':
+      return PhosphorIcons.regular.alignTop;
+
+    case 'alignTopSimple':
+      return PhosphorIcons.regular.alignTopSimple;
+
+    case 'amazonLogo':
+      return PhosphorIcons.regular.amazonLogo;
+
+    case 'anchor':
+      return PhosphorIcons.regular.anchor;
+
+    case 'anchorSimple':
+      return PhosphorIcons.regular.anchorSimple;
+
+    case 'androidLogo':
+      return PhosphorIcons.regular.androidLogo;
+
+    case 'angularLogo':
+      return PhosphorIcons.regular.angularLogo;
+
+    case 'aperture':
+      return PhosphorIcons.regular.aperture;
+
+    case 'appStoreLogo':
+      return PhosphorIcons.regular.appStoreLogo;
+
+    case 'appWindow':
+      return PhosphorIcons.regular.appWindow;
+
+    case 'appleLogo':
+      return PhosphorIcons.regular.appleLogo;
+
+    case 'applePodcastsLogo':
+      return PhosphorIcons.regular.applePodcastsLogo;
+
+    case 'archive':
+      return PhosphorIcons.regular.archive;
+
+    case 'archiveBox':
+      return PhosphorIcons.regular.archiveBox;
+
+    case 'archiveTray':
+      return PhosphorIcons.regular.archiveTray;
+
+    case 'armchair':
+      return PhosphorIcons.regular.armchair;
+
+    case 'arrowArcLeft':
+      return PhosphorIcons.regular.arrowArcLeft;
+
+    case 'arrowArcRight':
+      return PhosphorIcons.regular.arrowArcRight;
+
+    case 'arrowBendDoubleUpLeft':
+      return PhosphorIcons.regular.arrowBendDoubleUpLeft;
+
+    case 'arrowBendDoubleUpRight':
+      return PhosphorIcons.regular.arrowBendDoubleUpRight;
+
+    case 'arrowBendDownLeft':
+      return PhosphorIcons.regular.arrowBendDownLeft;
+
+    case 'arrowBendDownRight':
+      return PhosphorIcons.regular.arrowBendDownRight;
+
+    case 'arrowBendLeftDown':
+      return PhosphorIcons.regular.arrowBendLeftDown;
+
+    case 'arrowBendLeftUp':
+      return PhosphorIcons.regular.arrowBendLeftUp;
+
+    case 'arrowBendRightDown':
+      return PhosphorIcons.regular.arrowBendRightDown;
+
+    case 'arrowBendRightUp':
+      return PhosphorIcons.regular.arrowBendRightUp;
+
+    case 'arrowBendUpLeft':
+      return PhosphorIcons.regular.arrowBendUpLeft;
+
+    case 'arrowBendUpRight':
+      return PhosphorIcons.regular.arrowBendUpRight;
+
+    case 'arrowCircleDown':
+      return PhosphorIcons.regular.arrowCircleDown;
+
+    case 'arrowCircleDownLeft':
+      return PhosphorIcons.regular.arrowCircleDownLeft;
+
+    case 'arrowCircleDownRight':
+      return PhosphorIcons.regular.arrowCircleDownRight;
+
+    case 'arrowCircleLeft':
+      return PhosphorIcons.regular.arrowCircleLeft;
+
+    case 'arrowCircleRight':
+      return PhosphorIcons.regular.arrowCircleRight;
+
+    case 'arrowCircleUp':
+      return PhosphorIcons.regular.arrowCircleUp;
+
+    case 'arrowCircleUpLeft':
+      return PhosphorIcons.regular.arrowCircleUpLeft;
+
+    case 'arrowCircleUpRight':
+      return PhosphorIcons.regular.arrowCircleUpRight;
+
+    case 'arrowClockwise':
+      return PhosphorIcons.regular.arrowClockwise;
+
+    case 'arrowCounterClockwise':
+      return PhosphorIcons.regular.arrowCounterClockwise;
+
+    case 'arrowDown':
+      return PhosphorIcons.regular.arrowDown;
+
+    case 'arrowDownLeft':
+      return PhosphorIcons.regular.arrowDownLeft;
+
+    case 'arrowDownRight':
+      return PhosphorIcons.regular.arrowDownRight;
+
+    case 'arrowElbowDownLeft':
+      return PhosphorIcons.regular.arrowElbowDownLeft;
+
+    case 'arrowElbowDownRight':
+      return PhosphorIcons.regular.arrowElbowDownRight;
+
+    case 'arrowElbowLeft':
+      return PhosphorIcons.regular.arrowElbowLeft;
+
+    case 'arrowElbowLeftDown':
+      return PhosphorIcons.regular.arrowElbowLeftDown;
+
+    case 'arrowElbowLeftUp':
+      return PhosphorIcons.regular.arrowElbowLeftUp;
+
+    case 'arrowElbowRight':
+      return PhosphorIcons.regular.arrowElbowRight;
+
+    case 'arrowElbowRightDown':
+      return PhosphorIcons.regular.arrowElbowRightDown;
+
+    case 'arrowElbowRightUp':
+      return PhosphorIcons.regular.arrowElbowRightUp;
+
+    case 'arrowElbowUpLeft':
+      return PhosphorIcons.regular.arrowElbowUpLeft;
+
+    case 'arrowElbowUpRight':
+      return PhosphorIcons.regular.arrowElbowUpRight;
+
+    case 'arrowFatDown':
+      return PhosphorIcons.regular.arrowFatDown;
+
+    case 'arrowFatLeft':
+      return PhosphorIcons.regular.arrowFatLeft;
+
+    case 'arrowFatLineDown':
+      return PhosphorIcons.regular.arrowFatLineDown;
+
+    case 'arrowFatLineLeft':
+      return PhosphorIcons.regular.arrowFatLineLeft;
+
+    case 'arrowFatLineRight':
+      return PhosphorIcons.regular.arrowFatLineRight;
+
+    case 'arrowFatLineUp':
+      return PhosphorIcons.regular.arrowFatLineUp;
+
+    case 'arrowFatLinesDown':
+      return PhosphorIcons.regular.arrowFatLinesDown;
+
+    case 'arrowFatLinesLeft':
+      return PhosphorIcons.regular.arrowFatLinesLeft;
+
+    case 'arrowFatLinesRight':
+      return PhosphorIcons.regular.arrowFatLinesRight;
+
+    case 'arrowFatLinesUp':
+      return PhosphorIcons.regular.arrowFatLinesUp;
+
+    case 'arrowFatRight':
+      return PhosphorIcons.regular.arrowFatRight;
+
+    case 'arrowFatUp':
+      return PhosphorIcons.regular.arrowFatUp;
+
+    case 'arrowLeft':
+      return PhosphorIcons.regular.arrowLeft;
+
+    case 'arrowLineDown':
+      return PhosphorIcons.regular.arrowLineDown;
+
+    case 'arrowLineDownLeft':
+      return PhosphorIcons.regular.arrowLineDownLeft;
+
+    case 'arrowLineDownRight':
+      return PhosphorIcons.regular.arrowLineDownRight;
+
+    case 'arrowLineLeft':
+      return PhosphorIcons.regular.arrowLineLeft;
+
+    case 'arrowLineRight':
+      return PhosphorIcons.regular.arrowLineRight;
+
+    case 'arrowLineUp':
+      return PhosphorIcons.regular.arrowLineUp;
+
+    case 'arrowLineUpLeft':
+      return PhosphorIcons.regular.arrowLineUpLeft;
+
+    case 'arrowLineUpRight':
+      return PhosphorIcons.regular.arrowLineUpRight;
+
+    case 'arrowRight':
+      return PhosphorIcons.regular.arrowRight;
+
+    case 'arrowSquareDown':
+      return PhosphorIcons.regular.arrowSquareDown;
+
+    case 'arrowSquareDownLeft':
+      return PhosphorIcons.regular.arrowSquareDownLeft;
+
+    case 'arrowSquareDownRight':
+      return PhosphorIcons.regular.arrowSquareDownRight;
+
+    case 'arrowSquareIn':
+      return PhosphorIcons.regular.arrowSquareIn;
+
+    case 'arrowSquareLeft':
+      return PhosphorIcons.regular.arrowSquareLeft;
+
+    case 'arrowSquareOut':
+      return PhosphorIcons.regular.arrowSquareOut;
+
+    case 'arrowSquareRight':
+      return PhosphorIcons.regular.arrowSquareRight;
+
+    case 'arrowSquareUp':
+      return PhosphorIcons.regular.arrowSquareUp;
+
+    case 'arrowSquareUpLeft':
+      return PhosphorIcons.regular.arrowSquareUpLeft;
+
+    case 'arrowSquareUpRight':
+      return PhosphorIcons.regular.arrowSquareUpRight;
+
+    case 'arrowUDownLeft':
+      return PhosphorIcons.regular.arrowUDownLeft;
+
+    case 'arrowUDownRight':
+      return PhosphorIcons.regular.arrowUDownRight;
+
+    case 'arrowULeftDown':
+      return PhosphorIcons.regular.arrowULeftDown;
+
+    case 'arrowULeftUp':
+      return PhosphorIcons.regular.arrowULeftUp;
+
+    case 'arrowURightDown':
+      return PhosphorIcons.regular.arrowURightDown;
+
+    case 'arrowURightUp':
+      return PhosphorIcons.regular.arrowURightUp;
+
+    case 'arrowUUpLeft':
+      return PhosphorIcons.regular.arrowUUpLeft;
+
+    case 'arrowUUpRight':
+      return PhosphorIcons.regular.arrowUUpRight;
+
+    case 'arrowUp':
+      return PhosphorIcons.regular.arrowUp;
+
+    case 'arrowUpLeft':
+      return PhosphorIcons.regular.arrowUpLeft;
+
+    case 'arrowUpRight':
+      return PhosphorIcons.regular.arrowUpRight;
+
+    case 'arrowsClockwise':
+      return PhosphorIcons.regular.arrowsClockwise;
+
+    case 'arrowsCounterClockwise':
+      return PhosphorIcons.regular.arrowsCounterClockwise;
+
+    case 'arrowsDownUp':
+      return PhosphorIcons.regular.arrowsDownUp;
+
+    case 'arrowsHorizontal':
+      return PhosphorIcons.regular.arrowsHorizontal;
+
+    case 'arrowsIn':
+      return PhosphorIcons.regular.arrowsIn;
+
+    case 'arrowsInCardinal':
+      return PhosphorIcons.regular.arrowsInCardinal;
+
+    case 'arrowsInLineHorizontal':
+      return PhosphorIcons.regular.arrowsInLineHorizontal;
+
+    case 'arrowsInLineVertical':
+      return PhosphorIcons.regular.arrowsInLineVertical;
+
+    case 'arrowsInSimple':
+      return PhosphorIcons.regular.arrowsInSimple;
+
+    case 'arrowsLeftRight':
+      return PhosphorIcons.regular.arrowsLeftRight;
+
+    case 'arrowsMerge':
+      return PhosphorIcons.regular.arrowsMerge;
+
+    case 'arrowsOut':
+      return PhosphorIcons.regular.arrowsOut;
+
+    case 'arrowsOutCardinal':
+      return PhosphorIcons.regular.arrowsOutCardinal;
+
+    case 'arrowsOutLineHorizontal':
+      return PhosphorIcons.regular.arrowsOutLineHorizontal;
+
+    case 'arrowsOutLineVertical':
+      return PhosphorIcons.regular.arrowsOutLineVertical;
+
+    case 'arrowsOutSimple':
+      return PhosphorIcons.regular.arrowsOutSimple;
+
+    case 'arrowsSplit':
+      return PhosphorIcons.regular.arrowsSplit;
+
+    case 'arrowsVertical':
+      return PhosphorIcons.regular.arrowsVertical;
+
+    case 'article':
+      return PhosphorIcons.regular.article;
+
+    case 'articleMedium':
+      return PhosphorIcons.regular.articleMedium;
+
+    case 'articleNyTimes':
+      return PhosphorIcons.regular.articleNyTimes;
+
+    case 'asterisk':
+      return PhosphorIcons.regular.asterisk;
+
+    case 'asteriskSimple':
+      return PhosphorIcons.regular.asteriskSimple;
+
+    case 'at':
+      return PhosphorIcons.regular.at;
+
+    case 'atom':
+      return PhosphorIcons.regular.atom;
+
+    case 'baby':
+      return PhosphorIcons.regular.baby;
+
+    case 'backpack':
+      return PhosphorIcons.regular.backpack;
+
+    case 'backspace':
+      return PhosphorIcons.regular.backspace;
+
+    case 'bag':
+      return PhosphorIcons.regular.bag;
+
+    case 'bagSimple':
+      return PhosphorIcons.regular.bagSimple;
+
+    case 'balloon':
+      return PhosphorIcons.regular.balloon;
+
+    case 'bandaids':
+      return PhosphorIcons.regular.bandaids;
+
+    case 'bank':
+      return PhosphorIcons.regular.bank;
+
+    case 'barbell':
+      return PhosphorIcons.regular.barbell;
+
+    case 'barcode':
+      return PhosphorIcons.regular.barcode;
+
+    case 'barricade':
+      return PhosphorIcons.regular.barricade;
+
+    case 'baseball':
+      return PhosphorIcons.regular.baseball;
+
+    case 'baseballCap':
+      return PhosphorIcons.regular.baseballCap;
+
+    case 'basket':
+      return PhosphorIcons.regular.basket;
+
+    case 'basketball':
+      return PhosphorIcons.regular.basketball;
+
+    case 'bathtub':
+      return PhosphorIcons.regular.bathtub;
+
+    case 'batteryCharging':
+      return PhosphorIcons.regular.batteryCharging;
+
+    case 'batteryChargingVertical':
+      return PhosphorIcons.regular.batteryChargingVertical;
+
+    case 'batteryEmpty':
+      return PhosphorIcons.regular.batteryEmpty;
+
+    case 'batteryFull':
+      return PhosphorIcons.regular.batteryFull;
+
+    case 'batteryHigh':
+      return PhosphorIcons.regular.batteryHigh;
+
+    case 'batteryLow':
+      return PhosphorIcons.regular.batteryLow;
+
+    case 'batteryMedium':
+      return PhosphorIcons.regular.batteryMedium;
+
+    case 'batteryPlus':
+      return PhosphorIcons.regular.batteryPlus;
+
+    case 'batteryPlusVertical':
+      return PhosphorIcons.regular.batteryPlusVertical;
+
+    case 'batteryVerticalEmpty':
+      return PhosphorIcons.regular.batteryVerticalEmpty;
+
+    case 'batteryVerticalFull':
+      return PhosphorIcons.regular.batteryVerticalFull;
+
+    case 'batteryVerticalHigh':
+      return PhosphorIcons.regular.batteryVerticalHigh;
+
+    case 'batteryVerticalLow':
+      return PhosphorIcons.regular.batteryVerticalLow;
+
+    case 'batteryVerticalMedium':
+      return PhosphorIcons.regular.batteryVerticalMedium;
+
+    case 'batteryWarning':
+      return PhosphorIcons.regular.batteryWarning;
+
+    case 'batteryWarningVertical':
+      return PhosphorIcons.regular.batteryWarningVertical;
+
+    case 'bed':
+      return PhosphorIcons.regular.bed;
+
+    case 'beerBottle':
+      return PhosphorIcons.regular.beerBottle;
+
+    case 'beerStein':
+      return PhosphorIcons.regular.beerStein;
+
+    case 'behanceLogo':
+      return PhosphorIcons.regular.behanceLogo;
+
+    case 'bell':
+      return PhosphorIcons.regular.bell;
+
+    case 'bellRinging':
+      return PhosphorIcons.regular.bellRinging;
+
+    case 'bellSimple':
+      return PhosphorIcons.regular.bellSimple;
+
+    case 'bellSimpleRinging':
+      return PhosphorIcons.regular.bellSimpleRinging;
+
+    case 'bellSimpleSlash':
+      return PhosphorIcons.regular.bellSimpleSlash;
+
+    case 'bellSimpleZ':
+      return PhosphorIcons.regular.bellSimpleZ;
+
+    case 'bellSlash':
+      return PhosphorIcons.regular.bellSlash;
+
+    case 'bellZ':
+      return PhosphorIcons.regular.bellZ;
+
+    case 'bezierCurve':
+      return PhosphorIcons.regular.bezierCurve;
+
+    case 'bicycle':
+      return PhosphorIcons.regular.bicycle;
+
+    case 'binoculars':
+      return PhosphorIcons.regular.binoculars;
+
+    case 'bird':
+      return PhosphorIcons.regular.bird;
+
+    case 'bluetooth':
+      return PhosphorIcons.regular.bluetooth;
+
+    case 'bluetoothConnected':
+      return PhosphorIcons.regular.bluetoothConnected;
+
+    case 'bluetoothSlash':
+      return PhosphorIcons.regular.bluetoothSlash;
+
+    case 'bluetoothX':
+      return PhosphorIcons.regular.bluetoothX;
+
+    case 'boat':
+      return PhosphorIcons.regular.boat;
+
+    case 'bone':
+      return PhosphorIcons.regular.bone;
+
+    case 'book':
+      return PhosphorIcons.regular.book;
+
+    case 'bookBookmark':
+      return PhosphorIcons.regular.bookBookmark;
+
+    case 'bookOpen':
+      return PhosphorIcons.regular.bookOpen;
+
+    case 'bookOpenText':
+      return PhosphorIcons.regular.bookOpenText;
+
+    case 'bookmark':
+      return PhosphorIcons.regular.bookmark;
+
+    case 'bookmarkSimple':
+      return PhosphorIcons.regular.bookmarkSimple;
+
+    case 'bookmarks':
+      return PhosphorIcons.regular.bookmarks;
+
+    case 'bookmarksSimple':
+      return PhosphorIcons.regular.bookmarksSimple;
+
+    case 'books':
+      return PhosphorIcons.regular.books;
+
+    case 'boot':
+      return PhosphorIcons.regular.boot;
+
+    case 'boundingBox':
+      return PhosphorIcons.regular.boundingBox;
+
+    case 'bowlFood':
+      return PhosphorIcons.regular.bowlFood;
+
+    case 'bracketsAngle':
+      return PhosphorIcons.regular.bracketsAngle;
+
+    case 'bracketsCurly':
+      return PhosphorIcons.regular.bracketsCurly;
+
+    case 'bracketsRound':
+      return PhosphorIcons.regular.bracketsRound;
+
+    case 'bracketsSquare':
+      return PhosphorIcons.regular.bracketsSquare;
+
+    case 'brain':
+      return PhosphorIcons.regular.brain;
+
+    case 'brandy':
+      return PhosphorIcons.regular.brandy;
+
+    case 'bridge':
+      return PhosphorIcons.regular.bridge;
+
+    case 'briefcase':
+      return PhosphorIcons.regular.briefcase;
+
+    case 'briefcaseMetal':
+      return PhosphorIcons.regular.briefcaseMetal;
+
+    case 'broadcast':
+      return PhosphorIcons.regular.broadcast;
+
+    case 'broom':
+      return PhosphorIcons.regular.broom;
+
+    case 'browser':
+      return PhosphorIcons.regular.browser;
+
+    case 'browsers':
+      return PhosphorIcons.regular.browsers;
+
+    case 'bug':
+      return PhosphorIcons.regular.bug;
+
+    case 'bugBeetle':
+      return PhosphorIcons.regular.bugBeetle;
+
+    case 'bugDroid':
+      return PhosphorIcons.regular.bugDroid;
+
+    case 'buildings':
+      return PhosphorIcons.regular.buildings;
+
+    case 'bus':
+      return PhosphorIcons.regular.bus;
+
+    case 'butterfly':
+      return PhosphorIcons.regular.butterfly;
+
+    case 'cactus':
+      return PhosphorIcons.regular.cactus;
+
+    case 'cake':
+      return PhosphorIcons.regular.cake;
+
+    case 'calculator':
+      return PhosphorIcons.regular.calculator;
+
+    case 'calendar':
+      return PhosphorIcons.regular.calendar;
+
+    case 'calendarBlank':
+      return PhosphorIcons.regular.calendarBlank;
+
+    case 'calendarCheck':
+      return PhosphorIcons.regular.calendarCheck;
+
+    case 'calendarPlus':
+      return PhosphorIcons.regular.calendarPlus;
+
+    case 'calendarX':
+      return PhosphorIcons.regular.calendarX;
+
+    case 'callBell':
+      return PhosphorIcons.regular.callBell;
+
+    case 'camera':
+      return PhosphorIcons.regular.camera;
+
+    case 'cameraPlus':
+      return PhosphorIcons.regular.cameraPlus;
+
+    case 'cameraRotate':
+      return PhosphorIcons.regular.cameraRotate;
+
+    case 'cameraSlash':
+      return PhosphorIcons.regular.cameraSlash;
+
+    case 'campfire':
+      return PhosphorIcons.regular.campfire;
+
+    case 'car':
+      return PhosphorIcons.regular.car;
+
+    case 'carProfile':
+      return PhosphorIcons.regular.carProfile;
+
+    case 'carSimple':
+      return PhosphorIcons.regular.carSimple;
+
+    case 'cardholder':
+      return PhosphorIcons.regular.cardholder;
+
+    case 'cards':
+      return PhosphorIcons.regular.cards;
+
+    case 'caretCircleDoubleDown':
+      return PhosphorIcons.regular.caretCircleDoubleDown;
+
+    case 'caretCircleDoubleLeft':
+      return PhosphorIcons.regular.caretCircleDoubleLeft;
+
+    case 'caretCircleDoubleRight':
+      return PhosphorIcons.regular.caretCircleDoubleRight;
+
+    case 'caretCircleDoubleUp':
+      return PhosphorIcons.regular.caretCircleDoubleUp;
+
+    case 'caretCircleDown':
+      return PhosphorIcons.regular.caretCircleDown;
+
+    case 'caretCircleLeft':
+      return PhosphorIcons.regular.caretCircleLeft;
+
+    case 'caretCircleRight':
+      return PhosphorIcons.regular.caretCircleRight;
+
+    case 'caretCircleUp':
+      return PhosphorIcons.regular.caretCircleUp;
+
+    case 'caretCircleUpDown':
+      return PhosphorIcons.regular.caretCircleUpDown;
+
+    case 'caretDoubleDown':
+      return PhosphorIcons.regular.caretDoubleDown;
+
+    case 'caretDoubleLeft':
+      return PhosphorIcons.regular.caretDoubleLeft;
+
+    case 'caretDoubleRight':
+      return PhosphorIcons.regular.caretDoubleRight;
+
+    case 'caretDoubleUp':
+      return PhosphorIcons.regular.caretDoubleUp;
+
+    case 'caretDown':
+      return PhosphorIcons.regular.caretDown;
+
+    case 'caretLeft':
+      return PhosphorIcons.regular.caretLeft;
+
+    case 'caretRight':
+      return PhosphorIcons.regular.caretRight;
+
+    case 'caretUp':
+      return PhosphorIcons.regular.caretUp;
+
+    case 'caretUpDown':
+      return PhosphorIcons.regular.caretUpDown;
+
+    case 'carrot':
+      return PhosphorIcons.regular.carrot;
+
+    case 'cassetteTape':
+      return PhosphorIcons.regular.cassetteTape;
+
+    case 'castleTurret':
+      return PhosphorIcons.regular.castleTurret;
+
+    case 'cat':
+      return PhosphorIcons.regular.cat;
+
+    case 'cellSignalFull':
+      return PhosphorIcons.regular.cellSignalFull;
+
+    case 'cellSignalHigh':
+      return PhosphorIcons.regular.cellSignalHigh;
+
+    case 'cellSignalLow':
+      return PhosphorIcons.regular.cellSignalLow;
+
+    case 'cellSignalMedium':
+      return PhosphorIcons.regular.cellSignalMedium;
+
+    case 'cellSignalNone':
+      return PhosphorIcons.regular.cellSignalNone;
+
+    case 'cellSignalSlash':
+      return PhosphorIcons.regular.cellSignalSlash;
+
+    case 'cellSignalX':
+      return PhosphorIcons.regular.cellSignalX;
+
+    case 'certificate':
+      return PhosphorIcons.regular.certificate;
+
+    case 'chair':
+      return PhosphorIcons.regular.chair;
+
+    case 'chalkboard':
+      return PhosphorIcons.regular.chalkboard;
+
+    case 'chalkboardSimple':
+      return PhosphorIcons.regular.chalkboardSimple;
+
+    case 'chalkboardTeacher':
+      return PhosphorIcons.regular.chalkboardTeacher;
+
+    case 'champagne':
+      return PhosphorIcons.regular.champagne;
+
+    case 'chargingStation':
+      return PhosphorIcons.regular.chargingStation;
+
+    case 'chartBar':
+      return PhosphorIcons.regular.chartBar;
+
+    case 'chartBarHorizontal':
+      return PhosphorIcons.regular.chartBarHorizontal;
+
+    case 'chartDonut':
+      return PhosphorIcons.regular.chartDonut;
+
+    case 'chartLine':
+      return PhosphorIcons.regular.chartLine;
+
+    case 'chartLineDown':
+      return PhosphorIcons.regular.chartLineDown;
+
+    case 'chartLineUp':
+      return PhosphorIcons.regular.chartLineUp;
+
+    case 'chartPie':
+      return PhosphorIcons.regular.chartPie;
+
+    case 'chartPieSlice':
+      return PhosphorIcons.regular.chartPieSlice;
+
+    case 'chartPolar':
+      return PhosphorIcons.regular.chartPolar;
+
+    case 'chartScatter':
+      return PhosphorIcons.regular.chartScatter;
+
+    case 'chat':
+      return PhosphorIcons.regular.chat;
+
+    case 'chatCentered':
+      return PhosphorIcons.regular.chatCentered;
+
+    case 'chatCenteredDots':
+      return PhosphorIcons.regular.chatCenteredDots;
+
+    case 'chatCenteredText':
+      return PhosphorIcons.regular.chatCenteredText;
+
+    case 'chatCircle':
+      return PhosphorIcons.regular.chatCircle;
+
+    case 'chatCircleDots':
+      return PhosphorIcons.regular.chatCircleDots;
+
+    case 'chatCircleText':
+      return PhosphorIcons.regular.chatCircleText;
+
+    case 'chatDots':
+      return PhosphorIcons.regular.chatDots;
+
+    case 'chatTeardrop':
+      return PhosphorIcons.regular.chatTeardrop;
+
+    case 'chatTeardropDots':
+      return PhosphorIcons.regular.chatTeardropDots;
+
+    case 'chatTeardropText':
+      return PhosphorIcons.regular.chatTeardropText;
+
+    case 'chatText':
+      return PhosphorIcons.regular.chatText;
+
+    case 'chats':
+      return PhosphorIcons.regular.chats;
+
+    case 'chatsCircle':
+      return PhosphorIcons.regular.chatsCircle;
+
+    case 'chatsTeardrop':
+      return PhosphorIcons.regular.chatsTeardrop;
+
+    case 'check':
+      return PhosphorIcons.regular.check;
+
+    case 'checkCircle':
+      return PhosphorIcons.regular.checkCircle;
+
+    case 'checkFat':
+      return PhosphorIcons.regular.checkFat;
+
+    case 'checkSquare':
+      return PhosphorIcons.regular.checkSquare;
+
+    case 'checkSquareOffset':
+      return PhosphorIcons.regular.checkSquareOffset;
+
+    case 'checks':
+      return PhosphorIcons.regular.checks;
+
+    case 'church':
+      return PhosphorIcons.regular.church;
+
+    case 'circle':
+      return PhosphorIcons.regular.circle;
+
+    case 'circleDashed':
+      return PhosphorIcons.regular.circleDashed;
+
+    case 'circleHalf':
+      return PhosphorIcons.regular.circleHalf;
+
+    case 'circleHalfTilt':
+      return PhosphorIcons.regular.circleHalfTilt;
+
+    case 'circleNotch':
+      return PhosphorIcons.regular.circleNotch;
+
+    case 'circlesFour':
+      return PhosphorIcons.regular.circlesFour;
+
+    case 'circlesThree':
+      return PhosphorIcons.regular.circlesThree;
+
+    case 'circlesThreePlus':
+      return PhosphorIcons.regular.circlesThreePlus;
+
+    case 'circuitry':
+      return PhosphorIcons.regular.circuitry;
+
+    case 'clipboard':
+      return PhosphorIcons.regular.clipboard;
+
+    case 'clipboardText':
+      return PhosphorIcons.regular.clipboardText;
+
+    case 'clock':
+      return PhosphorIcons.regular.clock;
+
+    case 'clockAfternoon':
+      return PhosphorIcons.regular.clockAfternoon;
+
+    case 'clockClockwise':
+      return PhosphorIcons.regular.clockClockwise;
+
+    case 'clockCountdown':
+      return PhosphorIcons.regular.clockCountdown;
+
+    case 'clockCounterClockwise':
+      return PhosphorIcons.regular.clockCounterClockwise;
+
+    case 'closedCaptioning':
+      return PhosphorIcons.regular.closedCaptioning;
+
+    case 'cloud':
+      return PhosphorIcons.regular.cloud;
+
+    case 'cloudArrowDown':
+      return PhosphorIcons.regular.cloudArrowDown;
+
+    case 'cloudArrowUp':
+      return PhosphorIcons.regular.cloudArrowUp;
+
+    case 'cloudCheck':
+      return PhosphorIcons.regular.cloudCheck;
+
+    case 'cloudFog':
+      return PhosphorIcons.regular.cloudFog;
+
+    case 'cloudLightning':
+      return PhosphorIcons.regular.cloudLightning;
+
+    case 'cloudMoon':
+      return PhosphorIcons.regular.cloudMoon;
+
+    case 'cloudRain':
+      return PhosphorIcons.regular.cloudRain;
+
+    case 'cloudSlash':
+      return PhosphorIcons.regular.cloudSlash;
+
+    case 'cloudSnow':
+      return PhosphorIcons.regular.cloudSnow;
+
+    case 'cloudSun':
+      return PhosphorIcons.regular.cloudSun;
+
+    case 'cloudWarning':
+      return PhosphorIcons.regular.cloudWarning;
+
+    case 'cloudX':
+      return PhosphorIcons.regular.cloudX;
+
+    case 'club':
+      return PhosphorIcons.regular.club;
+
+    case 'coatHanger':
+      return PhosphorIcons.regular.coatHanger;
+
+    case 'codaLogo':
+      return PhosphorIcons.regular.codaLogo;
+
+    case 'code':
+      return PhosphorIcons.regular.code;
+
+    case 'codeBlock':
+      return PhosphorIcons.regular.codeBlock;
+
+    case 'codeSimple':
+      return PhosphorIcons.regular.codeSimple;
+
+    case 'codepenLogo':
+      return PhosphorIcons.regular.codepenLogo;
+
+    case 'codesandboxLogo':
+      return PhosphorIcons.regular.codesandboxLogo;
+
+    case 'coffee':
+      return PhosphorIcons.regular.coffee;
+
+    case 'coin':
+      return PhosphorIcons.regular.coin;
+
+    case 'coinVertical':
+      return PhosphorIcons.regular.coinVertical;
+
+    case 'coins':
+      return PhosphorIcons.regular.coins;
+
+    case 'columns':
+      return PhosphorIcons.regular.columns;
+
+    case 'command':
+      return PhosphorIcons.regular.command;
+
+    case 'compass':
+      return PhosphorIcons.regular.compass;
+
+    case 'compassTool':
+      return PhosphorIcons.regular.compassTool;
+
+    case 'computerTower':
+      return PhosphorIcons.regular.computerTower;
+
+    case 'confetti':
+      return PhosphorIcons.regular.confetti;
+
+    case 'contactlessPayment':
+      return PhosphorIcons.regular.contactlessPayment;
+
+    case 'control':
+      return PhosphorIcons.regular.control;
+
+    case 'cookie':
+      return PhosphorIcons.regular.cookie;
+
+    case 'cookingPot':
+      return PhosphorIcons.regular.cookingPot;
+
+    case 'copy':
+      return PhosphorIcons.regular.copy;
+
+    case 'copySimple':
+      return PhosphorIcons.regular.copySimple;
+
+    case 'copyleft':
+      return PhosphorIcons.regular.copyleft;
+
+    case 'copyright':
+      return PhosphorIcons.regular.copyright;
+
+    case 'cornersIn':
+      return PhosphorIcons.regular.cornersIn;
+
+    case 'cornersOut':
+      return PhosphorIcons.regular.cornersOut;
+
+    case 'couch':
+      return PhosphorIcons.regular.couch;
+
+    case 'cpu':
+      return PhosphorIcons.regular.cpu;
+
+    case 'creditCard':
+      return PhosphorIcons.regular.creditCard;
+
+    case 'crop':
+      return PhosphorIcons.regular.crop;
+
+    case 'cross':
+      return PhosphorIcons.regular.cross;
+
+    case 'crosshair':
+      return PhosphorIcons.regular.crosshair;
+
+    case 'crosshairSimple':
+      return PhosphorIcons.regular.crosshairSimple;
+
+    case 'crown':
+      return PhosphorIcons.regular.crown;
+
+    case 'crownSimple':
+      return PhosphorIcons.regular.crownSimple;
+
+    case 'cube':
+      return PhosphorIcons.regular.cube;
+
+    case 'cubeFocus':
+      return PhosphorIcons.regular.cubeFocus;
+
+    case 'cubeTransparent':
+      return PhosphorIcons.regular.cubeTransparent;
+
+    case 'currencyBtc':
+      return PhosphorIcons.regular.currencyBtc;
+
+    case 'currencyCircleDollar':
+      return PhosphorIcons.regular.currencyCircleDollar;
+
+    case 'currencyCny':
+      return PhosphorIcons.regular.currencyCny;
+
+    case 'currencyDollar':
+      return PhosphorIcons.regular.currencyDollar;
+
+    case 'currencyDollarSimple':
+      return PhosphorIcons.regular.currencyDollarSimple;
+
+    case 'currencyEth':
+      return PhosphorIcons.regular.currencyEth;
+
+    case 'currencyEur':
+      return PhosphorIcons.regular.currencyEur;
+
+    case 'currencyGbp':
+      return PhosphorIcons.regular.currencyGbp;
+
+    case 'currencyInr':
+      return PhosphorIcons.regular.currencyInr;
+
+    case 'currencyJpy':
+      return PhosphorIcons.regular.currencyJpy;
+
+    case 'currencyKrw':
+      return PhosphorIcons.regular.currencyKrw;
+
+    case 'currencyKzt':
+      return PhosphorIcons.regular.currencyKzt;
+
+    case 'currencyNgn':
+      return PhosphorIcons.regular.currencyNgn;
+
+    case 'currencyRub':
+      return PhosphorIcons.regular.currencyRub;
+
+    case 'cursor':
+      return PhosphorIcons.regular.cursor;
+
+    case 'cursorClick':
+      return PhosphorIcons.regular.cursorClick;
+
+    case 'cursorText':
+      return PhosphorIcons.regular.cursorText;
+
+    case 'cylinder':
+      return PhosphorIcons.regular.cylinder;
+
+    case 'database':
+      return PhosphorIcons.regular.database;
+
+    case 'desktop':
+      return PhosphorIcons.regular.desktop;
+
+    case 'desktopTower':
+      return PhosphorIcons.regular.desktopTower;
+
+    case 'detective':
+      return PhosphorIcons.regular.detective;
+
+    case 'devToLogo':
+      return PhosphorIcons.regular.devToLogo;
+
+    case 'deviceMobile':
+      return PhosphorIcons.regular.deviceMobile;
+
+    case 'deviceMobileCamera':
+      return PhosphorIcons.regular.deviceMobileCamera;
+
+    case 'deviceMobileSpeaker':
+      return PhosphorIcons.regular.deviceMobileSpeaker;
+
+    case 'deviceTablet':
+      return PhosphorIcons.regular.deviceTablet;
+
+    case 'deviceTabletCamera':
+      return PhosphorIcons.regular.deviceTabletCamera;
+
+    case 'deviceTabletSpeaker':
+      return PhosphorIcons.regular.deviceTabletSpeaker;
+
+    case 'devices':
+      return PhosphorIcons.regular.devices;
+
+    case 'diamond':
+      return PhosphorIcons.regular.diamond;
+
+    case 'diamondsFour':
+      return PhosphorIcons.regular.diamondsFour;
+
+    case 'diceFive':
+      return PhosphorIcons.regular.diceFive;
+
+    case 'diceFour':
+      return PhosphorIcons.regular.diceFour;
+
+    case 'diceOne':
+      return PhosphorIcons.regular.diceOne;
+
+    case 'diceSix':
+      return PhosphorIcons.regular.diceSix;
+
+    case 'diceThree':
+      return PhosphorIcons.regular.diceThree;
+
+    case 'diceTwo':
+      return PhosphorIcons.regular.diceTwo;
+
+    case 'disc':
+      return PhosphorIcons.regular.disc;
+
+    case 'discordLogo':
+      return PhosphorIcons.regular.discordLogo;
+
+    case 'divide':
+      return PhosphorIcons.regular.divide;
+
+    case 'dna':
+      return PhosphorIcons.regular.dna;
+
+    case 'dog':
+      return PhosphorIcons.regular.dog;
+
+    case 'door':
+      return PhosphorIcons.regular.door;
+
+    case 'doorOpen':
+      return PhosphorIcons.regular.doorOpen;
+
+    case 'dot':
+      return PhosphorIcons.regular.dot;
+
+    case 'dotOutline':
+      return PhosphorIcons.regular.dotOutline;
+
+    case 'dotsNine':
+      return PhosphorIcons.regular.dotsNine;
+
+    case 'dotsSix':
+      return PhosphorIcons.regular.dotsSix;
+
+    case 'dotsSixVertical':
+      return PhosphorIcons.regular.dotsSixVertical;
+
+    case 'dotsThree':
+      return PhosphorIcons.regular.dotsThree;
+
+    case 'dotsThreeCircle':
+      return PhosphorIcons.regular.dotsThreeCircle;
+
+    case 'dotsThreeCircleVertical':
+      return PhosphorIcons.regular.dotsThreeCircleVertical;
+
+    case 'dotsThreeOutline':
+      return PhosphorIcons.regular.dotsThreeOutline;
+
+    case 'dotsThreeOutlineVertical':
+      return PhosphorIcons.regular.dotsThreeOutlineVertical;
+
+    case 'dotsThreeVertical':
+      return PhosphorIcons.regular.dotsThreeVertical;
+
+    case 'download':
+      return PhosphorIcons.regular.download;
+
+    case 'downloadSimple':
+      return PhosphorIcons.regular.downloadSimple;
+
+    case 'dress':
+      return PhosphorIcons.regular.dress;
+
+    case 'dribbbleLogo':
+      return PhosphorIcons.regular.dribbbleLogo;
+
+    case 'drop':
+      return PhosphorIcons.regular.drop;
+
+    case 'dropHalf':
+      return PhosphorIcons.regular.dropHalf;
+
+    case 'dropHalfBottom':
+      return PhosphorIcons.regular.dropHalfBottom;
+
+    case 'dropboxLogo':
+      return PhosphorIcons.regular.dropboxLogo;
+
+    case 'ear':
+      return PhosphorIcons.regular.ear;
+
+    case 'earSlash':
+      return PhosphorIcons.regular.earSlash;
+
+    case 'egg':
+      return PhosphorIcons.regular.egg;
+
+    case 'eggCrack':
+      return PhosphorIcons.regular.eggCrack;
+
+    case 'eject':
+      return PhosphorIcons.regular.eject;
+
+    case 'ejectSimple':
+      return PhosphorIcons.regular.ejectSimple;
+
+    case 'elevator':
+      return PhosphorIcons.regular.elevator;
+
+    case 'engine':
+      return PhosphorIcons.regular.engine;
+
+    case 'envelope':
+      return PhosphorIcons.regular.envelope;
+
+    case 'envelopeOpen':
+      return PhosphorIcons.regular.envelopeOpen;
+
+    case 'envelopeSimple':
+      return PhosphorIcons.regular.envelopeSimple;
+
+    case 'envelopeSimpleOpen':
+      return PhosphorIcons.regular.envelopeSimpleOpen;
+
+    case 'equalizer':
+      return PhosphorIcons.regular.equalizer;
+
+    case 'equals':
+      return PhosphorIcons.regular.equals;
+
+    case 'eraser':
+      return PhosphorIcons.regular.eraser;
+
+    case 'escalatorDown':
+      return PhosphorIcons.regular.escalatorDown;
+
+    case 'escalatorUp':
+      return PhosphorIcons.regular.escalatorUp;
+
+    case 'exam':
+      return PhosphorIcons.regular.exam;
+
+    case 'exclude':
+      return PhosphorIcons.regular.exclude;
+
+    case 'excludeSquare':
+      return PhosphorIcons.regular.excludeSquare;
+
+    case 'export':
+      return PhosphorIcons.regular.export;
+
+    case 'eye':
+      return PhosphorIcons.regular.eye;
+
+    case 'eyeClosed':
+      return PhosphorIcons.regular.eyeClosed;
+
+    case 'eyeSlash':
+      return PhosphorIcons.regular.eyeSlash;
+
+    case 'eyedropper':
+      return PhosphorIcons.regular.eyedropper;
+
+    case 'eyedropperSample':
+      return PhosphorIcons.regular.eyedropperSample;
+
+    case 'eyeglasses':
+      return PhosphorIcons.regular.eyeglasses;
+
+    case 'faceMask':
+      return PhosphorIcons.regular.faceMask;
+
+    case 'facebookLogo':
+      return PhosphorIcons.regular.facebookLogo;
+
+    case 'factory':
+      return PhosphorIcons.regular.factory;
+
+    case 'faders':
+      return PhosphorIcons.regular.faders;
+
+    case 'fadersHorizontal':
+      return PhosphorIcons.regular.fadersHorizontal;
+
+    case 'fan':
+      return PhosphorIcons.regular.fan;
+
+    case 'fastForward':
+      return PhosphorIcons.regular.fastForward;
+
+    case 'fastForwardCircle':
+      return PhosphorIcons.regular.fastForwardCircle;
+
+    case 'feather':
+      return PhosphorIcons.regular.feather;
+
+    case 'figmaLogo':
+      return PhosphorIcons.regular.figmaLogo;
+
+    case 'file':
+      return PhosphorIcons.regular.file;
+
+    case 'fileArchive':
+      return PhosphorIcons.regular.fileArchive;
+
+    case 'fileArrowDown':
+      return PhosphorIcons.regular.fileArrowDown;
+
+    case 'fileArrowUp':
+      return PhosphorIcons.regular.fileArrowUp;
+
+    case 'fileAudio':
+      return PhosphorIcons.regular.fileAudio;
+
+    case 'fileCloud':
+      return PhosphorIcons.regular.fileCloud;
+
+    case 'fileCode':
+      return PhosphorIcons.regular.fileCode;
+
+    case 'fileCss':
+      return PhosphorIcons.regular.fileCss;
+
+    case 'fileCsv':
+      return PhosphorIcons.regular.fileCsv;
+
+    case 'fileDashed':
+      return PhosphorIcons.regular.fileDashed;
+
+    case 'fileDoc':
+      return PhosphorIcons.regular.fileDoc;
+
+    case 'fileHtml':
+      return PhosphorIcons.regular.fileHtml;
+
+    case 'fileImage':
+      return PhosphorIcons.regular.fileImage;
+
+    case 'fileJpg':
+      return PhosphorIcons.regular.fileJpg;
+
+    case 'fileJs':
+      return PhosphorIcons.regular.fileJs;
+
+    case 'fileJsx':
+      return PhosphorIcons.regular.fileJsx;
+
+    case 'fileLock':
+      return PhosphorIcons.regular.fileLock;
+
+    case 'fileMagnifyingGlass':
+      return PhosphorIcons.regular.fileMagnifyingGlass;
+
+    case 'fileMinus':
+      return PhosphorIcons.regular.fileMinus;
+
+    case 'filePdf':
+      return PhosphorIcons.regular.filePdf;
+
+    case 'filePlus':
+      return PhosphorIcons.regular.filePlus;
+
+    case 'filePng':
+      return PhosphorIcons.regular.filePng;
+
+    case 'filePpt':
+      return PhosphorIcons.regular.filePpt;
+
+    case 'fileRs':
+      return PhosphorIcons.regular.fileRs;
+
+    case 'fileSql':
+      return PhosphorIcons.regular.fileSql;
+
+    case 'fileText':
+      return PhosphorIcons.regular.fileText;
+
+    case 'fileTs':
+      return PhosphorIcons.regular.fileTs;
+
+    case 'fileTsx':
+      return PhosphorIcons.regular.fileTsx;
+
+    case 'fileVideo':
+      return PhosphorIcons.regular.fileVideo;
+
+    case 'fileVue':
+      return PhosphorIcons.regular.fileVue;
+
+    case 'fileX':
+      return PhosphorIcons.regular.fileX;
+
+    case 'fileXls':
+      return PhosphorIcons.regular.fileXls;
+
+    case 'fileZip':
+      return PhosphorIcons.regular.fileZip;
+
+    case 'files':
+      return PhosphorIcons.regular.files;
+
+    case 'filmReel':
+      return PhosphorIcons.regular.filmReel;
+
+    case 'filmScript':
+      return PhosphorIcons.regular.filmScript;
+
+    case 'filmSlate':
+      return PhosphorIcons.regular.filmSlate;
+
+    case 'filmStrip':
+      return PhosphorIcons.regular.filmStrip;
+
+    case 'fingerprint':
+      return PhosphorIcons.regular.fingerprint;
+
+    case 'fingerprintSimple':
+      return PhosphorIcons.regular.fingerprintSimple;
+
+    case 'finnTheHuman':
+      return PhosphorIcons.regular.finnTheHuman;
+
+    case 'fire':
+      return PhosphorIcons.regular.fire;
+
+    case 'fireExtinguisher':
+      return PhosphorIcons.regular.fireExtinguisher;
+
+    case 'fireSimple':
+      return PhosphorIcons.regular.fireSimple;
+
+    case 'firstAid':
+      return PhosphorIcons.regular.firstAid;
+
+    case 'firstAidKit':
+      return PhosphorIcons.regular.firstAidKit;
+
+    case 'fish':
+      return PhosphorIcons.regular.fish;
+
+    case 'fishSimple':
+      return PhosphorIcons.regular.fishSimple;
+
+    case 'flag':
+      return PhosphorIcons.regular.flag;
+
+    case 'flagBanner':
+      return PhosphorIcons.regular.flagBanner;
+
+    case 'flagCheckered':
+      return PhosphorIcons.regular.flagCheckered;
+
+    case 'flagPennant':
+      return PhosphorIcons.regular.flagPennant;
+
+    case 'flame':
+      return PhosphorIcons.regular.flame;
+
+    case 'flashlight':
+      return PhosphorIcons.regular.flashlight;
+
+    case 'flask':
+      return PhosphorIcons.regular.flask;
+
+    case 'floppyDisk':
+      return PhosphorIcons.regular.floppyDisk;
+
+    case 'floppyDiskBack':
+      return PhosphorIcons.regular.floppyDiskBack;
+
+    case 'flowArrow':
+      return PhosphorIcons.regular.flowArrow;
+
+    case 'flower':
+      return PhosphorIcons.regular.flower;
+
+    case 'flowerLotus':
+      return PhosphorIcons.regular.flowerLotus;
+
+    case 'flowerTulip':
+      return PhosphorIcons.regular.flowerTulip;
+
+    case 'flyingSaucer':
+      return PhosphorIcons.regular.flyingSaucer;
+
+    case 'folder':
+      return PhosphorIcons.regular.folder;
+
+    case 'folderDashed':
+      return PhosphorIcons.regular.folderDashed;
+
+    case 'folderLock':
+      return PhosphorIcons.regular.folderLock;
+
+    case 'folderMinus':
+      return PhosphorIcons.regular.folderMinus;
+
+    case 'folderNotch':
+      return PhosphorIcons.regular.folderNotch;
+
+    case 'folderNotchMinus':
+      return PhosphorIcons.regular.folderNotchMinus;
+
+    case 'folderNotchOpen':
+      return PhosphorIcons.regular.folderNotchOpen;
+
+    case 'folderNotchPlus':
+      return PhosphorIcons.regular.folderNotchPlus;
+
+    case 'folderOpen':
+      return PhosphorIcons.regular.folderOpen;
+
+    case 'folderPlus':
+      return PhosphorIcons.regular.folderPlus;
+
+    case 'folderSimple':
+      return PhosphorIcons.regular.folderSimple;
+
+    case 'folderSimpleDashed':
+      return PhosphorIcons.regular.folderSimpleDashed;
+
+    case 'folderSimpleLock':
+      return PhosphorIcons.regular.folderSimpleLock;
+
+    case 'folderSimpleMinus':
+      return PhosphorIcons.regular.folderSimpleMinus;
+
+    case 'folderSimplePlus':
+      return PhosphorIcons.regular.folderSimplePlus;
+
+    case 'folderSimpleStar':
+      return PhosphorIcons.regular.folderSimpleStar;
+
+    case 'folderSimpleUser':
+      return PhosphorIcons.regular.folderSimpleUser;
+
+    case 'folderStar':
+      return PhosphorIcons.regular.folderStar;
+
+    case 'folderUser':
+      return PhosphorIcons.regular.folderUser;
+
+    case 'folders':
+      return PhosphorIcons.regular.folders;
+
+    case 'football':
+      return PhosphorIcons.regular.football;
+
+    case 'footprints':
+      return PhosphorIcons.regular.footprints;
+
+    case 'forkKnife':
+      return PhosphorIcons.regular.forkKnife;
+
+    case 'frameCorners':
+      return PhosphorIcons.regular.frameCorners;
+
+    case 'framerLogo':
+      return PhosphorIcons.regular.framerLogo;
+
+    case 'function':
+      return PhosphorIcons.regular.function;
+
+    case 'funnel':
+      return PhosphorIcons.regular.funnel;
+
+    case 'funnelSimple':
+      return PhosphorIcons.regular.funnelSimple;
+
+    case 'gameController':
+      return PhosphorIcons.regular.gameController;
+
+    case 'garage':
+      return PhosphorIcons.regular.garage;
+
+    case 'gasCan':
+      return PhosphorIcons.regular.gasCan;
+
+    case 'gasPump':
+      return PhosphorIcons.regular.gasPump;
+
+    case 'gauge':
+      return PhosphorIcons.regular.gauge;
+
+    case 'gavel':
+      return PhosphorIcons.regular.gavel;
+
+    case 'gear':
+      return PhosphorIcons.regular.gear;
+
+    case 'gearFine':
+      return PhosphorIcons.regular.gearFine;
+
+    case 'gearSix':
+      return PhosphorIcons.regular.gearSix;
+
+    case 'genderFemale':
+      return PhosphorIcons.regular.genderFemale;
+
+    case 'genderIntersex':
+      return PhosphorIcons.regular.genderIntersex;
+
+    case 'genderMale':
+      return PhosphorIcons.regular.genderMale;
+
+    case 'genderNeuter':
+      return PhosphorIcons.regular.genderNeuter;
+
+    case 'genderNonbinary':
+      return PhosphorIcons.regular.genderNonbinary;
+
+    case 'genderTransgender':
+      return PhosphorIcons.regular.genderTransgender;
+
+    case 'ghost':
+      return PhosphorIcons.regular.ghost;
+
+    case 'gif':
+      return PhosphorIcons.regular.gif;
+
+    case 'gift':
+      return PhosphorIcons.regular.gift;
+
+    case 'gitBranch':
+      return PhosphorIcons.regular.gitBranch;
+
+    case 'gitCommit':
+      return PhosphorIcons.regular.gitCommit;
+
+    case 'gitDiff':
+      return PhosphorIcons.regular.gitDiff;
+
+    case 'gitFork':
+      return PhosphorIcons.regular.gitFork;
+
+    case 'gitMerge':
+      return PhosphorIcons.regular.gitMerge;
+
+    case 'gitPullRequest':
+      return PhosphorIcons.regular.gitPullRequest;
+
+    case 'githubLogo':
+      return PhosphorIcons.regular.githubLogo;
+
+    case 'gitlabLogo':
+      return PhosphorIcons.regular.gitlabLogo;
+
+    case 'gitlabLogoSimple':
+      return PhosphorIcons.regular.gitlabLogoSimple;
+
+    case 'globe':
+      return PhosphorIcons.regular.globe;
+
+    case 'globeHemisphereEast':
+      return PhosphorIcons.regular.globeHemisphereEast;
+
+    case 'globeHemisphereWest':
+      return PhosphorIcons.regular.globeHemisphereWest;
+
+    case 'globeSimple':
+      return PhosphorIcons.regular.globeSimple;
+
+    case 'globeStand':
+      return PhosphorIcons.regular.globeStand;
+
+    case 'goggles':
+      return PhosphorIcons.regular.goggles;
+
+    case 'goodreadsLogo':
+      return PhosphorIcons.regular.goodreadsLogo;
+
+    case 'googleCardboardLogo':
+      return PhosphorIcons.regular.googleCardboardLogo;
+
+    case 'googleChromeLogo':
+      return PhosphorIcons.regular.googleChromeLogo;
+
+    case 'googleDriveLogo':
+      return PhosphorIcons.regular.googleDriveLogo;
+
+    case 'googleLogo':
+      return PhosphorIcons.regular.googleLogo;
+
+    case 'googlePhotosLogo':
+      return PhosphorIcons.regular.googlePhotosLogo;
+
+    case 'googlePlayLogo':
+      return PhosphorIcons.regular.googlePlayLogo;
+
+    case 'googlePodcastsLogo':
+      return PhosphorIcons.regular.googlePodcastsLogo;
+
+    case 'gradient':
+      return PhosphorIcons.regular.gradient;
+
+    case 'graduationCap':
+      return PhosphorIcons.regular.graduationCap;
+
+    case 'grains':
+      return PhosphorIcons.regular.grains;
+
+    case 'grainsSlash':
+      return PhosphorIcons.regular.grainsSlash;
+
+    case 'graph':
+      return PhosphorIcons.regular.graph;
+
+    case 'gridFour':
+      return PhosphorIcons.regular.gridFour;
+
+    case 'gridNine':
+      return PhosphorIcons.regular.gridNine;
+
+    case 'guitar':
+      return PhosphorIcons.regular.guitar;
+
+    case 'hamburger':
+      return PhosphorIcons.regular.hamburger;
+
+    case 'hammer':
+      return PhosphorIcons.regular.hammer;
+
+    case 'hand':
+      return PhosphorIcons.regular.hand;
+
+    case 'handCoins':
+      return PhosphorIcons.regular.handCoins;
+
+    case 'handEye':
+      return PhosphorIcons.regular.handEye;
+
+    case 'handFist':
+      return PhosphorIcons.regular.handFist;
+
+    case 'handGrabbing':
+      return PhosphorIcons.regular.handGrabbing;
+
+    case 'handHeart':
+      return PhosphorIcons.regular.handHeart;
+
+    case 'handPalm':
+      return PhosphorIcons.regular.handPalm;
+
+    case 'handPointing':
+      return PhosphorIcons.regular.handPointing;
+
+    case 'handSoap':
+      return PhosphorIcons.regular.handSoap;
+
+    case 'handSwipeLeft':
+      return PhosphorIcons.regular.handSwipeLeft;
+
+    case 'handSwipeRight':
+      return PhosphorIcons.regular.handSwipeRight;
+
+    case 'handTap':
+      return PhosphorIcons.regular.handTap;
+
+    case 'handWaving':
+      return PhosphorIcons.regular.handWaving;
+
+    case 'handbag':
+      return PhosphorIcons.regular.handbag;
+
+    case 'handbagSimple':
+      return PhosphorIcons.regular.handbagSimple;
+
+    case 'handsClapping':
+      return PhosphorIcons.regular.handsClapping;
+
+    case 'handsPraying':
+      return PhosphorIcons.regular.handsPraying;
+
+    case 'handshake':
+      return PhosphorIcons.regular.handshake;
+
+    case 'hardDrive':
+      return PhosphorIcons.regular.hardDrive;
+
+    case 'hardDrives':
+      return PhosphorIcons.regular.hardDrives;
+
+    case 'hash':
+      return PhosphorIcons.regular.hash;
+
+    case 'hashStraight':
+      return PhosphorIcons.regular.hashStraight;
+
+    case 'headlights':
+      return PhosphorIcons.regular.headlights;
+
+    case 'headphones':
+      return PhosphorIcons.regular.headphones;
+
+    case 'headset':
+      return PhosphorIcons.regular.headset;
+
+    case 'heart':
+      return PhosphorIcons.regular.heart;
+
+    case 'heartBreak':
+      return PhosphorIcons.regular.heartBreak;
+
+    case 'heartHalf':
+      return PhosphorIcons.regular.heartHalf;
+
+    case 'heartStraight':
+      return PhosphorIcons.regular.heartStraight;
+
+    case 'heartStraightBreak':
+      return PhosphorIcons.regular.heartStraightBreak;
+
+    case 'heartbeat':
+      return PhosphorIcons.regular.heartbeat;
+
+    case 'hexagon':
+      return PhosphorIcons.regular.hexagon;
+
+    case 'highHeel':
+      return PhosphorIcons.regular.highHeel;
+
+    case 'highlighterCircle':
+      return PhosphorIcons.regular.highlighterCircle;
+
+    case 'hoodie':
+      return PhosphorIcons.regular.hoodie;
+
+    case 'horse':
+      return PhosphorIcons.regular.horse;
+
+    case 'hourglass':
+      return PhosphorIcons.regular.hourglass;
+
+    case 'hourglassHigh':
+      return PhosphorIcons.regular.hourglassHigh;
+
+    case 'hourglassLow':
+      return PhosphorIcons.regular.hourglassLow;
+
+    case 'hourglassMedium':
+      return PhosphorIcons.regular.hourglassMedium;
+
+    case 'hourglassSimple':
+      return PhosphorIcons.regular.hourglassSimple;
+
+    case 'hourglassSimpleHigh':
+      return PhosphorIcons.regular.hourglassSimpleHigh;
+
+    case 'hourglassSimpleLow':
+      return PhosphorIcons.regular.hourglassSimpleLow;
+
+    case 'hourglassSimpleMedium':
+      return PhosphorIcons.regular.hourglassSimpleMedium;
+
+    case 'house':
+      return PhosphorIcons.regular.house;
+
+    case 'houseLine':
+      return PhosphorIcons.regular.houseLine;
+
+    case 'houseSimple':
+      return PhosphorIcons.regular.houseSimple;
+
+    case 'iceCream':
+      return PhosphorIcons.regular.iceCream;
+
+    case 'identificationBadge':
+      return PhosphorIcons.regular.identificationBadge;
+
+    case 'identificationCard':
+      return PhosphorIcons.regular.identificationCard;
+
+    case 'image':
+      return PhosphorIcons.regular.image;
+
+    case 'imageSquare':
+      return PhosphorIcons.regular.imageSquare;
+
+    case 'images':
+      return PhosphorIcons.regular.images;
+
+    case 'imagesSquare':
+      return PhosphorIcons.regular.imagesSquare;
+
+    case 'infinity':
+      return PhosphorIcons.regular.infinity;
+
+    case 'info':
+      return PhosphorIcons.regular.info;
+
+    case 'instagramLogo':
+      return PhosphorIcons.regular.instagramLogo;
+
+    case 'intersect':
+      return PhosphorIcons.regular.intersect;
+
+    case 'intersectSquare':
+      return PhosphorIcons.regular.intersectSquare;
+
+    case 'intersectThree':
+      return PhosphorIcons.regular.intersectThree;
+
+    case 'jeep':
+      return PhosphorIcons.regular.jeep;
+
+    case 'kanban':
+      return PhosphorIcons.regular.kanban;
+
+    case 'key':
+      return PhosphorIcons.regular.key;
+
+    case 'keyReturn':
+      return PhosphorIcons.regular.keyReturn;
+
+    case 'keyboard':
+      return PhosphorIcons.regular.keyboard;
+
+    case 'keyhole':
+      return PhosphorIcons.regular.keyhole;
+
+    case 'knife':
+      return PhosphorIcons.regular.knife;
+
+    case 'ladder':
+      return PhosphorIcons.regular.ladder;
+
+    case 'ladderSimple':
+      return PhosphorIcons.regular.ladderSimple;
+
+    case 'lamp':
+      return PhosphorIcons.regular.lamp;
+
+    case 'laptop':
+      return PhosphorIcons.regular.laptop;
+
+    case 'layout':
+      return PhosphorIcons.regular.layout;
+
+    case 'leaf':
+      return PhosphorIcons.regular.leaf;
+
+    case 'lifebuoy':
+      return PhosphorIcons.regular.lifebuoy;
+
+    case 'lightbulb':
+      return PhosphorIcons.regular.lightbulb;
+
+    case 'lightbulbFilament':
+      return PhosphorIcons.regular.lightbulbFilament;
+
+    case 'lighthouse':
+      return PhosphorIcons.regular.lighthouse;
+
+    case 'lightning':
+      return PhosphorIcons.regular.lightning;
+
+    case 'lightningA':
+      return PhosphorIcons.regular.lightningA;
+
+    case 'lightningSlash':
+      return PhosphorIcons.regular.lightningSlash;
+
+    case 'lineSegment':
+      return PhosphorIcons.regular.lineSegment;
+
+    case 'lineSegments':
+      return PhosphorIcons.regular.lineSegments;
+
+    case 'link':
+      return PhosphorIcons.regular.link;
+
+    case 'linkBreak':
+      return PhosphorIcons.regular.linkBreak;
+
+    case 'linkSimple':
+      return PhosphorIcons.regular.linkSimple;
+
+    case 'linkSimpleBreak':
+      return PhosphorIcons.regular.linkSimpleBreak;
+
+    case 'linkSimpleHorizontal':
+      return PhosphorIcons.regular.linkSimpleHorizontal;
+
+    case 'linkSimpleHorizontalBreak':
+      return PhosphorIcons.regular.linkSimpleHorizontalBreak;
+
+    case 'linkedinLogo':
+      return PhosphorIcons.regular.linkedinLogo;
+
+    case 'linuxLogo':
+      return PhosphorIcons.regular.linuxLogo;
+
+    case 'list':
+      return PhosphorIcons.regular.list;
+
+    case 'listBullets':
+      return PhosphorIcons.regular.listBullets;
+
+    case 'listChecks':
+      return PhosphorIcons.regular.listChecks;
+
+    case 'listDashes':
+      return PhosphorIcons.regular.listDashes;
+
+    case 'listMagnifyingGlass':
+      return PhosphorIcons.regular.listMagnifyingGlass;
+
+    case 'listNumbers':
+      return PhosphorIcons.regular.listNumbers;
+
+    case 'listPlus':
+      return PhosphorIcons.regular.listPlus;
+
+    case 'lock':
+      return PhosphorIcons.regular.lock;
+
+    case 'lockKey':
+      return PhosphorIcons.regular.lockKey;
+
+    case 'lockKeyOpen':
+      return PhosphorIcons.regular.lockKeyOpen;
+
+    case 'lockLaminated':
+      return PhosphorIcons.regular.lockLaminated;
+
+    case 'lockLaminatedOpen':
+      return PhosphorIcons.regular.lockLaminatedOpen;
+
+    case 'lockOpen':
+      return PhosphorIcons.regular.lockOpen;
+
+    case 'lockSimple':
+      return PhosphorIcons.regular.lockSimple;
+
+    case 'lockSimpleOpen':
+      return PhosphorIcons.regular.lockSimpleOpen;
+
+    case 'lockers':
+      return PhosphorIcons.regular.lockers;
+
+    case 'magicWand':
+      return PhosphorIcons.regular.magicWand;
+
+    case 'magnet':
+      return PhosphorIcons.regular.magnet;
+
+    case 'magnetStraight':
+      return PhosphorIcons.regular.magnetStraight;
+
+    case 'magnifyingGlass':
+      return PhosphorIcons.regular.magnifyingGlass;
+
+    case 'magnifyingGlassMinus':
+      return PhosphorIcons.regular.magnifyingGlassMinus;
+
+    case 'magnifyingGlassPlus':
+      return PhosphorIcons.regular.magnifyingGlassPlus;
+
+    case 'mapPin':
+      return PhosphorIcons.regular.mapPin;
+
+    case 'mapPinLine':
+      return PhosphorIcons.regular.mapPinLine;
+
+    case 'mapTrifold':
+      return PhosphorIcons.regular.mapTrifold;
+
+    case 'markerCircle':
+      return PhosphorIcons.regular.markerCircle;
+
+    case 'martini':
+      return PhosphorIcons.regular.martini;
+
+    case 'maskHappy':
+      return PhosphorIcons.regular.maskHappy;
+
+    case 'maskSad':
+      return PhosphorIcons.regular.maskSad;
+
+    case 'mathOperations':
+      return PhosphorIcons.regular.mathOperations;
+
+    case 'medal':
+      return PhosphorIcons.regular.medal;
+
+    case 'medalMilitary':
+      return PhosphorIcons.regular.medalMilitary;
+
+    case 'mediumLogo':
+      return PhosphorIcons.regular.mediumLogo;
+
+    case 'megaphone':
+      return PhosphorIcons.regular.megaphone;
+
+    case 'megaphoneSimple':
+      return PhosphorIcons.regular.megaphoneSimple;
+
+    case 'messengerLogo':
+      return PhosphorIcons.regular.messengerLogo;
+
+    case 'metaLogo':
+      return PhosphorIcons.regular.metaLogo;
+
+    case 'metronome':
+      return PhosphorIcons.regular.metronome;
+
+    case 'microphone':
+      return PhosphorIcons.regular.microphone;
+
+    case 'microphoneSlash':
+      return PhosphorIcons.regular.microphoneSlash;
+
+    case 'microphoneStage':
+      return PhosphorIcons.regular.microphoneStage;
+
+    case 'microsoftExcelLogo':
+      return PhosphorIcons.regular.microsoftExcelLogo;
+
+    case 'microsoftOutlookLogo':
+      return PhosphorIcons.regular.microsoftOutlookLogo;
+
+    case 'microsoftPowerpointLogo':
+      return PhosphorIcons.regular.microsoftPowerpointLogo;
+
+    case 'microsoftTeamsLogo':
+      return PhosphorIcons.regular.microsoftTeamsLogo;
+
+    case 'microsoftWordLogo':
+      return PhosphorIcons.regular.microsoftWordLogo;
+
+    case 'minus':
+      return PhosphorIcons.regular.minus;
+
+    case 'minusCircle':
+      return PhosphorIcons.regular.minusCircle;
+
+    case 'minusSquare':
+      return PhosphorIcons.regular.minusSquare;
+
+    case 'money':
+      return PhosphorIcons.regular.money;
+
+    case 'monitor':
+      return PhosphorIcons.regular.monitor;
+
+    case 'monitorPlay':
+      return PhosphorIcons.regular.monitorPlay;
+
+    case 'moon':
+      return PhosphorIcons.regular.moon;
+
+    case 'moonStars':
+      return PhosphorIcons.regular.moonStars;
+
+    case 'moped':
+      return PhosphorIcons.regular.moped;
+
+    case 'mopedFront':
+      return PhosphorIcons.regular.mopedFront;
+
+    case 'mosque':
+      return PhosphorIcons.regular.mosque;
+
+    case 'motorcycle':
+      return PhosphorIcons.regular.motorcycle;
+
+    case 'mountains':
+      return PhosphorIcons.regular.mountains;
+
+    case 'mouse':
+      return PhosphorIcons.regular.mouse;
+
+    case 'mouseSimple':
+      return PhosphorIcons.regular.mouseSimple;
+
+    case 'musicNote':
+      return PhosphorIcons.regular.musicNote;
+
+    case 'musicNoteSimple':
+      return PhosphorIcons.regular.musicNoteSimple;
+
+    case 'musicNotes':
+      return PhosphorIcons.regular.musicNotes;
+
+    case 'musicNotesPlus':
+      return PhosphorIcons.regular.musicNotesPlus;
+
+    case 'musicNotesSimple':
+      return PhosphorIcons.regular.musicNotesSimple;
+
+    case 'navigationArrow':
+      return PhosphorIcons.regular.navigationArrow;
+
+    case 'needle':
+      return PhosphorIcons.regular.needle;
+
+    case 'newspaper':
+      return PhosphorIcons.regular.newspaper;
+
+    case 'newspaperClipping':
+      return PhosphorIcons.regular.newspaperClipping;
+
+    case 'notches':
+      return PhosphorIcons.regular.notches;
+
+    case 'note':
+      return PhosphorIcons.regular.note;
+
+    case 'noteBlank':
+      return PhosphorIcons.regular.noteBlank;
+
+    case 'notePencil':
+      return PhosphorIcons.regular.notePencil;
+
+    case 'notebook':
+      return PhosphorIcons.regular.notebook;
+
+    case 'notepad':
+      return PhosphorIcons.regular.notepad;
+
+    case 'notification':
+      return PhosphorIcons.regular.notification;
+
+    case 'notionLogo':
+      return PhosphorIcons.regular.notionLogo;
+
+    case 'numberCircleEight':
+      return PhosphorIcons.regular.numberCircleEight;
+
+    case 'numberCircleFive':
+      return PhosphorIcons.regular.numberCircleFive;
+
+    case 'numberCircleFour':
+      return PhosphorIcons.regular.numberCircleFour;
+
+    case 'numberCircleNine':
+      return PhosphorIcons.regular.numberCircleNine;
+
+    case 'numberCircleOne':
+      return PhosphorIcons.regular.numberCircleOne;
+
+    case 'numberCircleSeven':
+      return PhosphorIcons.regular.numberCircleSeven;
+
+    case 'numberCircleSix':
+      return PhosphorIcons.regular.numberCircleSix;
+
+    case 'numberCircleThree':
+      return PhosphorIcons.regular.numberCircleThree;
+
+    case 'numberCircleTwo':
+      return PhosphorIcons.regular.numberCircleTwo;
+
+    case 'numberCircleZero':
+      return PhosphorIcons.regular.numberCircleZero;
+
+    case 'numberEight':
+      return PhosphorIcons.regular.numberEight;
+
+    case 'numberFive':
+      return PhosphorIcons.regular.numberFive;
+
+    case 'numberFour':
+      return PhosphorIcons.regular.numberFour;
+
+    case 'numberNine':
+      return PhosphorIcons.regular.numberNine;
+
+    case 'numberOne':
+      return PhosphorIcons.regular.numberOne;
+
+    case 'numberSeven':
+      return PhosphorIcons.regular.numberSeven;
+
+    case 'numberSix':
+      return PhosphorIcons.regular.numberSix;
+
+    case 'numberSquareEight':
+      return PhosphorIcons.regular.numberSquareEight;
+
+    case 'numberSquareFive':
+      return PhosphorIcons.regular.numberSquareFive;
+
+    case 'numberSquareFour':
+      return PhosphorIcons.regular.numberSquareFour;
+
+    case 'numberSquareNine':
+      return PhosphorIcons.regular.numberSquareNine;
+
+    case 'numberSquareOne':
+      return PhosphorIcons.regular.numberSquareOne;
+
+    case 'numberSquareSeven':
+      return PhosphorIcons.regular.numberSquareSeven;
+
+    case 'numberSquareSix':
+      return PhosphorIcons.regular.numberSquareSix;
+
+    case 'numberSquareThree':
+      return PhosphorIcons.regular.numberSquareThree;
+
+    case 'numberSquareTwo':
+      return PhosphorIcons.regular.numberSquareTwo;
+
+    case 'numberSquareZero':
+      return PhosphorIcons.regular.numberSquareZero;
+
+    case 'numberThree':
+      return PhosphorIcons.regular.numberThree;
+
+    case 'numberTwo':
+      return PhosphorIcons.regular.numberTwo;
+
+    case 'numberZero':
+      return PhosphorIcons.regular.numberZero;
+
+    case 'nut':
+      return PhosphorIcons.regular.nut;
+
+    case 'nyTimesLogo':
+      return PhosphorIcons.regular.nyTimesLogo;
+
+    case 'octagon':
+      return PhosphorIcons.regular.octagon;
+
+    case 'officeChair':
+      return PhosphorIcons.regular.officeChair;
+
+    case 'option':
+      return PhosphorIcons.regular.option;
+
+    case 'orangeSlice':
+      return PhosphorIcons.regular.orangeSlice;
+
+    case 'package':
+      return PhosphorIcons.regular.package;
+
+    case 'paintBrush':
+      return PhosphorIcons.regular.paintBrush;
+
+    case 'paintBrushBroad':
+      return PhosphorIcons.regular.paintBrushBroad;
+
+    case 'paintBrushHousehold':
+      return PhosphorIcons.regular.paintBrushHousehold;
+
+    case 'paintBucket':
+      return PhosphorIcons.regular.paintBucket;
+
+    case 'paintRoller':
+      return PhosphorIcons.regular.paintRoller;
+
+    case 'palette':
+      return PhosphorIcons.regular.palette;
+
+    case 'pants':
+      return PhosphorIcons.regular.pants;
+
+    case 'paperPlane':
+      return PhosphorIcons.regular.paperPlane;
+
+    case 'paperPlaneRight':
+      return PhosphorIcons.regular.paperPlaneRight;
+
+    case 'paperPlaneTilt':
+      return PhosphorIcons.regular.paperPlaneTilt;
+
+    case 'paperclip':
+      return PhosphorIcons.regular.paperclip;
+
+    case 'paperclipHorizontal':
+      return PhosphorIcons.regular.paperclipHorizontal;
+
+    case 'parachute':
+      return PhosphorIcons.regular.parachute;
+
+    case 'paragraph':
+      return PhosphorIcons.regular.paragraph;
+
+    case 'parallelogram':
+      return PhosphorIcons.regular.parallelogram;
+
+    case 'park':
+      return PhosphorIcons.regular.park;
+
+    case 'password':
+      return PhosphorIcons.regular.password;
+
+    case 'path':
+      return PhosphorIcons.regular.path;
+
+    case 'patreonLogo':
+      return PhosphorIcons.regular.patreonLogo;
+
+    case 'pause':
+      return PhosphorIcons.regular.pause;
+
+    case 'pauseCircle':
+      return PhosphorIcons.regular.pauseCircle;
+
+    case 'pawPrint':
+      return PhosphorIcons.regular.pawPrint;
+
+    case 'paypalLogo':
+      return PhosphorIcons.regular.paypalLogo;
+
+    case 'peace':
+      return PhosphorIcons.regular.peace;
+
+    case 'pen':
+      return PhosphorIcons.regular.pen;
+
+    case 'penNib':
+      return PhosphorIcons.regular.penNib;
+
+    case 'penNibStraight':
+      return PhosphorIcons.regular.penNibStraight;
+
+    case 'pencil':
+      return PhosphorIcons.regular.pencil;
+
+    case 'pencilCircle':
+      return PhosphorIcons.regular.pencilCircle;
+
+    case 'pencilLine':
+      return PhosphorIcons.regular.pencilLine;
+
+    case 'pencilSimple':
+      return PhosphorIcons.regular.pencilSimple;
+
+    case 'pencilSimpleLine':
+      return PhosphorIcons.regular.pencilSimpleLine;
+
+    case 'pencilSimpleSlash':
+      return PhosphorIcons.regular.pencilSimpleSlash;
+
+    case 'pencilSlash':
+      return PhosphorIcons.regular.pencilSlash;
+
+    case 'pentagram':
+      return PhosphorIcons.regular.pentagram;
+
+    case 'pepper':
+      return PhosphorIcons.regular.pepper;
+
+    case 'percent':
+      return PhosphorIcons.regular.percent;
+
+    case 'person':
+      return PhosphorIcons.regular.person;
+
+    case 'personArmsSpread':
+      return PhosphorIcons.regular.personArmsSpread;
+
+    case 'personSimple':
+      return PhosphorIcons.regular.personSimple;
+
+    case 'personSimpleBike':
+      return PhosphorIcons.regular.personSimpleBike;
+
+    case 'personSimpleRun':
+      return PhosphorIcons.regular.personSimpleRun;
+
+    case 'personSimpleThrow':
+      return PhosphorIcons.regular.personSimpleThrow;
+
+    case 'personSimpleWalk':
+      return PhosphorIcons.regular.personSimpleWalk;
+
+    case 'perspective':
+      return PhosphorIcons.regular.perspective;
+
+    case 'phone':
+      return PhosphorIcons.regular.phone;
+
+    case 'phoneCall':
+      return PhosphorIcons.regular.phoneCall;
+
+    case 'phoneDisconnect':
+      return PhosphorIcons.regular.phoneDisconnect;
+
+    case 'phoneIncoming':
+      return PhosphorIcons.regular.phoneIncoming;
+
+    case 'phoneOutgoing':
+      return PhosphorIcons.regular.phoneOutgoing;
+
+    case 'phonePlus':
+      return PhosphorIcons.regular.phonePlus;
+
+    case 'phoneSlash':
+      return PhosphorIcons.regular.phoneSlash;
+
+    case 'phoneX':
+      return PhosphorIcons.regular.phoneX;
+
+    case 'phosphorLogo':
+      return PhosphorIcons.regular.phosphorLogo;
+
+    case 'pi':
+      return PhosphorIcons.regular.pi;
+
+    case 'pianoKeys':
+      return PhosphorIcons.regular.pianoKeys;
+
+    case 'pictureInpicture':
+      return PhosphorIcons.regular.pictureInpicture;
+
+    case 'piggyBank':
+      return PhosphorIcons.regular.piggyBank;
+
+    case 'pill':
+      return PhosphorIcons.regular.pill;
+
+    case 'pinterestLogo':
+      return PhosphorIcons.regular.pinterestLogo;
+
+    case 'pinwheel':
+      return PhosphorIcons.regular.pinwheel;
+
+    case 'pizza':
+      return PhosphorIcons.regular.pizza;
+
+    case 'placeholder':
+      return PhosphorIcons.regular.placeholder;
+
+    case 'planet':
+      return PhosphorIcons.regular.planet;
+
+    case 'plant':
+      return PhosphorIcons.regular.plant;
+
+    case 'play':
+      return PhosphorIcons.regular.play;
+
+    case 'playCircle':
+      return PhosphorIcons.regular.playCircle;
+
+    case 'playPause':
+      return PhosphorIcons.regular.playPause;
+
+    case 'playlist':
+      return PhosphorIcons.regular.playlist;
+
+    case 'plug':
+      return PhosphorIcons.regular.plug;
+
+    case 'plugCharging':
+      return PhosphorIcons.regular.plugCharging;
+
+    case 'plugs':
+      return PhosphorIcons.regular.plugs;
+
+    case 'plugsConnected':
+      return PhosphorIcons.regular.plugsConnected;
+
+    case 'plus':
+      return PhosphorIcons.regular.plus;
+
+    case 'plusCircle':
+      return PhosphorIcons.regular.plusCircle;
+
+    case 'plusMinus':
+      return PhosphorIcons.regular.plusMinus;
+
+    case 'plusSquare':
+      return PhosphorIcons.regular.plusSquare;
+
+    case 'pokerChip':
+      return PhosphorIcons.regular.pokerChip;
+
+    case 'policeCar':
+      return PhosphorIcons.regular.policeCar;
+
+    case 'polygon':
+      return PhosphorIcons.regular.polygon;
+
+    case 'popcorn':
+      return PhosphorIcons.regular.popcorn;
+
+    case 'pottedPlant':
+      return PhosphorIcons.regular.pottedPlant;
+
+    case 'power':
+      return PhosphorIcons.regular.power;
+
+    case 'prescription':
+      return PhosphorIcons.regular.prescription;
+
+    case 'presentation':
+      return PhosphorIcons.regular.presentation;
+
+    case 'presentationChart':
+      return PhosphorIcons.regular.presentationChart;
+
+    case 'printer':
+      return PhosphorIcons.regular.printer;
+
+    case 'prohibit':
+      return PhosphorIcons.regular.prohibit;
+
+    case 'prohibitInset':
+      return PhosphorIcons.regular.prohibitInset;
+
+    case 'projectorScreen':
+      return PhosphorIcons.regular.projectorScreen;
+
+    case 'projectorScreenChart':
+      return PhosphorIcons.regular.projectorScreenChart;
+
+    case 'pulse':
+      return PhosphorIcons.regular.pulse;
+
+    case 'pushPin':
+      return PhosphorIcons.regular.pushPin;
+
+    case 'pushPinSimple':
+      return PhosphorIcons.regular.pushPinSimple;
+
+    case 'pushPinSimpleSlash':
+      return PhosphorIcons.regular.pushPinSimpleSlash;
+
+    case 'pushPinSlash':
+      return PhosphorIcons.regular.pushPinSlash;
+
+    case 'puzzlePiece':
+      return PhosphorIcons.regular.puzzlePiece;
+
+    case 'qrCode':
+      return PhosphorIcons.regular.qrCode;
+
+    case 'question':
+      return PhosphorIcons.regular.question;
+
+    case 'queue':
+      return PhosphorIcons.regular.queue;
+
+    case 'quotes':
+      return PhosphorIcons.regular.quotes;
+
+    case 'radical':
+      return PhosphorIcons.regular.radical;
+
+    case 'radio':
+      return PhosphorIcons.regular.radio;
+
+    case 'radioButton':
+      return PhosphorIcons.regular.radioButton;
+
+    case 'radioactive':
+      return PhosphorIcons.regular.radioactive;
+
+    case 'rainbow':
+      return PhosphorIcons.regular.rainbow;
+
+    case 'rainbowCloud':
+      return PhosphorIcons.regular.rainbowCloud;
+
+    case 'readCvLogo':
+      return PhosphorIcons.regular.readCvLogo;
+
+    case 'receipt':
+      return PhosphorIcons.regular.receipt;
+
+    case 'receiptX':
+      return PhosphorIcons.regular.receiptX;
+
+    case 'record':
+      return PhosphorIcons.regular.record;
+
+    case 'rectangle':
+      return PhosphorIcons.regular.rectangle;
+
+    case 'recycle':
+      return PhosphorIcons.regular.recycle;
+
+    case 'redditLogo':
+      return PhosphorIcons.regular.redditLogo;
+
+    case 'repeat':
+      return PhosphorIcons.regular.repeat;
+
+    case 'repeatOnce':
+      return PhosphorIcons.regular.repeatOnce;
+
+    case 'rewind':
+      return PhosphorIcons.regular.rewind;
+
+    case 'rewindCircle':
+      return PhosphorIcons.regular.rewindCircle;
+
+    case 'roadHorizon':
+      return PhosphorIcons.regular.roadHorizon;
+
+    case 'robot':
+      return PhosphorIcons.regular.robot;
+
+    case 'rocket':
+      return PhosphorIcons.regular.rocket;
+
+    case 'rocketLaunch':
+      return PhosphorIcons.regular.rocketLaunch;
+
+    case 'rows':
+      return PhosphorIcons.regular.rows;
+
+    case 'rss':
+      return PhosphorIcons.regular.rss;
+
+    case 'rssSimple':
+      return PhosphorIcons.regular.rssSimple;
+
+    case 'rug':
+      return PhosphorIcons.regular.rug;
+
+    case 'ruler':
+      return PhosphorIcons.regular.ruler;
+
+    case 'scales':
+      return PhosphorIcons.regular.scales;
+
+    case 'scan':
+      return PhosphorIcons.regular.scan;
+
+    case 'scissors':
+      return PhosphorIcons.regular.scissors;
+
+    case 'scooter':
+      return PhosphorIcons.regular.scooter;
+
+    case 'screencast':
+      return PhosphorIcons.regular.screencast;
+
+    case 'scribbleLoop':
+      return PhosphorIcons.regular.scribbleLoop;
+
+    case 'scroll':
+      return PhosphorIcons.regular.scroll;
+
+    case 'seal':
+      return PhosphorIcons.regular.seal;
+
+    case 'sealCheck':
+      return PhosphorIcons.regular.sealCheck;
+
+    case 'sealQuestion':
+      return PhosphorIcons.regular.sealQuestion;
+
+    case 'sealWarning':
+      return PhosphorIcons.regular.sealWarning;
+
+    case 'selection':
+      return PhosphorIcons.regular.selection;
+
+    case 'selectionAll':
+      return PhosphorIcons.regular.selectionAll;
+
+    case 'selectionBackground':
+      return PhosphorIcons.regular.selectionBackground;
+
+    case 'selectionForeground':
+      return PhosphorIcons.regular.selectionForeground;
+
+    case 'selectionInverse':
+      return PhosphorIcons.regular.selectionInverse;
+
+    case 'selectionPlus':
+      return PhosphorIcons.regular.selectionPlus;
+
+    case 'selectionSlash':
+      return PhosphorIcons.regular.selectionSlash;
+
+    case 'shapes':
+      return PhosphorIcons.regular.shapes;
+
+    case 'share':
+      return PhosphorIcons.regular.share;
+
+    case 'shareFat':
+      return PhosphorIcons.regular.shareFat;
+
+    case 'shareNetwork':
+      return PhosphorIcons.regular.shareNetwork;
+
+    case 'shield':
+      return PhosphorIcons.regular.shield;
+
+    case 'shieldCheck':
+      return PhosphorIcons.regular.shieldCheck;
+
+    case 'shieldCheckered':
+      return PhosphorIcons.regular.shieldCheckered;
+
+    case 'shieldChevron':
+      return PhosphorIcons.regular.shieldChevron;
+
+    case 'shieldPlus':
+      return PhosphorIcons.regular.shieldPlus;
+
+    case 'shieldSlash':
+      return PhosphorIcons.regular.shieldSlash;
+
+    case 'shieldStar':
+      return PhosphorIcons.regular.shieldStar;
+
+    case 'shieldWarning':
+      return PhosphorIcons.regular.shieldWarning;
+
+    case 'shirtFolded':
+      return PhosphorIcons.regular.shirtFolded;
+
+    case 'shootingStar':
+      return PhosphorIcons.regular.shootingStar;
+
+    case 'shoppingBag':
+      return PhosphorIcons.regular.shoppingBag;
+
+    case 'shoppingBagOpen':
+      return PhosphorIcons.regular.shoppingBagOpen;
+
+    case 'shoppingCart':
+      return PhosphorIcons.regular.shoppingCart;
+
+    case 'shoppingCartSimple':
+      return PhosphorIcons.regular.shoppingCartSimple;
+
+    case 'shower':
+      return PhosphorIcons.regular.shower;
+
+    case 'shrimp':
+      return PhosphorIcons.regular.shrimp;
+
+    case 'shuffle':
+      return PhosphorIcons.regular.shuffle;
+
+    case 'shuffleAngular':
+      return PhosphorIcons.regular.shuffleAngular;
+
+    case 'shuffleSimple':
+      return PhosphorIcons.regular.shuffleSimple;
+
+    case 'sidebar':
+      return PhosphorIcons.regular.sidebar;
+
+    case 'sidebarSimple':
+      return PhosphorIcons.regular.sidebarSimple;
+
+    case 'sigma':
+      return PhosphorIcons.regular.sigma;
+
+    case 'signIn':
+      return PhosphorIcons.regular.signIn;
+
+    case 'signOut':
+      return PhosphorIcons.regular.signOut;
+
+    case 'signature':
+      return PhosphorIcons.regular.signature;
+
+    case 'signpost':
+      return PhosphorIcons.regular.signpost;
+
+    case 'simCard':
+      return PhosphorIcons.regular.simCard;
+
+    case 'siren':
+      return PhosphorIcons.regular.siren;
+
+    case 'sketchLogo':
+      return PhosphorIcons.regular.sketchLogo;
+
+    case 'skipBack':
+      return PhosphorIcons.regular.skipBack;
+
+    case 'skipBackCircle':
+      return PhosphorIcons.regular.skipBackCircle;
+
+    case 'skipForward':
+      return PhosphorIcons.regular.skipForward;
+
+    case 'skipForwardCircle':
+      return PhosphorIcons.regular.skipForwardCircle;
+
+    case 'skull':
+      return PhosphorIcons.regular.skull;
+
+    case 'slackLogo':
+      return PhosphorIcons.regular.slackLogo;
+
+    case 'sliders':
+      return PhosphorIcons.regular.sliders;
+
+    case 'slidersHorizontal':
+      return PhosphorIcons.regular.slidersHorizontal;
+
+    case 'slideshow':
+      return PhosphorIcons.regular.slideshow;
+
+    case 'smiley':
+      return PhosphorIcons.regular.smiley;
+
+    case 'smileyAngry':
+      return PhosphorIcons.regular.smileyAngry;
+
+    case 'smileyBlank':
+      return PhosphorIcons.regular.smileyBlank;
+
+    case 'smileyMeh':
+      return PhosphorIcons.regular.smileyMeh;
+
+    case 'smileyNervous':
+      return PhosphorIcons.regular.smileyNervous;
+
+    case 'smileySad':
+      return PhosphorIcons.regular.smileySad;
+
+    case 'smileySticker':
+      return PhosphorIcons.regular.smileySticker;
+
+    case 'smileyWink':
+      return PhosphorIcons.regular.smileyWink;
+
+    case 'smileyXEyes':
+      return PhosphorIcons.regular.smileyXEyes;
+
+    case 'snapchatLogo':
+      return PhosphorIcons.regular.snapchatLogo;
+
+    case 'sneaker':
+      return PhosphorIcons.regular.sneaker;
+
+    case 'sneakerMove':
+      return PhosphorIcons.regular.sneakerMove;
+
+    case 'snowflake':
+      return PhosphorIcons.regular.snowflake;
+
+    case 'soccerBall':
+      return PhosphorIcons.regular.soccerBall;
+
+    case 'sortAscending':
+      return PhosphorIcons.regular.sortAscending;
+
+    case 'sortDescending':
+      return PhosphorIcons.regular.sortDescending;
+
+    case 'soundcloudLogo':
+      return PhosphorIcons.regular.soundcloudLogo;
+
+    case 'spade':
+      return PhosphorIcons.regular.spade;
+
+    case 'sparkle':
+      return PhosphorIcons.regular.sparkle;
+
+    case 'speakerHifi':
+      return PhosphorIcons.regular.speakerHifi;
+
+    case 'speakerHigh':
+      return PhosphorIcons.regular.speakerHigh;
+
+    case 'speakerLow':
+      return PhosphorIcons.regular.speakerLow;
+
+    case 'speakerNone':
+      return PhosphorIcons.regular.speakerNone;
+
+    case 'speakerSimpleHigh':
+      return PhosphorIcons.regular.speakerSimpleHigh;
+
+    case 'speakerSimpleLow':
+      return PhosphorIcons.regular.speakerSimpleLow;
+
+    case 'speakerSimpleNone':
+      return PhosphorIcons.regular.speakerSimpleNone;
+
+    case 'speakerSimpleSlash':
+      return PhosphorIcons.regular.speakerSimpleSlash;
+
+    case 'speakerSimpleX':
+      return PhosphorIcons.regular.speakerSimpleX;
+
+    case 'speakerSlash':
+      return PhosphorIcons.regular.speakerSlash;
+
+    case 'speakerX':
+      return PhosphorIcons.regular.speakerX;
+
+    case 'spinner':
+      return PhosphorIcons.regular.spinner;
+
+    case 'spinnerGap':
+      return PhosphorIcons.regular.spinnerGap;
+
+    case 'spiral':
+      return PhosphorIcons.regular.spiral;
+
+    case 'splitHorizontal':
+      return PhosphorIcons.regular.splitHorizontal;
+
+    case 'splitVertical':
+      return PhosphorIcons.regular.splitVertical;
+
+    case 'spotifyLogo':
+      return PhosphorIcons.regular.spotifyLogo;
+
+    case 'square':
+      return PhosphorIcons.regular.square;
+
+    case 'squareHalf':
+      return PhosphorIcons.regular.squareHalf;
+
+    case 'squareHalfBottom':
+      return PhosphorIcons.regular.squareHalfBottom;
+
+    case 'squareLogo':
+      return PhosphorIcons.regular.squareLogo;
+
+    case 'squareSplitHorizontal':
+      return PhosphorIcons.regular.squareSplitHorizontal;
+
+    case 'squareSplitVertical':
+      return PhosphorIcons.regular.squareSplitVertical;
+
+    case 'squaresFour':
+      return PhosphorIcons.regular.squaresFour;
+
+    case 'stack':
+      return PhosphorIcons.regular.stack;
+
+    case 'stackOverflowLogo':
+      return PhosphorIcons.regular.stackOverflowLogo;
+
+    case 'stackSimple':
+      return PhosphorIcons.regular.stackSimple;
+
+    case 'stairs':
+      return PhosphorIcons.regular.stairs;
+
+    case 'stamp':
+      return PhosphorIcons.regular.stamp;
+
+    case 'star':
+      return PhosphorIcons.regular.star;
+
+    case 'starAndCrescent':
+      return PhosphorIcons.regular.starAndCrescent;
+
+    case 'starFour':
+      return PhosphorIcons.regular.starFour;
+
+    case 'starHalf':
+      return PhosphorIcons.regular.starHalf;
+
+    case 'starOfDavid':
+      return PhosphorIcons.regular.starOfDavid;
+
+    case 'steeringWheel':
+      return PhosphorIcons.regular.steeringWheel;
+
+    case 'steps':
+      return PhosphorIcons.regular.steps;
+
+    case 'stethoscope':
+      return PhosphorIcons.regular.stethoscope;
+
+    case 'sticker':
+      return PhosphorIcons.regular.sticker;
+
+    case 'stool':
+      return PhosphorIcons.regular.stool;
+
+    case 'stop':
+      return PhosphorIcons.regular.stop;
+
+    case 'stopCircle':
+      return PhosphorIcons.regular.stopCircle;
+
+    case 'storefront':
+      return PhosphorIcons.regular.storefront;
+
+    case 'strategy':
+      return PhosphorIcons.regular.strategy;
+
+    case 'stripeLogo':
+      return PhosphorIcons.regular.stripeLogo;
+
+    case 'student':
+      return PhosphorIcons.regular.student;
+
+    case 'subtitles':
+      return PhosphorIcons.regular.subtitles;
+
+    case 'subtract':
+      return PhosphorIcons.regular.subtract;
+
+    case 'subtractSquare':
+      return PhosphorIcons.regular.subtractSquare;
+
+    case 'suitcase':
+      return PhosphorIcons.regular.suitcase;
+
+    case 'suitcaseRolling':
+      return PhosphorIcons.regular.suitcaseRolling;
+
+    case 'suitcaseSimple':
+      return PhosphorIcons.regular.suitcaseSimple;
+
+    case 'sun':
+      return PhosphorIcons.regular.sun;
+
+    case 'sunDim':
+      return PhosphorIcons.regular.sunDim;
+
+    case 'sunHorizon':
+      return PhosphorIcons.regular.sunHorizon;
+
+    case 'sunglasses':
+      return PhosphorIcons.regular.sunglasses;
+
+    case 'swap':
+      return PhosphorIcons.regular.swap;
+
+    case 'swatches':
+      return PhosphorIcons.regular.swatches;
+
+    case 'swimmingPool':
+      return PhosphorIcons.regular.swimmingPool;
+
+    case 'sword':
+      return PhosphorIcons.regular.sword;
+
+    case 'synagogue':
+      return PhosphorIcons.regular.synagogue;
+
+    case 'syringe':
+      return PhosphorIcons.regular.syringe;
+
+    case 'tShirt':
+      return PhosphorIcons.regular.tShirt;
+
+    case 'table':
+      return PhosphorIcons.regular.table;
+
+    case 'tabs':
+      return PhosphorIcons.regular.tabs;
+
+    case 'tag':
+      return PhosphorIcons.regular.tag;
+
+    case 'tagChevron':
+      return PhosphorIcons.regular.tagChevron;
+
+    case 'tagSimple':
+      return PhosphorIcons.regular.tagSimple;
+
+    case 'target':
+      return PhosphorIcons.regular.target;
+
+    case 'taxi':
+      return PhosphorIcons.regular.taxi;
+
+    case 'telegramLogo':
+      return PhosphorIcons.regular.telegramLogo;
+
+    case 'television':
+      return PhosphorIcons.regular.television;
+
+    case 'televisionSimple':
+      return PhosphorIcons.regular.televisionSimple;
+
+    case 'tennisBall':
+      return PhosphorIcons.regular.tennisBall;
+
+    case 'tent':
+      return PhosphorIcons.regular.tent;
+
+    case 'terminal':
+      return PhosphorIcons.regular.terminal;
+
+    case 'terminalWindow':
+      return PhosphorIcons.regular.terminalWindow;
+
+    case 'testTube':
+      return PhosphorIcons.regular.testTube;
+
+    case 'textAUnderline':
+      return PhosphorIcons.regular.textAUnderline;
+
+    case 'textAa':
+      return PhosphorIcons.regular.textAa;
+
+    case 'textAlignCenter':
+      return PhosphorIcons.regular.textAlignCenter;
+
+    case 'textAlignJustify':
+      return PhosphorIcons.regular.textAlignJustify;
+
+    case 'textAlignLeft':
+      return PhosphorIcons.regular.textAlignLeft;
+
+    case 'textAlignRight':
+      return PhosphorIcons.regular.textAlignRight;
+
+    case 'textB':
+      return PhosphorIcons.regular.textB;
+
+    case 'textColumns':
+      return PhosphorIcons.regular.textColumns;
+
+    case 'textH':
+      return PhosphorIcons.regular.textH;
+
+    case 'textHFive':
+      return PhosphorIcons.regular.textHFive;
+
+    case 'textHFour':
+      return PhosphorIcons.regular.textHFour;
+
+    case 'textHOne':
+      return PhosphorIcons.regular.textHOne;
+
+    case 'textHSix':
+      return PhosphorIcons.regular.textHSix;
+
+    case 'textHThree':
+      return PhosphorIcons.regular.textHThree;
+
+    case 'textHTwo':
+      return PhosphorIcons.regular.textHTwo;
+
+    case 'textIndent':
+      return PhosphorIcons.regular.textIndent;
+
+    case 'textItalic':
+      return PhosphorIcons.regular.textItalic;
+
+    case 'textOutdent':
+      return PhosphorIcons.regular.textOutdent;
+
+    case 'textStrikethrough':
+      return PhosphorIcons.regular.textStrikethrough;
+
+    case 'textT':
+      return PhosphorIcons.regular.textT;
+
+    case 'textUnderline':
+      return PhosphorIcons.regular.textUnderline;
+
+    case 'textbox':
+      return PhosphorIcons.regular.textbox;
+
+    case 'thermometer':
+      return PhosphorIcons.regular.thermometer;
+
+    case 'thermometerCold':
+      return PhosphorIcons.regular.thermometerCold;
+
+    case 'thermometerHot':
+      return PhosphorIcons.regular.thermometerHot;
+
+    case 'thermometerSimple':
+      return PhosphorIcons.regular.thermometerSimple;
+
+    case 'thumbsDown':
+      return PhosphorIcons.regular.thumbsDown;
+
+    case 'thumbsUp':
+      return PhosphorIcons.regular.thumbsUp;
+
+    case 'ticket':
+      return PhosphorIcons.regular.ticket;
+
+    case 'tidalLogo':
+      return PhosphorIcons.regular.tidalLogo;
+
+    case 'tiktokLogo':
+      return PhosphorIcons.regular.tiktokLogo;
+
+    case 'timer':
+      return PhosphorIcons.regular.timer;
+
+    case 'tipi':
+      return PhosphorIcons.regular.tipi;
+
+    case 'toggleLeft':
+      return PhosphorIcons.regular.toggleLeft;
+
+    case 'toggleRight':
+      return PhosphorIcons.regular.toggleRight;
+
+    case 'toilet':
+      return PhosphorIcons.regular.toilet;
+
+    case 'toiletPaper':
+      return PhosphorIcons.regular.toiletPaper;
+
+    case 'toolbox':
+      return PhosphorIcons.regular.toolbox;
+
+    case 'tooth':
+      return PhosphorIcons.regular.tooth;
+
+    case 'tote':
+      return PhosphorIcons.regular.tote;
+
+    case 'toteSimple':
+      return PhosphorIcons.regular.toteSimple;
+
+    case 'trademark':
+      return PhosphorIcons.regular.trademark;
+
+    case 'trademarkRegistered':
+      return PhosphorIcons.regular.trademarkRegistered;
+
+    case 'trafficCone':
+      return PhosphorIcons.regular.trafficCone;
+
+    case 'trafficSign':
+      return PhosphorIcons.regular.trafficSign;
+
+    case 'trafficSignal':
+      return PhosphorIcons.regular.trafficSignal;
+
+    case 'train':
+      return PhosphorIcons.regular.train;
+
+    case 'trainRegional':
+      return PhosphorIcons.regular.trainRegional;
+
+    case 'trainSimple':
+      return PhosphorIcons.regular.trainSimple;
+
+    case 'tram':
+      return PhosphorIcons.regular.tram;
+
+    case 'translate':
+      return PhosphorIcons.regular.translate;
+
+    case 'trash':
+      return PhosphorIcons.regular.trash;
+
+    case 'trashSimple':
+      return PhosphorIcons.regular.trashSimple;
+
+    case 'tray':
+      return PhosphorIcons.regular.tray;
+
+    case 'tree':
+      return PhosphorIcons.regular.tree;
+
+    case 'treeEvergreen':
+      return PhosphorIcons.regular.treeEvergreen;
+
+    case 'treePalm':
+      return PhosphorIcons.regular.treePalm;
+
+    case 'treeStructure':
+      return PhosphorIcons.regular.treeStructure;
+
+    case 'trendDown':
+      return PhosphorIcons.regular.trendDown;
+
+    case 'trendUp':
+      return PhosphorIcons.regular.trendUp;
+
+    case 'triangle':
+      return PhosphorIcons.regular.triangle;
+
+    case 'trophy':
+      return PhosphorIcons.regular.trophy;
+
+    case 'truck':
+      return PhosphorIcons.regular.truck;
+
+    case 'twitchLogo':
+      return PhosphorIcons.regular.twitchLogo;
+
+    case 'twitterLogo':
+      return PhosphorIcons.regular.twitterLogo;
+
+    case 'umbrella':
+      return PhosphorIcons.regular.umbrella;
+
+    case 'umbrellaSimple':
+      return PhosphorIcons.regular.umbrellaSimple;
+
+    case 'unite':
+      return PhosphorIcons.regular.unite;
+
+    case 'uniteSquare':
+      return PhosphorIcons.regular.uniteSquare;
+
+    case 'upload':
+      return PhosphorIcons.regular.upload;
+
+    case 'uploadSimple':
+      return PhosphorIcons.regular.uploadSimple;
+
+    case 'usb':
+      return PhosphorIcons.regular.usb;
+
+    case 'user':
+      return PhosphorIcons.regular.user;
+
+    case 'userCircle':
+      return PhosphorIcons.regular.userCircle;
+
+    case 'userCircleGear':
+      return PhosphorIcons.regular.userCircleGear;
+
+    case 'userCircleMinus':
+      return PhosphorIcons.regular.userCircleMinus;
+
+    case 'userCirclePlus':
+      return PhosphorIcons.regular.userCirclePlus;
+
+    case 'userFocus':
+      return PhosphorIcons.regular.userFocus;
+
+    case 'userGear':
+      return PhosphorIcons.regular.userGear;
+
+    case 'userList':
+      return PhosphorIcons.regular.userList;
+
+    case 'userMinus':
+      return PhosphorIcons.regular.userMinus;
+
+    case 'userPlus':
+      return PhosphorIcons.regular.userPlus;
+
+    case 'userRectangle':
+      return PhosphorIcons.regular.userRectangle;
+
+    case 'userSquare':
+      return PhosphorIcons.regular.userSquare;
+
+    case 'userSwitch':
+      return PhosphorIcons.regular.userSwitch;
+
+    case 'users':
+      return PhosphorIcons.regular.users;
+
+    case 'usersFour':
+      return PhosphorIcons.regular.usersFour;
+
+    case 'usersThree':
+      return PhosphorIcons.regular.usersThree;
+
+    case 'van':
+      return PhosphorIcons.regular.van;
+
+    case 'vault':
+      return PhosphorIcons.regular.vault;
+
+    case 'vibrate':
+      return PhosphorIcons.regular.vibrate;
+
+    case 'video':
+      return PhosphorIcons.regular.video;
+
+    case 'videoCamera':
+      return PhosphorIcons.regular.videoCamera;
+
+    case 'videoCameraSlash':
+      return PhosphorIcons.regular.videoCameraSlash;
+
+    case 'vignette':
+      return PhosphorIcons.regular.vignette;
+
+    case 'vinylRecord':
+      return PhosphorIcons.regular.vinylRecord;
+
+    case 'virtualReality':
+      return PhosphorIcons.regular.virtualReality;
+
+    case 'virus':
+      return PhosphorIcons.regular.virus;
+
+    case 'voicemail':
+      return PhosphorIcons.regular.voicemail;
+
+    case 'volleyball':
+      return PhosphorIcons.regular.volleyball;
+
+    case 'wall':
+      return PhosphorIcons.regular.wall;
+
+    case 'wallet':
+      return PhosphorIcons.regular.wallet;
+
+    case 'warehouse':
+      return PhosphorIcons.regular.warehouse;
+
+    case 'warning':
+      return PhosphorIcons.regular.warning;
+
+    case 'warningCircle':
+      return PhosphorIcons.regular.warningCircle;
+
+    case 'warningDiamond':
+      return PhosphorIcons.regular.warningDiamond;
+
+    case 'warningOctagon':
+      return PhosphorIcons.regular.warningOctagon;
+
+    case 'watch':
+      return PhosphorIcons.regular.watch;
+
+    case 'waveSawtooth':
+      return PhosphorIcons.regular.waveSawtooth;
+
+    case 'waveSine':
+      return PhosphorIcons.regular.waveSine;
+
+    case 'waveSquare':
+      return PhosphorIcons.regular.waveSquare;
+
+    case 'waveTriangle':
+      return PhosphorIcons.regular.waveTriangle;
+
+    case 'waveform':
+      return PhosphorIcons.regular.waveform;
+
+    case 'waves':
+      return PhosphorIcons.regular.waves;
+
+    case 'webcam':
+      return PhosphorIcons.regular.webcam;
+
+    case 'webcamSlash':
+      return PhosphorIcons.regular.webcamSlash;
+
+    case 'webhooksLogo':
+      return PhosphorIcons.regular.webhooksLogo;
+
+    case 'wechatLogo':
+      return PhosphorIcons.regular.wechatLogo;
+
+    case 'whatsappLogo':
+      return PhosphorIcons.regular.whatsappLogo;
+
+    case 'wheelchair':
+      return PhosphorIcons.regular.wheelchair;
+
+    case 'wheelchairMotion':
+      return PhosphorIcons.regular.wheelchairMotion;
+
+    case 'wifiHigh':
+      return PhosphorIcons.regular.wifiHigh;
+
+    case 'wifiLow':
+      return PhosphorIcons.regular.wifiLow;
+
+    case 'wifiMedium':
+      return PhosphorIcons.regular.wifiMedium;
+
+    case 'wifiNone':
+      return PhosphorIcons.regular.wifiNone;
+
+    case 'wifiSlash':
+      return PhosphorIcons.regular.wifiSlash;
+
+    case 'wifiX':
+      return PhosphorIcons.regular.wifiX;
+
+    case 'wind':
+      return PhosphorIcons.regular.wind;
+
+    case 'windowsLogo':
+      return PhosphorIcons.regular.windowsLogo;
+
+    case 'wine':
+      return PhosphorIcons.regular.wine;
+
+    case 'wrench':
+      return PhosphorIcons.regular.wrench;
+
+    case 'x':
+      return PhosphorIcons.regular.x;
+
+    case 'xCircle':
+      return PhosphorIcons.regular.xCircle;
+
+    case 'xSquare':
+      return PhosphorIcons.regular.xSquare;
+
+    case 'yinYang':
+      return PhosphorIcons.regular.yinYang;
+
+    case 'youtubeLogo':
+      return PhosphorIcons.regular.youtubeLogo;
+
+    default:
+      return PhosphorIcons.regular.info;
   }
 }
-

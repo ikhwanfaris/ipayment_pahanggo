@@ -125,7 +125,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    "Forgot User ID?".tr,
+                    "Forgot user ID?".tr,
                     style: styles.heading6,
                   ),
                 ),

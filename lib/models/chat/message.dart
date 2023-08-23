@@ -14,6 +14,7 @@ class ChatMessage {
   String? created_at;
   String? updated_at;
   GetAdmin? user;
+  GetRole? role;
 
   ChatMessage(
       {required this.id,
@@ -33,6 +34,9 @@ class ChatMessage {
     if (json.containsKey('user') && json['user'] != null) {
       user = GetAdmin.fromJson(json['user']);
     }
+    if (json.containsKey('user') && json['user']['role'] != null) {
+      role = GetRole.fromJson(json['user']['role']);
+    }
   }
 }
 
@@ -51,5 +55,17 @@ class GetAdmin {
     id = json['id'];
     first_name = json['first_name'] ?? '';
     last_name = json['last_name'] ?? '';
+  }
+}
+
+class GetRole {
+  String? name;
+
+  GetRole({
+    this.name,
+  });
+
+  GetRole.fromJson(Map<String, dynamic> json) {
+    name = json['name'] ?? '';
   }
 }

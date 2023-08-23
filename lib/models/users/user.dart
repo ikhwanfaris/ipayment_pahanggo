@@ -7,6 +7,8 @@ class User {
   String? lastName;
   String? username;
   String? email;
+  String? officialEmail;
+  String? personalEmail;
   int? identityTypeId;
   String? identityNo;
   String? phoneNo;
@@ -35,6 +37,8 @@ class User {
     this.lastName,
     this.username,
     this.email,
+    this.officialEmail,
+    this.personalEmail,
     this.identityTypeId,
     this.identityNo,
     this.phoneNo,
@@ -62,6 +66,11 @@ class User {
     lastName = json['last_name'];
     username = json['username'];
     email = json['email'];
+
+    if (json['official_email'] != null) {
+      officialEmail = json['official_email'];
+    }
+    personalEmail = json['personal_email'];
     identityTypeId = json['user_identity_type_id'];
     identityNo = json['ic_no'];
     phoneNo = json['phone_no'];

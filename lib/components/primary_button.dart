@@ -30,27 +30,30 @@ class PrimaryButton extends StatelessWidget {
       onPressed: isLoading ? null : onPressed,
       child: isLoading
           ? const CircularProgressIndicator()
-          : SizedBox(
+          : Container(
               width: double.infinity,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    text.toTitleCase(),
-                    style: styles.raisedButtonTextWhite,
-                    textAlign: TextAlign.center,
-                  ),
-                  ...(subText != null
-                      ? [
-                          Text(
-                            (subText ?? '').toTitleCase(),
-                            style: styles.raisedButtonTextWhite,
-                            textAlign: TextAlign.center,
-                            textScaleFactor: 0.8,
-                          )
-                        ]
-                      : [SizedBox.shrink()])
-                ],
+              constraints: BoxConstraints(maxHeight: 100),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      text.toTitleCase(),
+                      style: styles.raisedButtonTextWhite,
+                      textAlign: TextAlign.center,
+                    ),
+                    ...(subText != null
+                        ? [
+                            Text(
+                              (subText ?? '').toTitleCase(),
+                              style: styles.raisedButtonTextWhite,
+                              textAlign: TextAlign.center,
+                              textScaleFactor: 0.8,
+                            )
+                          ]
+                        : [SizedBox.shrink()])
+                  ],
+                ),
               ),
             ),
     );

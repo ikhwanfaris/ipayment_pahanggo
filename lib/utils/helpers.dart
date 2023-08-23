@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutterbase/api/api.dart';
@@ -7,7 +9,7 @@ import 'package:flutterbase/components/popup_button.dart';
 import 'package:flutterbase/components/popper_generator.dart';
 import 'package:flutterbase/controller/home_controller.dart';
 import 'package:flutterbase/screens/auth/login.dart';
-import 'package:flutterbase/screens/content/home/menu.dart';
+import 'package:flutterbase/screens/home/menu.dart';
 import 'package:flutterbase/states/app_state.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/rive_animation.dart';
@@ -64,7 +66,7 @@ snack(
       color = Colors.orange;
       break;
     case SnackLevel.Success:
-      color = constants.primaryColor;
+      color = constants.primaryColor.withOpacity(.8);
       break;
   }
 
@@ -74,6 +76,8 @@ snack(
     top: AppStyles.u2,
     bottom: AppStyles.u6,
   );
+
+  ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
   return ScaffoldMessenger.of(context).showSnackBar(
     action != null
@@ -929,8 +933,8 @@ Future<String?> demoteConfirmation(
 Future<String?> cancelConfirmation(
   BuildContext context,
   List<Widget> children, {
-  String title = 'Cancel',
-  String noTitle = 'Back',
+  String title = 'Yes',
+  String noTitle = 'No',
   bool hasActions = true,
   bool hasClose = false,
 }) =>
@@ -1090,7 +1094,6 @@ logout(BuildContext context) async {
   try {
     snack(context, 'You are logged out.'.tr, level: SnackLevel.Success);
   } catch (e) {
-    print(e.toString());
   }
 }
 
@@ -1390,7 +1393,36 @@ extension StringCasingExtension on String {
 
 String maskEmail(String email) {
   int atIndex = email.indexOf('@');
-  String maskedSubstring =
-      email.substring(0, atIndex).replaceRange(1, atIndex, '*' * atIndex);
-  return maskedSubstring + email.substring(atIndex);
+  int length = atIndex-2;
+  String maskedSubstring = "";
+  
+  for (int i = 0; i < length; i++) {
+    maskedSubstring += "*";
+  }
+  
+  return email.substring(0, 1) + maskedSubstring + email.substring(atIndex-1);
+}
+
+class ScaleSize {
+  static double textScaleFactor(BuildContext context, {double maxTextScaleFactor = 2}) {
+    final width = MediaQuery.of(context).size.width;
+    double val = (width / 1400) * maxTextScaleFactor;
+    return max(1, min(val, maxTextScaleFactor));
+  }
+}
+
+String generateMask(int length) {
+  var mask = '';
+  for (var i = 0; i < length; i++) {
+    mask += '#';
+  }
+  return mask;
+}
+
+String generateHintText(length) {
+  var mask = '';
+  for (var i = 0; i < length; i++) {
+    mask += '_ ';
+  }
+  return mask;
 }

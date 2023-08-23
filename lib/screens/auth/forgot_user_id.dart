@@ -8,6 +8,7 @@ import 'package:flutterbase/models/users/identity_type.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/rive_animation.dart';
 import 'package:get/get.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class ForgotUserIDScreen extends StatefulWidget {
   ForgotUserIDScreen({Key? key}) : super(key: key);
@@ -19,6 +20,8 @@ class ForgotUserIDScreen extends StatefulWidget {
 class _ForgotUserIDScreenState extends State<ForgotUserIDScreen> {
   final myController = TextEditingController();
   TextEditingController verifiedIcNo = TextEditingController();
+
+  var maskFormatter = new MaskTextInputFormatter(mask: "", type: MaskAutoCompletionType.lazy);
 
   bool isLoading = false;
   String identityNo = '';
@@ -78,6 +81,7 @@ class _ForgotUserIDScreenState extends State<ForgotUserIDScreen> {
 
   @override
   Widget build(BuildContext context) {
+    maskFormatter.updateMask(mask: generateMask(characterCount));
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -142,15 +146,22 @@ class _ForgotUserIDScreenState extends State<ForgotUserIDScreen> {
               SizedBox(height: 20),
               TextFormField(
                 controller: verifiedIcNo,
-                maxLength: characterCount,
+                // maxLength: characterCount,
                 // style: styles.heading2,
                 keyboardType:
                     _isNumber ? TextInputType.number : TextInputType.text,
-                inputFormatters:
-                    _isNumber ? [FilteringTextInputFormatter.digitsOnly] : null,
+                // inputFormatters:
+                //     _isNumber ? [FilteringTextInputFormatter.digitsOnly] : null,
+                   inputFormatters: _isNumber
+                              ? [maskFormatter]
+                              : [
+                                  LengthLimitingTextInputFormatter(
+                                      characterCount)
+                                ],
                 decoration: styles.inputDecoration.copyWith(
                   labelText: 'Number '.tr + identityTypeLabel,
                   hintStyle: styles.heading2,
+                  hintText: generateHintText(characterCount),
                   // suffixIcon: Icon(LineIcons.identificationBadge),
                 ),
                 // initialValue: identityNo,

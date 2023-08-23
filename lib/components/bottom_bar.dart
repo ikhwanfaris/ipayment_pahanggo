@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutterbase/components/add_to_cart_button.dart';
 import 'package:flutterbase/components/checkout_button.dart';
 import 'package:flutterbase/controller/bottom_bar_controller.dart';
+import 'package:flutterbase/helpers.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:get/get.dart';
-import 'package:line_icons/line_icons.dart';
 
 class BottomBar extends StatelessWidget
 {
@@ -14,7 +14,7 @@ class BottomBar extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => (controller.items.length > 0)
+    return Obx(() => (controller.alwaysShown.value || controller.items.length > 0)
             ? Container(
       color: constants.secondaryColor,
       child: SafeArea(
@@ -33,8 +33,12 @@ class BottomBar extends StatelessWidget
                       ),
                       checkColor: Colors.white,
                       activeColor: Colors.amber,
-                      value: false,
+                      value: controller.allChecked.value,
                       onChanged: (bool? value) async {
+                        controller.allChecked.value = value!;
+                        if(controller.onAllChecked != null) {
+                          controller.onAllChecked!(value);
+                        }
                       },
                     ),
                   ),
@@ -52,11 +56,10 @@ class BottomBar extends StatelessWidget
                             crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('Total'.tr),
+                              Text('Total'.tr  +
+                                (controller.length > 1 ? ' ('+ controller.length.toString() +')' : ''),),
                               Text(
-                                // "RM " + (sum3+sum4).toStringAsFixed(2).toString(),
-                                "RM " + controller.total.toStringAsFixed(2).toString(),
-                                // "RM " + (sum3 * 100000).toStringAsFixed(2).toString(),
+                                "RM " + moneyFormat(controller.total),
                                 style: styles.heading13Primary,
                                 overflow: TextOverflow.fade,
                               ),
@@ -67,16 +70,16 @@ class BottomBar extends StatelessWidget
                     ],
                   ),
                 ),
-                Expanded(
-                  flex: 2,
-                  child: AddToCartButton(
-                    isEnabled: controller.total > 0,
-                    onPressed: () async {
-
-                    },
-                    icon: LineIcons.addToShoppingCart,
+                if(!controller.hideCartButton)
+                  Expanded(
+                    flex: 2,
+                    child: AddToCartButton(
+                      isEnabled: controller.total > 0,
+                      onPressed: () async {
+                        await controller.addToCart();
+                      },
+                    ),
                   ),
-                ),
                 Expanded(
                   flex: 3,
                   child: Container(
@@ -84,10 +87,9 @@ class BottomBar extends StatelessWidget
                     child: CheckoutButton(
                       isEnabled: controller.total > 0,
                       onPressed: () async {
+                        await controller.checkout();
                       },
-                      text: controller.length > 1 ? "Checkout (@count)"
-                          .trParams({'count': controller.length.toString()})
-                          : 'Checkout'.tr,
+                      text: 'Checkout'.tr,
                     ),
                   ),
                 ),

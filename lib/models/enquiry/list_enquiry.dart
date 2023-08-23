@@ -1,23 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 class Enquiry {
-  //  "id": 1,
-  //           "enquiry_category_id": 1,
-  //           "user_id": 2,
-  //           "reference_number": "R012345",
-  //           "ticket_number": "P000000002",
-  //           "title": "Resit tidak terima dalam email",
-  //           "description": "Saya tidak menerima email setelah membuat pembayaran bil elektrik",
-  //           "upload_url": "http://www.attachment.com",
-  //           "status": "Pertanyaan baharu",
-  //           "assigned_to": 5,
-  //           "reassigned_to": null,
-  //           "officer_incharge": null,
-  //           "answer": null,
-  //           "remark_admin": null,
-  //           "remark_user": null,
-  //           "created_at": "2022-11-21T03:31:28.000000Z",
-  //           "updated_at": "2022-11-21T03:31:28.000000Z"
   int? id;
   int? enquiry_category_id;
   int? user_id;

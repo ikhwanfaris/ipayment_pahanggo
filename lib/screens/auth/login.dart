@@ -5,20 +5,22 @@ import 'package:flutterbase/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterbase/components/primary_button.dart';
 import 'package:flutterbase/controller/home_controller.dart';
+import 'package:flutterbase/screens/home/menu.dart';
 import 'package:flutterbase/screens/link_user_manual.dart';
 import 'package:flutterbase/screens/maintenance/maintenance.dart';
 import 'package:flutterbase/utils/helpers.dart';
 import 'package:flutterbase/screens/auth/forgot_password.dart';
 import 'package:flutterbase/screens/auth/forgot_user_id.dart';
 import 'package:flutterbase/screens/auth/register.dart';
-import 'package:flutterbase/screens/content/home/menu.dart';
 import 'package:flutterbase/states/app_state.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/phosphor.dart';
-import 'package:flutterbase/utils/rive_animation.dart';
+// import 'package:flutterbase/utils/rive_animation.dart';
 import 'package:get/get.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../components/loading_blocker.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -33,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late FocusNode passwordFocusNode;
 
   bool _isVisible = false;
-  bool isLoading = false;
+  RxBool isLoading = false.obs;
   bool isCheckedForgotUserID = false;
 
   String _username = '';
@@ -47,6 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     passwordFocusNode = FocusNode();
+
+    loadingBlocker.bind(isLoading);
 
     PackageInfo.fromPlatform().then((info) {
       setState(() {
@@ -169,13 +173,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           ],
                         ),
                         SizedBox(height: 120),
+                        Center(
+                          child: Text(
+                              "(iPayment)"
+                                  .tr,
+                              style: styles.headingTitlebold),
+                        ),
+                            SizedBox(height: 10),
                         Text(
-                            "Federal Government Electronic Payment System (iPayment)"
+                            "Federal Government Electronic Payment System"
                                 .tr,
-                            style: styles.headingTitlebold),
+                            style: styles.headingSubTitlebold, textAlign: TextAlign.center),
                         SizedBox(height: 50),
                         TextFormField(
                           initialValue: _username,
+                          autocorrect: false,
                           keyboardType: TextInputType.emailAddress,
                           textInputAction: TextInputAction.next,
                           decoration: styles.inputDecoration.copyWith(
@@ -260,56 +272,28 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         SizedBox(height: 25),
-                        isLoading
-                            ? Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12.0),
-                                child: DefaultLoadingBar(),
-                              )
-                            : PrimaryButton(
-                                isLoading: isLoading,
+                        PrimaryButton(
                                 text: 'Login'.tr,
                                 onPressed: _isFormEmpty()
                                     ? null
-                                    : () async {
-                                        setState(() {
-                                          isLoading = true;
-                                        });
-                                        if (_formKey.currentState!.validate()) {
-                                          setState(() {
-                                            isLoading = true;
-                                          });
+                                    : () async {                    
+                                            isLoading(true);
+                                          
+                                        if (_formKey.currentState!.validate()) {                      
+                                            isLoading(true);                                          
                                           try {
                                             var response = await api.login(
                                                 _username, _password);
                                             if (response.isSuccessful) {
-                                              // Merge guest cart items into user account
-                                              // await ApiCart()
-                                              //     .addItems(
-                                              //   getGuestCart().all(),
-                                              // )
-                                              //     .then((value) {
-                                              //   if (value) {
-                                              //     return getGuestCart().clear();
-                                              //   }
-                                              // }).whenComplete(() {
-                                              //   debugPrint(
-                                              //       'guest cart item merged');
-                                              // });
-
+                                             
                                               Get.replace(HomeController());
 
                                               var homeRoute = MaterialPageRoute(
                                                   builder: (_) => MenuScreen());
-
-                                              setState(() {
-                                                isLoading = false;
-                                              });
+                                                  
+                                                  isLoading(false);
                                               await credentialStore.setItem(
                                                   '_username', _username);
-
-                                              print(
-                                                  store.getItem('fromLoginLS'));
 
                                               Navigator.of(context)
                                                   .pushAndRemoveUntil(homeRoute,
@@ -323,13 +307,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       state.user.firstName! +
                                                       '!',
                                                   level: SnackLevel.Success);
+                                                  isLoading = false.obs;
                                               return;
-                                            } else {
+ 
+                                            } else {                     
                                               hideSnacks(context);
-                                              setState(() {
-                                                isLoading = false;
-                                              });
-
+                                              isLoading(false);
                                               if (response.statusCode == 503) {
                                                 navigate(context,
                                                     MaintenanceScreen());
@@ -357,10 +340,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 "There is a problem connecting to the server. Please try again."
                                                     .tr);
                                           }
-                                        }
-                                        setState(() {
-                                          isLoading = false;
-                                        });
+                                        }  
+                                          isLoading(false);
                                       }),
                         SizedBox(height: 20),
                         Container(

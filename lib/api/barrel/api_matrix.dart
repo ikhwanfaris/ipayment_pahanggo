@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
-// import 'package:flutterbase/api/api.dart';
 import 'package:flutterbase/api/barrel/barrel.dart';
 import 'package:flutterbase/helpers.dart';
-import 'package:flutterbase/models/models.dart';
+import 'package:flutterbase/models/cart/cart_matrix.dart';
 
 class ApiMatrix extends ApiClient {
   Future<List<CartMatrix>> getService(int serviceId) async {

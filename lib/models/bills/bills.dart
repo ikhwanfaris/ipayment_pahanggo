@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutterbase/models/incomplete/service_incomplete.dart';
+import 'package:flutterbase/api/api.dart';
+import 'package:flutterbase/models/bills/extra_fields.dart';
+import 'package:flutterbase/models/shared/translatable.dart';
+import 'package:flutterbase/utils/helpers.dart';
 import 'package:get/get.dart';
 
-class Bills {
+class Bill {
   int? id;
   int? billTypeId;
   int? serviceId;
@@ -38,10 +41,10 @@ class Bills {
   String? documentNoSap;
   String? documentNoOriginal;
   String? documentYear;
-  String? billDate;
+  DateTime? billDate;
   String? postingDate;
-  String? startAt;
-  String? endAt;
+  DateTime? startAt;
+  DateTime? endAt;
   String? customerNote;
   String? source;
   int? stagingBatchId;
@@ -63,102 +66,141 @@ class Bills {
   String? approverName;
   String? approverPosition;
   String? approvalDate;
-  String? createdAt;
-  String? updatedAt;
+  String? chargedTo;
+  late DateTime createdAt;
+  late DateTime updatedAt;
   Null deletedAt;
-  NettCalculations? nettCalculations;
-  bool? favorite;
+  late NettCalculation nettCalculations;
   bool? inCart;
-  List<Chargelines>? chargelines;
-  List<Paymentsss>? payments;
-  List<AmountChanges>? amountChanges;
-  Service? service;
-  Agency? agency;
-  Null customer;
+  List<Chargeline> chargelines = [];
+  List<BillPayment> payments = [];
+  List<AmountChange> amountChanges = [];
+  List<BillChargelineSummary> chargelineSummaries = [];
+  late Services service;
+  late Agency agency;
+  Map<String, dynamic> customer = {};
   BillType? billType;
-  int? favorite1;
   bool? checked = false;
   String? amount1;
   String? amount = "";
   RxBool select = RxBool(false);
   final TextEditingController amount2 = TextEditingController(text: "0.00");
   RxString rounding = RxString("");
-  Bills(
-      {this.id,
-      this.billTypeId,
-      this.serviceId,
-      this.ministryId,
-      this.departmentId,
-      this.agencyId,
-      this.creatorId,
-      this.makerPtjId,
-      this.locationId,
-      this.sublocationId,
-      this.userIdentityTypeId,
-      this.countryId,
-      this.stateId,
-      this.cityId,
-      this.districtId,
-      this.identityCodeCategory,
-      this.identityCode,
-      this.previousIdentityCode,
-      this.customerName,
-      this.customerReferenceNumber,
-      this.address,
-      this.postcode,
-      this.stateName,
-      this.cityName,
-      this.districtName,
-      this.telephone,
-      this.email,
-      this.detail,
-      this.referenceNumber,
-      this.recordSeqNumber,
-      this.documentSeqNumber,
-      this.documentNoSap,
-      this.documentNoOriginal,
-      this.documentYear,
-      this.billDate,
-      this.postingDate,
-      this.startAt,
-      this.endAt,
-      this.customerNote,
-      this.source,
-      this.stagingBatchId,
-      this.stagingBatchContentId,
-      this.processCode,
-      this.dataStatus,
-      this.status,
-      this.firstApproverId,
-      this.secondApproverId,
-      this.firstApprovalAt,
-      this.secondApprovalAt,
-      this.taskAt,
-      this.queryRemarks,
-      this.billNumber,
-      this.billMask,
-      this.makerName,
-      this.makerPosition,
-      this.documentDatePrepared,
-      this.approverName,
-      this.approverPosition,
-      this.approvalDate,
-      this.createdAt,
-      this.updatedAt,
-      this.deletedAt,
-      this.nettCalculations,
-      this.favorite,
-      this.inCart,
-      this.service,
-      this.agency,
-      this.customer,
-      this.billType,
-      this.amount1,
-      this.favorite1,
-      this.checked,
-      this.amount});
+  bool canView = false;
+  bool canPay = false;
 
-  Bills.fromJson(Map<String, dynamic> json) {
+  TextEditingController amountController = TextEditingController(text: "0.00");
+
+  RxBool isSelected = false.obs;
+  RxBool isFavorite = false.obs;
+
+  String get summary {
+    List<String> summaries = [];
+    if (referenceNumber != null) {
+      summaries.add(referenceNumber!);
+    }
+    if (billNumber != null) {
+      summaries.add(billNumber!);
+    }
+    if (billDate != null) {
+      summaries.add(dateFormatterDisplay.format(billDate!));
+    }
+    return summaries.join(' | ');
+  }
+
+  Bill({
+    this.id,
+    this.billTypeId,
+    this.serviceId,
+    this.ministryId,
+    this.departmentId,
+    this.agencyId,
+    this.creatorId,
+    this.makerPtjId,
+    this.locationId,
+    this.sublocationId,
+    this.userIdentityTypeId,
+    this.countryId,
+    this.stateId,
+    this.cityId,
+    this.districtId,
+    this.identityCodeCategory,
+    this.identityCode,
+    this.previousIdentityCode,
+    this.customerName,
+    this.customerReferenceNumber,
+    this.address,
+    this.postcode,
+    this.stateName,
+    this.cityName,
+    this.districtName,
+    this.telephone,
+    this.email,
+    this.detail,
+    this.referenceNumber,
+    this.recordSeqNumber,
+    this.documentSeqNumber,
+    this.documentNoSap,
+    this.documentNoOriginal,
+    this.documentYear,
+    this.billDate,
+    this.postingDate,
+    this.startAt,
+    this.endAt,
+    this.customerNote,
+    this.source,
+    this.stagingBatchId,
+    this.stagingBatchContentId,
+    this.processCode,
+    this.dataStatus,
+    this.status,
+    this.firstApproverId,
+    this.secondApproverId,
+    this.firstApprovalAt,
+    this.secondApprovalAt,
+    this.taskAt,
+    this.queryRemarks,
+    this.billNumber,
+    this.billMask,
+    this.makerName,
+    this.makerPosition,
+    this.documentDatePrepared,
+    this.approverName,
+    this.approverPosition,
+    this.approvalDate,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+    this.inCart,
+    required this.service,
+    required this.agency,
+    required this.customer,
+    this.billType,
+    this.amount1,
+    this.checked,
+    this.amount,
+  });
+
+  double get amountAfterRounding =>
+      amountBeforeRounding + nettCalculations.rounding;
+
+  double get amountBeforeRounding {
+    double amt = 0;
+    for (var item in chargelineSummaries) {
+      amt += item.originalAmount;
+      for (var change in item.changes) {
+        amt += change.amount;
+      }
+    }
+    return amt;
+  }
+
+  static Future<Bill> fetch(int id) async {
+    var response = await api.getBill(id);
+    return Bill.fromJson(response.data);
+  }
+
+  Bill.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     billTypeId = json['bill_type_id'];
     serviceId = json['service_id'];
@@ -193,10 +235,12 @@ class Bills {
     documentNoSap = json['document_no_sap'];
     documentNoOriginal = json['document_no_original'];
     documentYear = json['document_year'];
-    billDate = json['bill_date'];
+    billDate =
+        json['bill_date'] != null ? DateTime.parse(json['bill_date']) : null;
     postingDate = json['posting_date'];
-    startAt = json['start_at'];
-    endAt = json['end_at'];
+    startAt =
+        json['start_at'] != null ? DateTime.parse(json['start_at']) : null;
+    endAt = json['end_at'] != null ? DateTime.parse(json['end_at']) : null;
     customerNote = json['customer_note'];
     source = json['source'];
     stagingBatchId = json['staging_batch_id'];
@@ -218,42 +262,90 @@ class Bills {
     approverName = json['approver_name'];
     approverPosition = json['approver_position'];
     approvalDate = json['approval_date'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
+    createdAt = DateTime.parse(json['created_at']);
+    updatedAt = DateTime.parse(json['updated_at']);
     amount1 = json['amount'];
     nettCalculations = json['nett_calculations'] != null
-        ? new NettCalculations.fromJson(json['nett_calculations'])
-        : null;
-    favorite = json['favorite'];
+        ? NettCalculation.fromJson(json['nett_calculations'])
+        : NettCalculation();
+    isFavorite.value = json['favorite'].toString() == 'true';
     inCart = json['in_cart'];
+    canView = json['can_view'] ?? true;
+    canPay = json['can_pay'] ?? true;
     if (json['chargelines'] != null) {
-      chargelines = <Chargelines>[];
+      chargelines = <Chargeline>[];
       json['chargelines'].forEach((v) {
-        chargelines!.add(new Chargelines.fromJson(v));
+        chargelines.add(new Chargeline.fromJson(v));
       });
     }
     if (json['payments'] != null) {
-      payments = <Paymentsss>[];
+      payments = <BillPayment>[];
       json['payments'].forEach((v) {
-        payments!.add(new Paymentsss.fromJson(v));
+        payments.add(new BillPayment.fromJson(v));
       });
     }
     if (json['amount_changes'] != null) {
-      amountChanges = <AmountChanges>[];
+      amountChanges = <AmountChange>[];
       json['amount_changes'].forEach((v) {
-        amountChanges!.add(new AmountChanges.fromJson(v));
+        amountChanges.add(new AmountChange.fromJson(v));
       });
     }
-    service =
-        json['service'] != null ? new Service.fromJson(json['service']) : null;
-    agency =
-        json['agency'] != null ? new Agency.fromJson(json['agency']) : null;
-    customer = json['customer'];
+
+    chargedTo = json['service']['charged_to'];
+
+    service = Services.fromJson(json['service']);
+    agency = Agency.fromJson(json['agency']);
+    customer = json['customer'] != null ? json['customer'] : {};
     billType = json['bill_type'] != null
         ? new BillType.fromJson(json['bill_type'])
         : null;
-    favorite1 = (json['favorite']) == true ? 1 : 0;
+
+    for (var item in chargelines) {
+      mergeChargeline(item);
+    }
+
+    for (var item in amountChanges) {
+      mergeAmountChange(item);
+    }
+  }
+
+  mergeChargeline(Chargeline item) {
+    try {
+      chargelineSummaries
+          .where(
+            (cl) => cl.code == item.classificationCode.code,
+          )
+          .first;
+    } catch (e) {
+      var cc = BillChargelineSummary(item.classificationCode.code,
+          item.classificationCode.description, item.amount);
+      chargelineSummaries.add(cc);
+    }
+  }
+
+  mergeAmountChange(AmountChange amountChange) {
+    for (var item in amountChange.charges) {
+      BillChargelineSummary? cc;
+      try {
+        cc = chargelineSummaries
+            .where(
+              (cl) => cl.code == item.code,
+            )
+            .first;
+      } catch (e) {
+        cc = BillChargelineSummary(item.code, item.description, 0);
+        chargelineSummaries.add(cc);
+      }
+
+      cc.changes.add(
+        ChargelineSummaryAmountChanges(
+            item.code,
+            item.description,
+            amountChange.referenceNumber,
+            amountChange.agencyReferenceNumber,
+            item.amount),
+      );
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -321,38 +413,58 @@ class Bills {
     data['updated_at'] = this.updatedAt;
     data['deleted_at'] = this.deletedAt;
     data['amount'] = this.amount1;
-    if (this.nettCalculations != null) {
-      data['nett_calculations'] = this.nettCalculations!.toJson();
-    }
-    data['favorite'] = this.favorite;
+    data['nett_calculations'] = this.nettCalculations.toJson();
     data['in_cart'] = this.inCart;
-    if (this.chargelines != null) {
-      data['chargelines'] = this.chargelines!.map((v) => v.toJson()).toList();
-    }
-    if (this.payments != null) {
-      data['payments'] = this.payments!.map((v) => v.toJson()).toList();
-    }
-    if (this.amountChanges != null) {
-      data['amount_changes'] =
-          this.amountChanges!.map((v) => v.toJson()).toList();
-    }
+    data['chargelines'] = this.chargelines.map((v) => v.toJson()).toList();
 
-    if (this.service != null) {
-      data['service'] = this.service!.toJson();
-    }
-    if (this.agency != null) {
-      data['agency'] = this.agency!.toJson();
-    }
+    data['payments'] = this.payments.map((v) => v.toJson()).toList();
+
+    data['amount_changes'] = this.amountChanges.map((v) => v.toJson()).toList();
+
+    data['service'] = this.service.toJson();
+    data['agency'] = this.agency.toJson();
+
     data['customer'] = this.customer;
     if (this.billType != null) {
       data['bill_type'] = this.billType!.toJson();
     }
-    data['favorite'] = this.favorite;
+    data['favorite'] = this.isFavorite.value;
     return data;
+  }
+
+  bool contains(String value) {
+    return ((detail ?? '') + (referenceNumber ?? '') + (billNumber ?? ''))
+        .toLowerCase()
+        .contains(value.toLowerCase());
   }
 }
 
-class Paymentsss {
+class ChargelineSummaryAmountChanges {
+  String code;
+  String description;
+  String referenceNumber;
+  String agencyReferenceNumber;
+  double amount;
+
+  ChargelineSummaryAmountChanges(
+    this.code,
+    this.description,
+    this.referenceNumber,
+    this.agencyReferenceNumber,
+    this.amount,
+  );
+}
+
+class BillChargelineSummary {
+  String code;
+  String description;
+  double originalAmount;
+  List<ChargelineSummaryAmountChanges> changes = [];
+
+  BillChargelineSummary(this.code, this.description, this.originalAmount);
+}
+
+class BillPayment {
   int? id;
   int? paymentId;
   int? userId;
@@ -364,7 +476,7 @@ class Paymentsss {
   String? receiptDocumentDate;
   Null receiptNote;
   Null receiptAmountIgfmas;
-  String? paymentDate;
+  late DateTime paymentDate;
   String? source;
   String? status;
   String? cashierName;
@@ -373,11 +485,11 @@ class Paymentsss {
   String? firstApprovalAt;
   Null secondApprovalAt;
   String? taskAt;
-  String? amount;
-  String? createdAt;
-  String? updatedAt;
+  double amount = 0;
+  late DateTime createdAt;
+  late DateTime updatedAt;
 
-  Paymentsss(
+  BillPayment(
       {this.id,
       this.paymentId,
       this.userId,
@@ -389,7 +501,7 @@ class Paymentsss {
       this.receiptDocumentDate,
       this.receiptNote,
       this.receiptAmountIgfmas,
-      this.paymentDate,
+      required this.paymentDate,
       this.source,
       this.status,
       this.cashierName,
@@ -398,11 +510,10 @@ class Paymentsss {
       this.firstApprovalAt,
       this.secondApprovalAt,
       this.taskAt,
-      this.amount,
-      this.createdAt,
-      this.updatedAt});
+      required this.createdAt,
+      required this.updatedAt});
 
-  Paymentsss.fromJson(Map<String, dynamic> json) {
+  BillPayment.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     paymentId = json['payment_id'];
     userId = json['user_id'];
@@ -414,7 +525,7 @@ class Paymentsss {
     receiptDocumentDate = json['receipt_document_date'];
     receiptNote = json['receipt_note'];
     receiptAmountIgfmas = json['receipt_amount_igfmas'];
-    paymentDate = json['payment_date'];
+    paymentDate = DateTime.parse(json['payment_date']);
     source = json['source'];
     status = json['status'];
     cashierName = json['cashier_name'];
@@ -423,9 +534,9 @@ class Paymentsss {
     firstApprovalAt = json['first_approval_at'];
     secondApprovalAt = json['second_approval_at'];
     taskAt = json['task_at'];
-    amount = json['amount'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    amount = double.parse(json['amount'].toString());
+    createdAt = DateTime.parse(json['created_at']);
+    updatedAt = DateTime.parse(json['updated_at']);
   }
 
   Map<String, dynamic> toJson() {
@@ -457,7 +568,110 @@ class Paymentsss {
   }
 }
 
-class PaymentItems {
+class Payment {
+  var referenceNumber;
+
+  var status;
+
+  var createdAt;
+
+  var amount;
+
+  var items;
+
+  var id;
+
+  Bill? bill;
+
+  Services? service;
+
+  var gatewayId;
+
+  Payment.fromJson(item) {
+    referenceNumber = item['reference_number'];
+    status = item['status'];
+    createdAt = item['created_at'];
+    amount = item['amount'];
+    id = item['id'];
+  }
+}
+
+class Matrix {
+  List<List<MatrixFilter>> filters = [];
+  List<Product> products = [];
+  Matrix.fromJson(item) {
+    filters.clear();
+    for (var _item in item['filters']) {
+      List<MatrixFilter> levelFilter = [];
+      for (var _subItem in _item) {
+        levelFilter.add(MatrixFilter.fromJson(_subItem));
+      }
+      filters.add(levelFilter);
+    }
+
+    products.clear();
+    for (var _item in item['products']) {
+      products.add(Product.fromJson(_item));
+    }
+  }
+}
+
+class MatrixFilter {
+  late int id;
+  late String name;
+  List<Chain> chains = [];
+
+  MatrixFilter.fromJson(item) {
+    id = int.parse(item['id'].toString());
+    name = item['name'];
+    // chains.clear();
+    for (var json in item['chains']) {
+      chains.add(Chain.fromJson(json));
+    }
+  }
+}
+
+class Chain {
+  late int id;
+  late String name;
+
+  Chain.fromJson(item) {
+    id = item['id'];
+    name = item['name'];
+  }
+}
+
+class Product {
+  double amount = 0;
+  List<Chain> chains = [];
+  int stock = 0;
+  int dailyQuota = 0;
+  int quotaGroup = 0;
+
+  late String name;
+  late String unit;
+  late double price;
+  late bool checkStock;
+  late bool checkQuota;
+  late int id;
+
+  Product.fromJson(item) {
+    id = item['id'];
+    name = item['name'];
+    unit = item['unit'] ?? '';
+    stock = item['stock'] ?? 0;
+    checkStock = item['check_stock'] ?? '';
+    checkQuota = item['check_quota'] ?? '';
+    dailyQuota = int.tryParse(item['daily_quota'].toString()) ?? 0;
+    quotaGroup = int.tryParse(item['quota_group'].toString()) ?? 0;
+    price = double.tryParse(item['price'].toString()) ?? 0;
+    for (var json in item['chains']) {
+      chains.add(Chain.fromJson(json));
+    }
+  }
+}
+
+class PaymentItem {
   int? id;
   int? paymentId;
   int? userId;
@@ -482,7 +696,9 @@ class PaymentItems {
   String? createdAt;
   String? updatedAt;
 
-  PaymentItems(
+  var items;
+
+  PaymentItem(
       {this.id,
       this.paymentId,
       this.userId,
@@ -507,7 +723,7 @@ class PaymentItems {
       this.createdAt,
       this.updatedAt});
 
-  PaymentItems.fromJson(Map<String, dynamic> json) {
+  PaymentItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     paymentId = json['payment_id'];
     userId = json['user_id'];
@@ -562,8 +778,8 @@ class PaymentItems {
   }
 }
 
-class Chargelines {
-  int? id;
+class Chargeline {
+  late int id;
   int? paymentId;
   int? classificationCodeId;
   int? ministryId;
@@ -575,39 +791,37 @@ class Chargelines {
   int? programActivityId;
   int? projectId;
   int? accountCodeId;
-  String? amount;
+  double amount = 0;
   String? createdAt;
   String? updatedAt;
   AccountCode? accountCode;
   FundVote? fundVote;
   ProgramActivity? programActivity;
   Project? project;
-  ClassificationCode? classificationCode;
+  late ClassificationCode classificationCode;
 
-  Chargelines(
-      {this.id,
-      this.paymentId,
-      this.classificationCodeId,
-      this.ministryId,
-      this.departmentId,
-      this.agencyId,
-      this.preparerPtjId,
-      this.chargedPtjId,
-      this.fundVoteId,
-      this.programActivityId,
-      this.projectId,
-      this.accountCodeId,
-      this.amount,
-      this.createdAt,
-      this.updatedAt,
-      this.accountCode,
-      this.fundVote,
-      this.programActivity,
-      this.project,
-      this.classificationCode});
+  Chargeline({
+    this.paymentId,
+    this.classificationCodeId,
+    this.ministryId,
+    this.departmentId,
+    this.agencyId,
+    this.preparerPtjId,
+    this.chargedPtjId,
+    this.fundVoteId,
+    this.programActivityId,
+    this.projectId,
+    this.accountCodeId,
+    this.createdAt,
+    this.updatedAt,
+    this.accountCode,
+    this.fundVote,
+    this.programActivity,
+    this.project,
+  });
 
-  Chargelines.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+  Chargeline.fromJson(Map<String, dynamic> json) {
+    id = int.parse(json['id'].toString());
     paymentId = json['payment_id'];
     classificationCodeId = json['classification_code_id'];
     ministryId = json['ministry_id'];
@@ -619,7 +833,7 @@ class Chargelines {
     programActivityId = json['program_activity_id'];
     projectId = json['project_id'];
     accountCodeId = json['account_code_id'];
-    amount = json['amount'];
+    amount = double.parse(json['amount'].toString());
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
     accountCode = json['account_code'] != null
@@ -634,9 +848,8 @@ class Chargelines {
     project = json['project'] != null
         ? new Project.fromJson(json['program_activity'])
         : null;
-    classificationCode = json['classification_code'] != null
-        ? new ClassificationCode.fromJson(json['classification_code'])
-        : null;
+    classificationCode =
+        ClassificationCode.fromJson(json['classification_code']);
   }
 
   Map<String, dynamic> toJson() {
@@ -666,9 +879,9 @@ class Chargelines {
       data['program_activity'] = this.programActivity!.toJson();
     }
     data['project'] = this.project;
-    if (this.classificationCode != null) {
-      data['classification_code'] = this.classificationCode!.toJson();
-    }
+
+    data['classification_code'] = this.classificationCode.toJson();
+
     return data;
   }
 }
@@ -834,8 +1047,8 @@ class ProgramActivity {
 
 class ClassificationCode {
   int? id;
-  String? code;
-  String? description;
+  late String code;
+  String description = '';
   String? year;
   int? ministryId;
   int? departmentId;
@@ -855,8 +1068,6 @@ class ClassificationCode {
 
   ClassificationCode(
       {this.id,
-      this.code,
-      this.description,
       this.year,
       this.ministryId,
       this.departmentId,
@@ -875,7 +1086,7 @@ class ClassificationCode {
       this.updatedAt});
 
   ClassificationCode.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = int.parse(json['id'].toString());
     code = json['code'];
     description = json['description'];
     year = json['year'];
@@ -921,13 +1132,21 @@ class ClassificationCode {
   }
 }
 
-class AmountChanges {
+class AmountChangeChargeline {
+  final String code;
+  final String description;
+  final double amount;
+
+  AmountChangeChargeline(this.code, this.description, this.amount);
+}
+
+class AmountChange {
   int? id;
   int? paymentId;
   int? paymentChargelineId;
   int? userId;
-  String? referenceNumber;
-  String? agencyReferenceNumber;
+  late String referenceNumber;
+  late String agencyReferenceNumber;
   String? agencyApprovalDate;
   String? changeAmountReason;
   String? source;
@@ -937,17 +1156,16 @@ class AmountChanges {
   String? firstApprovalAt;
   String? secondApprovalAt;
   String? taskAt;
-  String? amount;
+  late double amount;
   String? createdAt;
   String? updatedAt;
+  List<AmountChangeChargeline> charges = [];
 
-  AmountChanges(
+  AmountChange(
       {this.id,
       this.paymentId,
       this.paymentChargelineId,
       this.userId,
-      this.referenceNumber,
-      this.agencyReferenceNumber,
       this.agencyApprovalDate,
       this.changeAmountReason,
       this.source,
@@ -957,11 +1175,10 @@ class AmountChanges {
       this.firstApprovalAt,
       this.secondApprovalAt,
       this.taskAt,
-      this.amount,
       this.createdAt,
       this.updatedAt});
 
-  AmountChanges.fromJson(Map<String, dynamic> json) {
+  AmountChange.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     paymentId = json['payment_id'];
     paymentChargelineId = json['payment_chargeline_id'];
@@ -977,9 +1194,17 @@ class AmountChanges {
     firstApprovalAt = json['first_approval_at'];
     secondApprovalAt = json['second_approval_at'];
     taskAt = json['task_at'];
-    amount = json['amount'];
+    amount = double.parse(json['amount'].toString());
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+
+    for (var item in (json['payment_amount_change_chargelines'] ?? [])) {
+      charges.add(AmountChangeChargeline(
+        item['classification_code']['code'],
+        item['classification_code']['description'],
+        double.parse((item['amount'] ?? '0').toString()),
+      ));
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -1006,96 +1231,45 @@ class AmountChanges {
   }
 }
 
-class NettCalculations {
-  RoundingData? roundingData;
-  List<ChangesItems>? changesItems;
-  List<Null>? changesDraftItems;
-  List<Null>? paymentItems;
-  List<Null>? paymentDraftItems;
-  num? rounding;
-  num? original;
-  num? changes;
-  num? changesDraft;
-  num? total;
-  num? paid;
-  num? paidDraft;
-  num? due;
-  String? dueInWords;
+class NettCalculation {
+  late RoundingData roundingData;
+  List<ChangeItem> changesItems = [];
+  double rounding = 0;
+  double original = 0;
+  double changes = 0;
+  double changesDraft = 0;
+  double total = 0;
+  double paid = 0;
+  double paidDraft = 0;
+  double due = 0;
+  String dueInWords = '';
 
-  NettCalculations(
-      {this.roundingData,
-      this.changesItems,
-      this.changesDraftItems,
-      this.paymentItems,
-      this.paymentDraftItems,
-      this.rounding,
-      this.original,
-      this.changes,
-      this.changesDraft,
-      this.total,
-      this.paid,
-      this.paidDraft,
-      this.due,
-      this.dueInWords});
+  NettCalculation();
 
-  NettCalculations.fromJson(Map<String, dynamic> json) {
+  NettCalculation.fromJson(Map<String, dynamic> json) {
     roundingData = json['roundingData'] != null
-        ? new RoundingData.fromJson(json['roundingData'])
-        : null;
+        ? RoundingData.fromJson(json['roundingData'])
+        : RoundingData();
     if (json['changes_items'] != null) {
-      changesItems = <ChangesItems>[];
       json['changes_items'].forEach((v) {
-        changesItems!.add(new ChangesItems.fromJson(v));
+        changesItems.add(new ChangeItem.fromJson(v));
       });
     }
-    if (json['changes_draft_items'] != null) {
-      changesDraftItems = <Null>[];
-      json['changes_draft_items'].forEach((v) {
-        // changesDraftItems!.add(new Null.fromJson(v));
-      });
-    }
-    if (json['payment_items'] != null) {
-      paymentItems = <Null>[];
-      json['payment_items'].forEach((v) {
-        // paymentItems!.add(new Null.fromJson(v));
-      });
-    }
-    if (json['payment_draft_items'] != null) {
-      paymentDraftItems = <Null>[];
-      json['payment_draft_items'].forEach((v) {
-        // paymentDraftItems!.add(new Null.fromJson(v));
-      });
-    }
-    rounding = json['rounding'];
-    original = json['original'];
-    changes = json['changes'];
-    changesDraft = json['changes_draft'];
-    total = json['total'];
-    paid = json['paid'];
-    paidDraft = json['paid_draft'];
-    due = json['due'];
+
+    rounding = double.parse(json['rounding'].toString());
+    original = double.tryParse(json['original'].toString()) ?? 0;
+    changes = double.tryParse(json['changes'].toString()) ?? 0;
+    changesDraft = double.tryParse(json['changes_draft'].toString()) ?? 0;
+    total = double.tryParse(json['total'].toString()) ?? 0;
+    paid = double.tryParse(json['paid'].toString()) ?? 0;
+    paidDraft = double.tryParse(json['paid_draft'].toString()) ?? 0;
+    due = double.tryParse(json['due'].toString()) ?? 0.0;
     dueInWords = json['due_in_words'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['roundingData'] = this.roundingData;
-    if (this.changesItems != null) {
-      // data['changes_items'] =
-      //     this.changesItems!.map((v) => v.toJson()).toList();
-    }
-    if (this.changesDraftItems != null) {
-      // data['changes_draft_items'] =
-      //     this.changesDraftItems!.map((v) => v.toJson()).toList();
-    }
-    if (this.paymentItems != null) {
-      // data['payment_items'] =
-      //     this.paymentItems!.map((v) => v.toJson()).toList();
-    }
-    if (this.paymentDraftItems != null) {
-      // data['payment_draft_items'] =
-      //     this.paymentDraftItems!.map((v) => v.toJson()).toList();
-    }
     data['rounding'] = this.rounding;
     data['original'] = this.original;
     data['changes'] = this.changes;
@@ -1110,16 +1284,16 @@ class NettCalculations {
 }
 
 class RoundingData {
-  double? amount;
-  int? fundVoteId;
-  int? accountCodeId;
+  late double amount;
+  late int fundVoteId;
+  late int accountCodeId;
 
-  RoundingData({this.amount, this.fundVoteId, this.accountCodeId});
+  RoundingData();
 
   RoundingData.fromJson(Map<String, dynamic> json) {
-    amount = json['amount'];
-    fundVoteId = json['fund_vote_id'];
-    accountCodeId = json['account_code_id'];
+    amount = double.parse(json['amount'].toString());
+    fundVoteId = json['fund_vote_id'] ?? 0;
+    accountCodeId = json['account_code_id'] ?? 0;
   }
 
   Map<String, dynamic> toJson() {
@@ -1131,44 +1305,7 @@ class RoundingData {
   }
 }
 
-class Customers {
-  int? id;
-  int? userIdentityTypeId;
-  String? firstName;
-  String? lastName;
-  UserIdentityType? userIdentityType;
-
-  Customers(
-      {this.id,
-      this.userIdentityTypeId,
-      this.firstName,
-      this.lastName,
-      this.userIdentityType});
-
-  Customers.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    userIdentityTypeId = json['user_identity_type_id'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    userIdentityType = json['user_identity_type'] != null
-        ? new UserIdentityType.fromJson(json['user_identity_type'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_identity_type_id'] = this.userIdentityTypeId;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    if (this.userIdentityType != null) {
-      data['user_identity_type'] = this.userIdentityType!.toJson();
-    }
-    return data;
-  }
-}
-
-class ChangesItems {
+class ChangeItem {
   int? id;
   int? paymentId;
   int? paymentChargelineId;
@@ -1188,7 +1325,7 @@ class ChangesItems {
   String? createdAt;
   String? updatedAt;
 
-  ChangesItems(
+  ChangeItem(
       {this.id,
       this.paymentId,
       this.paymentChargelineId,
@@ -1208,7 +1345,7 @@ class ChangesItems {
       this.createdAt,
       this.updatedAt});
 
-  ChangesItems.fromJson(Map<String, dynamic> json) {
+  ChangeItem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     paymentId = json['payment_id'];
     paymentChargelineId = json['payment_chargeline_id'];
@@ -1224,7 +1361,7 @@ class ChangesItems {
     firstApprovalAt = json['first_approval_at'];
     secondApprovalAt = json['second_approval_at'];
     taskAt = json['task_at'];
-    amount = json['amount'];
+    amount = json['amount'].toString();
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }
@@ -1291,9 +1428,10 @@ class BillType {
   }
 }
 
-class Service {
-  int? id;
-  int? menuId;
+class Services {
+  late int id;
+  late int menuId;
+  late int billTypeId;
   String? name;
   String? serviceReferenceNumber;
   String? cbyChargelines;
@@ -1309,11 +1447,19 @@ class Service {
   String? serviceCategory;
   String? allowThirdPartyPayment;
   String? refNoLabel;
-  Menuss? menu;
+  Menu? menu;
 
-  Service(
-      {this.id,
-      this.menuId,
+  late Matrix? matrix;
+  late List<ExtraField> extraFields;
+  late BillType billType;
+  late Agency agency;
+  late Ministry ministry;
+  late bool favorite;
+  RxBool isFavorite = false.obs;
+
+  Services(
+      {required this.id,
+      required this.menuId,
       this.name,
       this.serviceReferenceNumber,
       this.cbyChargelines,
@@ -1331,10 +1477,10 @@ class Service {
       this.refNoLabel,
       this.menu});
 
-  Service.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    menuId = json['menu_id'];
+  Services.fromJson(Map<String, dynamic> json) {
+    id = json['id']!;
     name = json['name'];
+    billTypeId = json['bill_type_id'];
     serviceReferenceNumber = json['service_reference_number'];
     cbyChargelines = json['cby_chargelines'];
     receiptType = json['receipt_type'];
@@ -1349,7 +1495,31 @@ class Service {
     serviceCategory = json['service_category'];
     allowThirdPartyPayment = json['allow_third_party_payment'];
     refNoLabel = json['ref_no_label'];
-    menu = json['menu'] != null ? new Menuss.fromJson(json['menu']) : null;
+    agency = Agency.fromJson(json['agency']);
+    billType = BillType.fromJson(json['bill_type']);
+    favorite = json['favorite'].toString() == 'true';
+    isFavorite.value = favorite;
+
+    extraFields = <ExtraField>[].obs;
+
+    if (json.containsKey('matrix') && json['matrix'] != null) {
+      matrix = Matrix.fromJson(json['matrix']);
+    }
+
+    try {
+      if (json.containsKey('extra_fields') && json['extra_fields'] != null) {
+        for (var item in json['extra_fields']) {
+          extraFields.add(ExtraField.fromJson(item));
+        }
+      }
+    } catch (_) {
+      print(_);
+      print(json['extra_fields']);
+    }
+
+    if (json['menu'] != null) {
+      menu = Menu.fromJson(json['menu']);
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -1376,50 +1546,37 @@ class Service {
     }
     return data;
   }
-}
 
-class Menus {
-  int? id;
-  String? name;
-
-  Menus({this.id, this.name});
-
-  Menus.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    return data;
+  bool contains(String value) {
+    return (name! + (menu?.name ?? '') + serviceReferenceNumber!)
+        .toLowerCase()
+        .contains(value.toLowerCase());
   }
 }
 
 class Agency {
-  int? id;
-  String? name;
+  late int id;
+  late String name;
   String? shortName;
   String? code;
   String? profile;
   String? address;
-  int? ministryId;
-  int? departmentId;
-  Department? department;
-  Ministry? ministry;
+  late int ministryId;
+  late int departmentId;
+  late Department department;
+  late Ministry ministry;
 
   Agency(
-      {this.id,
-      this.name,
+      {required this.id,
+      required this.name,
       this.shortName,
       this.code,
       this.profile,
       this.address,
-      this.ministryId,
-      this.departmentId,
-      this.department,
-      this.ministry});
+      required this.ministryId,
+      required this.departmentId,
+      required this.department,
+      required this.ministry});
 
   Agency.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -1428,14 +1585,10 @@ class Agency {
     code = json['code'];
     profile = json['profile'];
     address = json['address'];
-    ministryId = json['ministry_id'];
-    departmentId = json['department_id'];
-    department = json['department'] != null
-        ? new Department.fromJson(json['department'])
-        : null;
-    ministry = json['ministry'] != null
-        ? new Ministry.fromJson(json['ministry'])
-        : null;
+    ministryId = json['ministry_id']!;
+    departmentId = json['department_id']!;
+    department = Department.fromJson(json['department']);
+    ministry = Ministry.fromJson(json['ministry']);
   }
 
   Map<String, dynamic> toJson() {
@@ -1448,22 +1601,16 @@ class Agency {
     data['address'] = this.address;
     data['ministry_id'] = this.ministryId;
     data['department_id'] = this.departmentId;
-    if (this.department != null) {
-      data['department'] = this.department!.toJson();
-    }
-    if (this.ministry != null) {
-      data['ministry'] = this.ministry!.toJson();
-    }
+    data['department'] = this.department.toJson();
+    data['ministry'] = this.ministry.toJson();
     return data;
   }
 }
 
 class Department {
-  int? id;
-  String? departmentName;
-  String? deptReferenceNo;
-
-  Department({this.id, this.departmentName, this.deptReferenceNo});
+  late int id;
+  late String departmentName;
+  late String deptReferenceNo;
 
   Department.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -1524,9 +1671,14 @@ class PaymentGateway {
   String? updatedAt;
   bool? isObw;
   bool? isQr;
+  Bank? selectedBank;
+
+  bool get requiresBankSelected => id == 2 || id == 4;
 
   // could be original name or translated name
   String? title;
+
+  var translatables;
 
   PaymentGateway({
     this.id,
@@ -1561,7 +1713,8 @@ class PaymentGateway {
     String code = Get.locale?.languageCode ?? 'ms_MY';
 
     // find the translated name
-    var tran = (json['translatables'] ?? []).firstWhere(
+    var tran =
+        ((json['translatables'] ?? []) as List<dynamic>).firstWhereOrNull(
       (e) => e['content'] != null && e['language'] == code,
     );
 
@@ -1577,6 +1730,11 @@ class PaymentGateway {
     id = json['id'];
     description = json['description'];
     logo = json['logo'];
+
+    if (logo != null) {
+      logo = ENDPOINT + '/storage/' + logo!;
+    }
+
     owner = json['owner'];
     address = json['address'];
     admin = json['admin'];
@@ -1607,61 +1765,106 @@ class PaymentGateway {
   }
 }
 
-class Banks {
-  String? code;
-  String? name;
-  bool? active;
-  String? browser;
-  String? iosApplicationId;
-  String? androidApplicationId;
-  List<RedirectUrls>? redirectUrls;
+class Bank {
+  late String code;
+  late String name;
+  late String browser;
+  late String iosApplicationId;
+  late String androidApplicationId;
+  late String url;
+  late String type;
 
-  Banks(
-      {this.code,
-      this.name,
-      this.active,
-      this.browser,
-      this.iosApplicationId,
-      this.androidApplicationId,
-      this.redirectUrls});
+  Bank();
 
-  Banks.fromJson(Map<String, dynamic> json) {
-    code = json['code'];
+  Bank.fromJson(String type, String url, Map<String, dynamic> json) {
+    code = json['code'] ?? '';
+    name = json['name'] ?? '';
+    browser = json['browser'] ?? '';
+    iosApplicationId = json['iosApplicationId'] ?? '';
+    androidApplicationId = json['androidApplicationId'] ?? '';
+    this.type = type == 'COR' ? 'Corporate' : 'Retail';
+    this.url = url;
+  }
+
+  Bank.fromEwalletJson(json) {
+    code = json['id'].toString();
     name = json['name'];
-    active = json['active'];
-    browser = json['browser'];
-    iosApplicationId = json['iosApplicationId'];
-    androidApplicationId = json['androidApplicationId'];
-    if (json['redirectUrls'] != null) {
-      redirectUrls = <RedirectUrls>[];
-      json['redirectUrls'].forEach((v) {
-        redirectUrls!.add(new RedirectUrls.fromJson(v));
-      });
-    }
+    browser = '';
+    iosApplicationId = '';
+    androidApplicationId = '';
+    url = '';
+    type = '';
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['code'] = this.code;
     data['name'] = this.name;
-    data['active'] = this.active;
     data['browser'] = this.browser;
     data['iosApplicationId'] = this.iosApplicationId;
     data['androidApplicationId'] = this.androidApplicationId;
-    if (this.redirectUrls != null) {
-      data['redirectUrls'] = this.redirectUrls!.map((v) => v.toJson()).toList();
-    }
     return data;
   }
 }
 
-class RedirectUrls {
+class Bank2 {
+  late String? code;
+  late String? name;
+  late String? browser;
+  late String? iosApplicationId;
+  late String? androidApplicationId;
+  late String? url;
+  late String? type;
+  late List? redirectUrls;
+
+  Bank2(
+      {this.code,
+      this.name,
+      this.browser,
+      this.iosApplicationId,
+      this.androidApplicationId,
+      this.url,
+      this.type,
+      this.redirectUrls});
+
+  Bank2.fromJson(String type, String url, Map<String, dynamic> json) {
+    code = json['code'] ?? '';
+    name = json['name'] ?? '';
+    browser = json['browser'] ?? '';
+    iosApplicationId = json['iosApplicationId'] ?? '';
+    androidApplicationId = json['androidApplicationId'] ?? '';
+    this.type = type == 'COR' ? 'Corporate' : 'Retail';
+    this.url = url;
+  }
+
+  Bank2.fromEwalletJson(json) {
+    code = json['id'].toString();
+    name = json['name'];
+    browser = '';
+    iosApplicationId = '';
+    androidApplicationId = '';
+    url = '';
+    type = '';
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['code'] = this.code;
+    data['name'] = this.name;
+    data['browser'] = this.browser;
+    data['iosApplicationId'] = this.iosApplicationId;
+    data['androidApplicationId'] = this.androidApplicationId;
+    return data;
+  }
+}
+
+class RedirectUrl {
   String? type;
   String? url;
 
-  RedirectUrls({this.type, this.url});
+  RedirectUrl({this.type, this.url});
 
-  RedirectUrls.fromJson(Map<String, dynamic> json) {
+  RedirectUrl.fromJson(Map<String, dynamic> json) {
     type = json['type'];
     url = json['url'];
   }
@@ -1687,8 +1890,8 @@ class HistoryItem {
   String? detail;
   String? billNumber;
   String? billReferenceNumber;
-  String? amount;
-  String? createdAt;
+  double amount = 0;
+  late DateTime createdAt;
   String? status;
   String? source;
   int? billTypeId;
@@ -1706,8 +1909,6 @@ class HistoryItem {
       this.detail,
       this.billNumber,
       this.billReferenceNumber,
-      this.amount,
-      this.createdAt,
       this.status,
       this.source});
 
@@ -1724,8 +1925,8 @@ class HistoryItem {
     detail = json['detail'];
     billNumber = json['bill_number'];
     billReferenceNumber = json['bill_reference_number'];
-    amount = json['amount'];
-    createdAt = json['created_at'];
+    amount = double.parse(json['amount'].toString());
+    createdAt = DateTime.parse(json['created_at']);
     status = json['status'];
     source = json['source'];
     billTypeId = json['bill_type_id'];
@@ -1759,26 +1960,19 @@ class History {
   int? gatewayId;
   int? rmaId;
   int? userId;
-  Null counterUserId;
-  Null counterId;
-  Null collectionCenterId;
-  Null counterHistoryId;
   String? referenceNumber;
   String? transactionReference;
-  String? amount;
+  late double amount;
   String? paymentMethod;
   String? paymentResponse;
   int? count;
   String? source;
-  Null customerName;
-  Null customerEmail;
-  Null customerPhoneNo;
+  String? customerName;
+  String? customerEmail;
+  String? customerPhoneNo;
   String? status;
   String? flag;
-  String? transactionFee;
-  int? settlement;
-  Null settledAt;
-  String? createdAt;
+  late DateTime createdAt;
   String? updatedAt;
   List<Items>? items;
   Customer? user;
@@ -1790,13 +1984,8 @@ class History {
       this.gatewayId,
       this.rmaId,
       this.userId,
-      this.counterUserId,
-      this.counterId,
-      this.collectionCenterId,
-      this.counterHistoryId,
       this.referenceNumber,
       this.transactionReference,
-      this.amount,
       this.paymentMethod,
       this.paymentResponse,
       this.count,
@@ -1806,10 +1995,6 @@ class History {
       this.customerPhoneNo,
       this.status,
       this.flag,
-      this.transactionFee,
-      this.settlement,
-      this.settledAt,
-      this.createdAt,
       this.updatedAt,
       this.items,
       this.user,
@@ -1821,13 +2006,9 @@ class History {
     gatewayId = json['gateway_id'];
     rmaId = json['rma_id'];
     userId = json['user_id'];
-    counterUserId = json['counter_user_id'];
-    counterId = json['counter_id'];
-    collectionCenterId = json['collection_center_id'];
-    counterHistoryId = json['counter_history_id'];
     referenceNumber = json['reference_number'];
     transactionReference = json['transaction_reference'];
-    amount = json['amount'];
+    amount = double.parse(json['amount'].toString());
     paymentMethod = json['payment_method'];
     paymentResponse = json['payment_response'];
     count = json['count'];
@@ -1837,10 +2018,7 @@ class History {
     customerPhoneNo = json['customer_phone_no'];
     status = json['status'];
     flag = json['flag'];
-    transactionFee = json['transaction_fee'];
-    settlement = json['settlement'];
-    settledAt = json['settled_at'];
-    createdAt = json['created_at'];
+    createdAt = DateTime.parse(json['created_at']);
     updatedAt = json['updated_at'];
     if (json['items'] != null) {
       items = <Items>[];
@@ -1859,10 +2037,6 @@ class History {
     data['gateway_id'] = this.gatewayId;
     data['rma_id'] = this.rmaId;
     data['user_id'] = this.userId;
-    data['counter_user_id'] = this.counterUserId;
-    data['counter_id'] = this.counterId;
-    data['collection_center_id'] = this.collectionCenterId;
-    data['counter_history_id'] = this.counterHistoryId;
     data['reference_number'] = this.referenceNumber;
     data['transaction_reference'] = this.transactionReference;
     data['amount'] = this.amount;
@@ -1875,9 +2049,6 @@ class History {
     data['customer_phone_no'] = this.customerPhoneNo;
     data['status'] = this.status;
     data['flag'] = this.flag;
-    data['transaction_fee'] = this.transactionFee;
-    data['settlement'] = this.settlement;
-    data['settled_at'] = this.settledAt;
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     if (this.items != null) {
@@ -1923,8 +2094,8 @@ class Items {
   // String? extraFields;
   String? createdAt;
   String? updatedAt;
-  Bills? bill;
-  Service? service;
+  Bill? bill;
+  Services? service;
   Customer? customer;
 
   Items(
@@ -1963,10 +2134,10 @@ class Items {
     // extraFields = json['extra_fields'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    bill = json['bill'] != null ? new Bills.fromJson(json['service']) : null;
+    bill = json['bill'] != null ? new Bill.fromJson(json['service']) : null;
 
     service =
-        json['service'] != null ? new Service.fromJson(json['service']) : null;
+        json['service'] != null ? new Services.fromJson(json['service']) : null;
     customer = json['customer'] != null
         ? new Customer.fromJson(json['customer'])
         : null;
@@ -1998,613 +2169,6 @@ class Items {
     if (this.customer != null) {
       data['customer'] = this.customer!.toJson();
     }
-    return data;
-  }
-}
-
-class Item {
-  String? referenceNumber;
-
-  Item({this.referenceNumber});
-
-  Item.fromJson(Map<String, dynamic> json) {
-    referenceNumber = json['reference_number'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['reference_number'] = this.referenceNumber;
-    return data;
-  }
-}
-
-class Bill {
-  int? id;
-  int? stagingPaymentId;
-  int? serviceId;
-  int? billTypeId;
-  int? ministryId;
-  int? makerControllingOfficerId;
-  int? makerPtjGroupId;
-  int? makerPtjId;
-  int? makerAccountingOfficeId;
-  int? chargedControllingOfficerId;
-  int? chargedPtjGroupId;
-  int? chargedPtjId;
-  int? departmentId;
-  int? agencyId;
-  Null productId;
-  Null subproductId;
-  BillType? billType;
-  Null processCode;
-  String? referenceNumber;
-  String? detail;
-  Null entityCode;
-  String? identityCode;
-  String? name1;
-  String? name2;
-  String? address1;
-  Null address2;
-  Null address3;
-  String? postcode;
-  String? city;
-  String? district;
-  String? state;
-  String? country;
-  String? telephone;
-  Null fax;
-  String? email;
-  Null description;
-  String? actualAmount;
-  String? paidAmount;
-  String? changedAmout;
-  String? amountWithoutTax;
-  String? discountType;
-  String? discountAmount;
-  String? amountWithDiscount;
-  String? taxAmount;
-  String? amountWithTax;
-  String? roundingAdjustment;
-  String? nettAmount;
-  String? nettAmountText;
-  String? collectionLocation;
-  String? centralisedLocation;
-  String? centralisedSublocation;
-  String? startAt;
-  String? endAt;
-  String? billMask;
-  String? billNumber;
-  String? calculations;
-  int? creatorId;
-  List<Null>? validationErrors;
-  Null remarks;
-  int? payerId;
-  Null customerId;
-  Null oldCustomerId;
-  int? amountWasChanged;
-  int? customerCharge;
-  Null cancellationCategory;
-  Null cancellationReason;
-  Null queryRemarks;
-  String? status;
-  String? source;
-  String? createdAt;
-  String? updatedAt;
-  Service? service;
-  Agency? agency;
-  Null customer;
-
-  Bill(
-      {this.id,
-      this.stagingPaymentId,
-      this.serviceId,
-      this.billTypeId,
-      this.ministryId,
-      this.makerControllingOfficerId,
-      this.makerPtjGroupId,
-      this.makerPtjId,
-      this.makerAccountingOfficeId,
-      this.chargedControllingOfficerId,
-      this.chargedPtjGroupId,
-      this.chargedPtjId,
-      this.departmentId,
-      this.agencyId,
-      this.productId,
-      this.subproductId,
-      this.billType,
-      this.processCode,
-      this.referenceNumber,
-      this.detail,
-      this.entityCode,
-      this.identityCode,
-      this.name1,
-      this.name2,
-      this.address1,
-      this.address2,
-      this.address3,
-      this.postcode,
-      this.city,
-      this.district,
-      this.state,
-      this.country,
-      this.telephone,
-      this.fax,
-      this.email,
-      this.description,
-      this.actualAmount,
-      this.paidAmount,
-      this.changedAmout,
-      this.amountWithoutTax,
-      this.discountType,
-      this.discountAmount,
-      this.amountWithDiscount,
-      this.taxAmount,
-      this.amountWithTax,
-      this.roundingAdjustment,
-      this.nettAmount,
-      this.nettAmountText,
-      this.collectionLocation,
-      this.centralisedLocation,
-      this.centralisedSublocation,
-      this.startAt,
-      this.endAt,
-      this.billMask,
-      this.billNumber,
-      this.calculations,
-      this.creatorId,
-      this.validationErrors,
-      this.remarks,
-      this.payerId,
-      this.customerId,
-      this.oldCustomerId,
-      this.amountWasChanged,
-      this.customerCharge,
-      this.cancellationCategory,
-      this.cancellationReason,
-      this.queryRemarks,
-      this.status,
-      this.source,
-      this.createdAt,
-      this.updatedAt,
-      this.service,
-      this.agency,
-      this.customer});
-
-  Bill.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    stagingPaymentId = json['staging_payment_id'];
-    serviceId = json['service_id'];
-    billTypeId = json['bill_type_id'];
-    ministryId = json['ministry_id'];
-    makerControllingOfficerId = json['maker_controlling_officer_id'];
-    makerPtjGroupId = json['maker_ptj_group_id'];
-    makerPtjId = json['maker_ptj_id'];
-    makerAccountingOfficeId = json['maker_accounting_office_id'];
-    chargedControllingOfficerId = json['charged_controlling_officer_id'];
-    chargedPtjGroupId = json['charged_ptj_group_id'];
-    chargedPtjId = json['charged_ptj_id'];
-    departmentId = json['department_id'];
-    agencyId = json['agency_id'];
-    productId = json['product_id'];
-    subproductId = json['subproduct_id'];
-    billType = json['bill_type'] != null
-        ? new BillType.fromJson(json['bill_type'])
-        : null;
-    processCode = json['process_code'];
-    referenceNumber = json['reference_number'];
-    detail = json['detail'];
-    entityCode = json['entity_code'];
-    identityCode = json['identity_code'];
-    name1 = json['name_1'];
-    name2 = json['name_2'];
-    address1 = json['address_1'];
-    address2 = json['address_2'];
-    address3 = json['address_3'];
-    postcode = json['postcode'];
-    city = json['city'];
-    district = json['district'];
-    state = json['state'];
-    country = json['country'];
-    telephone = json['telephone'];
-    fax = json['fax'];
-    email = json['email'];
-    description = json['description'];
-    actualAmount = json['actual_amount'];
-    paidAmount = json['paid_amount'];
-    changedAmout = json['changed_amout'];
-    amountWithoutTax = json['amount_without_tax'];
-    discountType = json['discount_type'];
-    discountAmount = json['discount_amount'];
-    amountWithDiscount = json['amount_with_discount'];
-    taxAmount = json['tax_amount'];
-    amountWithTax = json['amount_with_tax'];
-    roundingAdjustment = json['rounding_adjustment'];
-    nettAmount = json['nett_amount'];
-    nettAmountText = json['nett_amount_text'];
-    collectionLocation = json['collection_location'];
-    centralisedLocation = json['centralised_location'];
-    centralisedSublocation = json['centralised_sublocation'];
-    startAt = json['start_at'];
-    endAt = json['end_at'];
-    billMask = json['bill_mask'];
-    billNumber = json['bill_number'];
-    calculations = json['calculations'];
-    creatorId = json['creator_id'];
-    if (json['validation_errors'] != null) {
-      validationErrors = <Null>[];
-      json['validation_errors'].forEach((v) {
-        // validationErrors!.add(new Null.fromJson(v));
-      });
-    }
-    remarks = json['remarks'];
-    payerId = json['payer_id'];
-    customerId = json['customer_id'];
-    oldCustomerId = json['old_customer_id'];
-    amountWasChanged = json['amount_was_changed'];
-    customerCharge = json['customer_charge'];
-    cancellationCategory = json['cancellation_category'];
-    cancellationReason = json['cancellation_reason'];
-    queryRemarks = json['query_remarks'];
-    status = json['status'];
-    source = json['source'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    service =
-        json['service'] != null ? new Service.fromJson(json['service']) : null;
-    agency =
-        json['agency'] != null ? new Agency.fromJson(json['agency']) : null;
-    customer = json['customer'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['staging_payment_id'] = this.stagingPaymentId;
-    data['service_id'] = this.serviceId;
-    data['bill_type_id'] = this.billTypeId;
-    data['ministry_id'] = this.ministryId;
-    data['maker_controlling_officer_id'] = this.makerControllingOfficerId;
-    data['maker_ptj_group_id'] = this.makerPtjGroupId;
-    data['maker_ptj_id'] = this.makerPtjId;
-    data['maker_accounting_office_id'] = this.makerAccountingOfficeId;
-    data['charged_controlling_officer_id'] = this.chargedControllingOfficerId;
-    data['charged_ptj_group_id'] = this.chargedPtjGroupId;
-    data['charged_ptj_id'] = this.chargedPtjId;
-    data['department_id'] = this.departmentId;
-    data['agency_id'] = this.agencyId;
-    data['product_id'] = this.productId;
-    data['subproduct_id'] = this.subproductId;
-    if (this.billType != null) {
-      data['bill_type'] = this.billType!.toJson();
-    }
-    data['process_code'] = this.processCode;
-    data['reference_number'] = this.referenceNumber;
-    data['detail'] = this.detail;
-    data['entity_code'] = this.entityCode;
-    data['identity_code'] = this.identityCode;
-    data['name_1'] = this.name1;
-    data['name_2'] = this.name2;
-    data['address_1'] = this.address1;
-    data['address_2'] = this.address2;
-    data['address_3'] = this.address3;
-    data['postcode'] = this.postcode;
-    data['city'] = this.city;
-    data['district'] = this.district;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['telephone'] = this.telephone;
-    data['fax'] = this.fax;
-    data['email'] = this.email;
-    data['description'] = this.description;
-    data['actual_amount'] = this.actualAmount;
-    data['paid_amount'] = this.paidAmount;
-    data['changed_amout'] = this.changedAmout;
-    data['amount_without_tax'] = this.amountWithoutTax;
-    data['discount_type'] = this.discountType;
-    data['discount_amount'] = this.discountAmount;
-    data['amount_with_discount'] = this.amountWithDiscount;
-    data['tax_amount'] = this.taxAmount;
-    data['amount_with_tax'] = this.amountWithTax;
-    data['rounding_adjustment'] = this.roundingAdjustment;
-    data['nett_amount'] = this.nettAmount;
-    data['nett_amount_text'] = this.nettAmountText;
-    data['collection_location'] = this.collectionLocation;
-    data['centralised_location'] = this.centralisedLocation;
-    data['centralised_sublocation'] = this.centralisedSublocation;
-    data['start_at'] = this.startAt;
-    data['end_at'] = this.endAt;
-    data['bill_mask'] = this.billMask;
-    data['bill_number'] = this.billNumber;
-    data['calculations'] = this.calculations;
-    data['creator_id'] = this.creatorId;
-    if (this.validationErrors != null) {
-      // data['validation_errors'] =
-      //     this.validationErrors!.map((v) => v.toJson()).toList();
-    }
-    data['remarks'] = this.remarks;
-    data['payer_id'] = this.payerId;
-    data['customer_id'] = this.customerId;
-    data['old_customer_id'] = this.oldCustomerId;
-    data['amount_was_changed'] = this.amountWasChanged;
-    data['customer_charge'] = this.customerCharge;
-    data['cancellation_category'] = this.cancellationCategory;
-    data['cancellation_reason'] = this.cancellationReason;
-    data['query_remarks'] = this.queryRemarks;
-    data['status'] = this.status;
-    data['source'] = this.source;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.service != null) {
-      data['service'] = this.service!.toJson();
-    }
-    if (this.agency != null) {
-      data['agency'] = this.agency!.toJson();
-    }
-    data['customer'] = this.customer;
-    return data;
-  }
-}
-
-class Users {
-  int? id;
-  String? icNo;
-  String? firstName;
-  String? lastName;
-
-  Users({this.id, this.icNo, this.firstName, this.lastName});
-
-  Users.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    icNo = json['ic_no'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['ic_no'] = this.icNo;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    return data;
-  }
-}
-
-class Services {
-  int? id;
-  int? agencyId;
-  int? ministryId;
-  String? name;
-  int? menuId;
-  String? serviceReferenceNumber;
-  int? billTypeId;
-  Null serviceGroupId;
-  Null systemSupportingDocumentPath;
-  Null systemApprovalLetterDate;
-  Null systemApprovalLetterRef;
-  Null systemDescription;
-  Null systemLogo;
-  Null systemName;
-  Null productLabelDisplay;
-  List<Null>? matrix;
-  List<Null>? extraFields;
-  String? fileExtensions;
-  Null maxFileSize;
-  Null refNoLabel;
-  int? allowCby;
-  String? cbyChargelines;
-  String? receiptType;
-  int? allowPartialPayment;
-  int? isSensitive;
-  int? isInvoiceIGFMAS;
-  String? allowThirdPartyPayment;
-  String? thirdPartySearchTypes;
-  Null serviceMode;
-  String? integrationData;
-  String? serviceChargeData;
-  String? taxData;
-  String? discountData;
-  String? chargelineData;
-  String? chargedTo;
-  String? status;
-  int? creatorId;
-  int? hasModified;
-  String? submittedAt;
-  String? approvalAgencyAt;
-  int? approvalAgencyBy;
-  Null approvalAgencyRemarks;
-  Null approvalBaRemarks;
-  String? approvalBaAt;
-  int? approvalBaBy;
-  String? approvalJanmFungsianAt;
-  Null approvalJanmFungsianRemarks;
-  int? approvalJanmFungsianBy;
-  String? approvalJanmTeknikalAt;
-  Null approvalJanmTeknikalRemarks;
-  int? approvalJanmTeknikalBy;
-  String? createdAt;
-  String? updatedAt;
-
-  Services(
-      {this.id,
-      this.agencyId,
-      this.ministryId,
-      this.name,
-      this.menuId,
-      this.serviceReferenceNumber,
-      this.billTypeId,
-      this.serviceGroupId,
-      this.systemSupportingDocumentPath,
-      this.systemApprovalLetterDate,
-      this.systemApprovalLetterRef,
-      this.systemDescription,
-      this.systemLogo,
-      this.systemName,
-      this.productLabelDisplay,
-      this.matrix,
-      this.extraFields,
-      this.fileExtensions,
-      this.maxFileSize,
-      this.refNoLabel,
-      this.allowCby,
-      this.cbyChargelines,
-      this.receiptType,
-      this.allowPartialPayment,
-      this.isSensitive,
-      this.isInvoiceIGFMAS,
-      this.allowThirdPartyPayment,
-      this.thirdPartySearchTypes,
-      this.serviceMode,
-      this.integrationData,
-      this.serviceChargeData,
-      this.taxData,
-      this.discountData,
-      this.chargelineData,
-      this.chargedTo,
-      this.status,
-      this.creatorId,
-      this.hasModified,
-      this.submittedAt,
-      this.approvalAgencyAt,
-      this.approvalAgencyBy,
-      this.approvalAgencyRemarks,
-      this.approvalBaRemarks,
-      this.approvalBaAt,
-      this.approvalBaBy,
-      this.approvalJanmFungsianAt,
-      this.approvalJanmFungsianRemarks,
-      this.approvalJanmFungsianBy,
-      this.approvalJanmTeknikalAt,
-      this.approvalJanmTeknikalRemarks,
-      this.approvalJanmTeknikalBy,
-      this.createdAt,
-      this.updatedAt});
-
-  Services.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    agencyId = json['agency_id'];
-    ministryId = json['ministry_id'];
-    name = json['name'];
-    menuId = json['menu_id'];
-    serviceReferenceNumber = json['service_reference_number'];
-    billTypeId = json['bill_type_id'];
-    serviceGroupId = json['service_group_id'];
-    systemSupportingDocumentPath = json['system_supporting_document_path'];
-    systemApprovalLetterDate = json['system_approval_letter_date'];
-    systemApprovalLetterRef = json['system_approval_letter_ref'];
-    systemDescription = json['system_description'];
-    systemLogo = json['system_logo'];
-    systemName = json['system_name'];
-    productLabelDisplay = json['product_label_display'];
-    if (json['matrix'] != null) {
-      matrix = <Null>[];
-      json['matrix'].forEach((v) {
-        // matrix!.add(new Null.fromJson(v));
-      });
-    }
-    if (json['extra_fields'] != null) {
-      extraFields = <Null>[];
-      json['extra_fields'].forEach((v) {
-        // extraFields!.add(new Null.fromJson(v));
-      });
-    }
-    fileExtensions = json['file_extensions'];
-    maxFileSize = json['max_file_size'];
-    refNoLabel = json['ref_no_label'];
-    allowCby = json['allow_cby'];
-    cbyChargelines = json['cby_chargelines'];
-    receiptType = json['receipt_type'];
-    allowPartialPayment = json['allow_partial_payment'];
-    isSensitive = json['is_sensitive'];
-    isInvoiceIGFMAS = json['is_invoice_iGFMAS'];
-    allowThirdPartyPayment = json['allow_third_party_payment'];
-    thirdPartySearchTypes = json['third_party_search_types'];
-    serviceMode = json['service_mode'];
-    integrationData = json['integration_data'];
-    serviceChargeData = json['service_charge_data'];
-    taxData = json['tax_data'];
-    discountData = json['discount_data'];
-    chargelineData = json['chargeline_data'];
-    chargedTo = json['charged_to'];
-    status = json['status'];
-    creatorId = json['creator_id'];
-    hasModified = json['has_modified'];
-    submittedAt = json['submitted_at'];
-    approvalAgencyAt = json['approval_agency_at'];
-    approvalAgencyBy = json['approval_agency_by'];
-    approvalAgencyRemarks = json['approval_agency_remarks'];
-    approvalBaRemarks = json['approval_ba_remarks'];
-    approvalBaAt = json['approval_ba_at'];
-    approvalBaBy = json['approval_ba_by'];
-    approvalJanmFungsianAt = json['approval_janm_fungsian_at'];
-    approvalJanmFungsianRemarks = json['approval_janm_fungsian_remarks'];
-    approvalJanmFungsianBy = json['approval_janm_fungsian_by'];
-    approvalJanmTeknikalAt = json['approval_janm_teknikal_at'];
-    approvalJanmTeknikalRemarks = json['approval_janm_teknikal_remarks'];
-    approvalJanmTeknikalBy = json['approval_janm_teknikal_by'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['agency_id'] = this.agencyId;
-    data['ministry_id'] = this.ministryId;
-    data['name'] = this.name;
-    data['menu_id'] = this.menuId;
-    data['service_reference_number'] = this.serviceReferenceNumber;
-    data['bill_type_id'] = this.billTypeId;
-    data['service_group_id'] = this.serviceGroupId;
-    data['system_supporting_document_path'] = this.systemSupportingDocumentPath;
-    data['system_approval_letter_date'] = this.systemApprovalLetterDate;
-    data['system_approval_letter_ref'] = this.systemApprovalLetterRef;
-    data['system_description'] = this.systemDescription;
-    data['system_logo'] = this.systemLogo;
-    data['system_name'] = this.systemName;
-    data['product_label_display'] = this.productLabelDisplay;
-    if (this.matrix != null) {
-      // data['matrix'] = this.matrix!.map((v) => v.toJson()).toList();
-    }
-    if (this.extraFields != null) {
-      // data['extra_fields'] = this.extraFields!.map((v) => v.toJson()).toList();
-    }
-    data['file_extensions'] = this.fileExtensions;
-    data['max_file_size'] = this.maxFileSize;
-    data['ref_no_label'] = this.refNoLabel;
-    data['allow_cby'] = this.allowCby;
-    data['cby_chargelines'] = this.cbyChargelines;
-    data['receipt_type'] = this.receiptType;
-    data['allow_partial_payment'] = this.allowPartialPayment;
-    data['is_sensitive'] = this.isSensitive;
-    data['is_invoice_iGFMAS'] = this.isInvoiceIGFMAS;
-    data['allow_third_party_payment'] = this.allowThirdPartyPayment;
-    data['third_party_search_types'] = this.thirdPartySearchTypes;
-    data['service_mode'] = this.serviceMode;
-    data['integration_data'] = this.integrationData;
-    data['service_charge_data'] = this.serviceChargeData;
-    data['tax_data'] = this.taxData;
-    data['discount_data'] = this.discountData;
-    data['chargeline_data'] = this.chargelineData;
-    data['charged_to'] = this.chargedTo;
-    data['status'] = this.status;
-    data['creator_id'] = this.creatorId;
-    data['has_modified'] = this.hasModified;
-    data['submitted_at'] = this.submittedAt;
-    data['approval_agency_at'] = this.approvalAgencyAt;
-    data['approval_agency_by'] = this.approvalAgencyBy;
-    data['approval_agency_remarks'] = this.approvalAgencyRemarks;
-    data['approval_ba_remarks'] = this.approvalBaRemarks;
-    data['approval_ba_at'] = this.approvalBaAt;
-    data['approval_ba_by'] = this.approvalBaBy;
-    data['approval_janm_fungsian_at'] = this.approvalJanmFungsianAt;
-    data['approval_janm_fungsian_remarks'] = this.approvalJanmFungsianRemarks;
-    data['approval_janm_fungsian_by'] = this.approvalJanmFungsianBy;
-    data['approval_janm_teknikal_at'] = this.approvalJanmTeknikalAt;
-    data['approval_janm_teknikal_remarks'] = this.approvalJanmTeknikalRemarks;
-    data['approval_janm_teknikal_by'] = this.approvalJanmTeknikalBy;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
     return data;
   }
 }
@@ -2641,7 +2205,9 @@ class FavBill {
   int? billId;
   String? createdAt;
   String? updatedAt;
-  late Billss bill;
+  late Bill bill;
+
+  var payment;
 
   FavBill(
       {this.id,
@@ -2659,7 +2225,8 @@ class FavBill {
     billId = json['bill_id'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
-    bill = (json['bill'] != null ? new Billss.fromJson(json['bill']) : null)!;
+    bill =
+        (json['payment'] != null ? new Bill.fromJson(json['payment']) : null)!;
   }
 
   Map<String, dynamic> toJson() {
@@ -2671,1152 +2238,6 @@ class FavBill {
     data['created_at'] = this.createdAt;
     data['updated_at'] = this.updatedAt;
     data['bill'] = this.bill.toJson();
-    return data;
-  }
-}
-
-class Billss {
-  int? id;
-  int? stagingPaymentId;
-  int? serviceId;
-  int? billTypeId;
-  int? ministryId;
-  int? makerControllingOfficerId;
-  int? makerPtjGroupId;
-  int? makerPtjId;
-  int? makerAccountingOfficeId;
-  int? chargedControllingOfficerId;
-  int? chargedPtjGroupId;
-  int? chargedPtjId;
-  int? departmentId;
-  int? agencyId;
-  Null productId;
-  Null subproductId;
-  BillType? billType;
-  Null processCode;
-  String? referenceNumber;
-  String? detail;
-  Null entityCode;
-  String? identityCode;
-  String? name1;
-  String? name2;
-  String? address1;
-  String? address2;
-  String? address3;
-  String? postcode;
-  String? city;
-  String? district;
-  String? state;
-  String? country;
-  String? telephone;
-  Null fax;
-  String? email;
-  String? description;
-  String? actualAmount;
-  String? paidAmount;
-  String? changedAmout;
-  String? amountWithoutTax;
-  String? discountType;
-  String? discountAmount;
-  String? amountWithDiscount;
-  String? taxAmount;
-  String? amountWithTax;
-  String? roundingAdjustment;
-  String? nettAmount;
-  String? nettAmountText;
-  String? collectionLocation;
-  String? centralisedLocation;
-  String? centralisedSublocation;
-  String? startAt;
-  String? endAt;
-  String? billMask;
-  String? billNumber;
-  String? calculations;
-  int? creatorId;
-  List<Null>? validationErrors;
-  Null remarks;
-  Null payerId;
-  Null customerId;
-  Null oldCustomerId;
-  int? amountWasChanged;
-  int? customerCharge;
-  String? cancellationCategory;
-  String? cancellationReason;
-  String? queryRemarks;
-  String? status;
-  String? source;
-  String? createdAt;
-  String? updatedAt;
-  Service? service;
-  Agency? agency;
-  Null customer;
-
-  Billss(
-      {this.id,
-      this.stagingPaymentId,
-      this.serviceId,
-      this.billTypeId,
-      this.ministryId,
-      this.makerControllingOfficerId,
-      this.makerPtjGroupId,
-      this.makerPtjId,
-      this.makerAccountingOfficeId,
-      this.chargedControllingOfficerId,
-      this.chargedPtjGroupId,
-      this.chargedPtjId,
-      this.departmentId,
-      this.agencyId,
-      this.productId,
-      this.subproductId,
-      this.billType,
-      this.processCode,
-      this.referenceNumber,
-      this.detail,
-      this.entityCode,
-      this.identityCode,
-      this.name1,
-      this.name2,
-      this.address1,
-      this.address2,
-      this.address3,
-      this.postcode,
-      this.city,
-      this.district,
-      this.state,
-      this.country,
-      this.telephone,
-      this.fax,
-      this.email,
-      this.description,
-      this.actualAmount,
-      this.paidAmount,
-      this.changedAmout,
-      this.amountWithoutTax,
-      this.discountType,
-      this.discountAmount,
-      this.amountWithDiscount,
-      this.taxAmount,
-      this.amountWithTax,
-      this.roundingAdjustment,
-      this.nettAmount,
-      this.nettAmountText,
-      this.collectionLocation,
-      this.centralisedLocation,
-      this.centralisedSublocation,
-      this.startAt,
-      this.endAt,
-      this.billMask,
-      this.billNumber,
-      this.calculations,
-      this.creatorId,
-      this.validationErrors,
-      this.remarks,
-      this.payerId,
-      this.customerId,
-      this.oldCustomerId,
-      this.amountWasChanged,
-      this.customerCharge,
-      this.cancellationCategory,
-      this.cancellationReason,
-      this.queryRemarks,
-      this.status,
-      this.source,
-      this.createdAt,
-      this.updatedAt,
-      this.service,
-      this.agency,
-      this.customer});
-
-  Billss.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    stagingPaymentId = json['staging_payment_id'];
-    serviceId = json['service_id'];
-    billTypeId = json['bill_type_id'];
-    ministryId = json['ministry_id'];
-    makerControllingOfficerId = json['maker_controlling_officer_id'];
-    makerPtjGroupId = json['maker_ptj_group_id'];
-    makerPtjId = json['maker_ptj_id'];
-    makerAccountingOfficeId = json['maker_accounting_office_id'];
-    chargedControllingOfficerId = json['charged_controlling_officer_id'];
-    chargedPtjGroupId = json['charged_ptj_group_id'];
-    chargedPtjId = json['charged_ptj_id'];
-    departmentId = json['department_id'];
-    agencyId = json['agency_id'];
-    productId = json['product_id'];
-    subproductId = json['subproduct_id'];
-    billType = json['bill_type'] != null
-        ? new BillType.fromJson(json['bill_type'])
-        : null;
-    processCode = json['process_code'];
-    referenceNumber = json['reference_number'];
-    detail = json['detail'];
-    entityCode = json['entity_code'];
-    identityCode = json['identity_code'];
-    name1 = json['name_1'];
-    name2 = json['name_2'];
-    address1 = json['address_1'];
-    address2 = json['address_2'];
-    address3 = json['address_3'];
-    postcode = json['postcode'];
-    city = json['city'];
-    district = json['district'];
-    state = json['state'];
-    country = json['country'];
-    telephone = json['telephone'];
-    fax = json['fax'];
-    email = json['email'];
-    description = json['description'];
-    actualAmount = json['actual_amount'];
-    paidAmount = json['paid_amount'];
-    changedAmout = json['changed_amout'];
-    amountWithoutTax = json['amount_without_tax'];
-    discountType = json['discount_type'];
-    discountAmount = json['discount_amount'];
-    amountWithDiscount = json['amount_with_discount'];
-    taxAmount = json['tax_amount'];
-    amountWithTax = json['amount_with_tax'];
-    roundingAdjustment = json['rounding_adjustment'];
-    nettAmount = json['nett_amount'];
-    nettAmountText = json['nett_amount_text'];
-    collectionLocation = json['collection_location'];
-    centralisedLocation = json['centralised_location'];
-    centralisedSublocation = json['centralised_sublocation'];
-    startAt = json['start_at'];
-    endAt = json['end_at'];
-    billMask = json['bill_mask'];
-    billNumber = json['bill_number'];
-    calculations = json['calculations'];
-    creatorId = json['creator_id'];
-    if (json['validation_errors'] != null) {
-      validationErrors = <Null>[];
-      json['validation_errors'].forEach((v) {
-        // validationErrors!.add(new Null.fromJson(v));
-      });
-    }
-    remarks = json['remarks'];
-    payerId = json['payer_id'];
-    customerId = json['customer_id'];
-    oldCustomerId = json['old_customer_id'];
-    amountWasChanged = json['amount_was_changed'];
-    customerCharge = json['customer_charge'];
-    cancellationCategory = json['cancellation_category'];
-    cancellationReason = json['cancellation_reason'];
-    queryRemarks = json['query_remarks'];
-    status = json['status'];
-    source = json['source'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    service =
-        json['service'] != null ? new Service.fromJson(json['service']) : null;
-    agency =
-        json['agency'] != null ? new Agency.fromJson(json['agency']) : null;
-    customer = json['customer'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['staging_payment_id'] = this.stagingPaymentId;
-    data['service_id'] = this.serviceId;
-    data['bill_type_id'] = this.billTypeId;
-    data['ministry_id'] = this.ministryId;
-    data['maker_controlling_officer_id'] = this.makerControllingOfficerId;
-    data['maker_ptj_group_id'] = this.makerPtjGroupId;
-    data['maker_ptj_id'] = this.makerPtjId;
-    data['maker_accounting_office_id'] = this.makerAccountingOfficeId;
-    data['charged_controlling_officer_id'] = this.chargedControllingOfficerId;
-    data['charged_ptj_group_id'] = this.chargedPtjGroupId;
-    data['charged_ptj_id'] = this.chargedPtjId;
-    data['department_id'] = this.departmentId;
-    data['agency_id'] = this.agencyId;
-    data['product_id'] = this.productId;
-    data['subproduct_id'] = this.subproductId;
-    if (this.billType != null) {
-      data['bill_type'] = this.billType!.toJson();
-    }
-    data['process_code'] = this.processCode;
-    data['reference_number'] = this.referenceNumber;
-    data['detail'] = this.detail;
-    data['entity_code'] = this.entityCode;
-    data['identity_code'] = this.identityCode;
-    data['name_1'] = this.name1;
-    data['name_2'] = this.name2;
-    data['address_1'] = this.address1;
-    data['address_2'] = this.address2;
-    data['address_3'] = this.address3;
-    data['postcode'] = this.postcode;
-    data['city'] = this.city;
-    data['district'] = this.district;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['telephone'] = this.telephone;
-    data['fax'] = this.fax;
-    data['email'] = this.email;
-    data['description'] = this.description;
-    data['actual_amount'] = this.actualAmount;
-    data['paid_amount'] = this.paidAmount;
-    data['changed_amout'] = this.changedAmout;
-    data['amount_without_tax'] = this.amountWithoutTax;
-    data['discount_type'] = this.discountType;
-    data['discount_amount'] = this.discountAmount;
-    data['amount_with_discount'] = this.amountWithDiscount;
-    data['tax_amount'] = this.taxAmount;
-    data['amount_with_tax'] = this.amountWithTax;
-    data['rounding_adjustment'] = this.roundingAdjustment;
-    data['nett_amount'] = this.nettAmount;
-    data['nett_amount_text'] = this.nettAmountText;
-    data['collection_location'] = this.collectionLocation;
-    data['centralised_location'] = this.centralisedLocation;
-    data['centralised_sublocation'] = this.centralisedSublocation;
-    data['start_at'] = this.startAt;
-    data['end_at'] = this.endAt;
-    data['bill_mask'] = this.billMask;
-    data['bill_number'] = this.billNumber;
-    data['calculations'] = this.calculations;
-    data['creator_id'] = this.creatorId;
-    if (this.validationErrors != null) {
-      // data['validation_errors'] =
-      // this.validationErrors!.map((v) => v.toJson()).toList();
-    }
-    data['remarks'] = this.remarks;
-    data['payer_id'] = this.payerId;
-    data['customer_id'] = this.customerId;
-    data['old_customer_id'] = this.oldCustomerId;
-    data['amount_was_changed'] = this.amountWasChanged;
-    data['customer_charge'] = this.customerCharge;
-    data['cancellation_category'] = this.cancellationCategory;
-    data['cancellation_reason'] = this.cancellationReason;
-    data['query_remarks'] = this.queryRemarks;
-    data['status'] = this.status;
-    data['source'] = this.source;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.service != null) {
-      data['service'] = this.service!.toJson();
-    }
-    if (this.agency != null) {
-      data['agency'] = this.agency!.toJson();
-    }
-    data['customer'] = this.customer;
-    return data;
-  }
-}
-
-class BillTypes {
-  int? id;
-  String? type;
-
-  BillTypes({this.id, this.type});
-
-  BillTypes.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    type = json['type'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['type'] = this.type;
-    return data;
-  }
-}
-
-class Servicess {
-  int? id;
-  int? menuId;
-  String? name;
-  String? serviceReferenceNumber;
-  String? cbyChargelines;
-  String? receiptType;
-  String? serviceChargeData;
-  String? taxData;
-  String? discountData;
-  String? chargelineData;
-  String? chargedTo;
-  String? status;
-  String? submittedAt;
-  String? approvalBaAt;
-  Menuss? menu;
-  bool? withMatrix;
-
-  Servicess(
-      {this.id,
-      this.menuId,
-      this.name,
-      this.serviceReferenceNumber,
-      this.cbyChargelines,
-      this.receiptType,
-      this.serviceChargeData,
-      this.taxData,
-      this.discountData,
-      this.chargelineData,
-      this.chargedTo,
-      this.status,
-      this.submittedAt,
-      this.approvalBaAt,
-      this.menu,
-      this.withMatrix});
-
-  Servicess.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    menuId = json['menu_id'];
-    name = json['name'];
-    serviceReferenceNumber = json['service_reference_number'];
-    cbyChargelines = json['cby_chargelines'];
-    receiptType = json['receipt_type'];
-    serviceChargeData = json['service_charge_data'];
-    taxData = json['tax_data'];
-    discountData = json['discount_data'];
-    chargelineData = json['chargeline_data'];
-    chargedTo = json['charged_to'];
-    status = json['status'];
-    submittedAt = json['submitted_at'];
-    approvalBaAt = json['approval_ba_at'];
-    menu = json['menu'] != null ? new Menuss.fromJson(json['menu']) : null;
-    withMatrix = json['with_matrix'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['menu_id'] = this.menuId;
-    data['name'] = this.name;
-    data['service_reference_number'] = this.serviceReferenceNumber;
-    data['cby_chargelines'] = this.cbyChargelines;
-    data['receipt_type'] = this.receiptType;
-    data['service_charge_data'] = this.serviceChargeData;
-    data['tax_data'] = this.taxData;
-    data['discount_data'] = this.discountData;
-    data['chargeline_data'] = this.chargelineData;
-    data['charged_to'] = this.chargedTo;
-    data['status'] = this.status;
-    data['submitted_at'] = this.submittedAt;
-    data['approval_ba_at'] = this.approvalBaAt;
-    if (this.menu != null) {
-      data['menu'] = this.menu!.toJson();
-    }
-    data['with_matrix'] = this.withMatrix;
-    return data;
-  }
-}
-
-class Menuss {
-  int? id;
-  String? name;
-
-  Menuss({this.id, this.name});
-
-  Menuss.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    return data;
-  }
-}
-
-class Agencys {
-  int? id;
-  String? name;
-  String? code;
-  String? profile;
-  String? address;
-
-  Agencys({this.id, this.name, this.code, this.profile, this.address});
-
-  Agencys.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    code = json['code'];
-    profile = json['profile'];
-    address = json['address'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['code'] = this.code;
-    data['profile'] = this.profile;
-    data['address'] = this.address;
-    return data;
-  }
-}
-
-class FavBills {
-  int? id;
-  int? userId;
-  Null serviceId;
-  int? billId;
-  String? createdAt;
-  String? updatedAt;
-  Bills? payment;
-
-  FavBills(
-      {this.id,
-      this.userId,
-      this.serviceId,
-      this.billId,
-      this.createdAt,
-      this.updatedAt,
-      this.payment});
-
-  FavBills.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    userId = json['user_id'];
-    serviceId = json['service_id'];
-    billId = json['bill_id'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    payment =
-        json['payment'] != null ? new Bills.fromJson(json['payment']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['service_id'] = this.serviceId;
-    data['bill_id'] = this.billId;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.payment != null) {
-      data['payment'] = this.payment!.toJson();
-    }
-    return data;
-  }
-}
-
-class Paymentss {
-  int? id;
-  Null billTypeId;
-  Null serviceId;
-  int? ministryId;
-  int? departmentId;
-  Null agencyId;
-  int? creatorId;
-  int? makerPtjId;
-  Null locationId;
-  Null sublocationId;
-  Null userIdentityTypeId;
-  int? countryId;
-  int? stateId;
-  int? cityId;
-  int? districtId;
-  String? identityCodeCategory;
-  Null identityCode;
-  Null previousIdentityCode;
-  Null customerName;
-  Null customerReferenceNumber;
-  String? address;
-  String? postcode;
-  String? stateName;
-  String? cityName;
-  String? districtName;
-  String? telephone;
-  String? email;
-  String? detail;
-  String? referenceNumber;
-  Null recordSeqNumber;
-  Null documentSeqNumber;
-  Null documentNoSap;
-  Null documentNoOriginal;
-  Null documentYear;
-  Null invoiceNumber;
-  Null invoiceNumberSap;
-  Null invoiceYear;
-  String? billDate;
-  Null postingDate;
-  String? startAt;
-  String? endAt;
-  String? customerNote;
-  String? source;
-  Null stagingBatchId;
-  Null stagingBatchContentId;
-  int? processCode;
-  String? dataStatus;
-  String? status;
-  int? firstApproverId;
-  Null secondApproverId;
-  String? firstApprovalAt;
-  Null secondApprovalAt;
-  String? taskAt;
-  Null queryRemarks;
-  Null billNumber;
-  Null billMask;
-  Null makerName;
-  Null makerPosition;
-  Null documentDatePrepared;
-  Null approverName;
-  Null approverPosition;
-  Null approvalDate;
-  String? createdAt;
-  String? updatedAt;
-  Null deletedAt;
-  NettCalculations? nettCalculations;
-  Service? service;
-  Agency? agency;
-  Null customer;
-  Null billType;
-  String amount = "";
-  Paymentss(
-      {this.id,
-      this.billTypeId,
-      this.serviceId,
-      this.ministryId,
-      this.departmentId,
-      this.agencyId,
-      this.creatorId,
-      this.makerPtjId,
-      this.locationId,
-      this.sublocationId,
-      this.userIdentityTypeId,
-      this.countryId,
-      this.stateId,
-      this.cityId,
-      this.districtId,
-      this.identityCodeCategory,
-      this.identityCode,
-      this.previousIdentityCode,
-      this.customerName,
-      this.customerReferenceNumber,
-      this.address,
-      this.postcode,
-      this.stateName,
-      this.cityName,
-      this.districtName,
-      this.telephone,
-      this.email,
-      this.detail,
-      this.referenceNumber,
-      this.recordSeqNumber,
-      this.documentSeqNumber,
-      this.documentNoSap,
-      this.documentNoOriginal,
-      this.documentYear,
-      this.invoiceNumber,
-      this.invoiceNumberSap,
-      this.invoiceYear,
-      this.billDate,
-      this.postingDate,
-      this.startAt,
-      this.endAt,
-      this.customerNote,
-      this.source,
-      this.stagingBatchId,
-      this.stagingBatchContentId,
-      this.processCode,
-      this.dataStatus,
-      this.status,
-      this.firstApproverId,
-      this.secondApproverId,
-      this.firstApprovalAt,
-      this.secondApprovalAt,
-      this.taskAt,
-      this.queryRemarks,
-      this.billNumber,
-      this.billMask,
-      this.makerName,
-      this.makerPosition,
-      this.documentDatePrepared,
-      this.approverName,
-      this.approverPosition,
-      this.approvalDate,
-      this.createdAt,
-      this.updatedAt,
-      this.deletedAt,
-      this.nettCalculations,
-      this.service,
-      this.agency,
-      this.customer,
-      this.billType});
-
-  Paymentss.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    billTypeId = json['bill_type_id'];
-    serviceId = json['service_id'];
-    ministryId = json['ministry_id'];
-    departmentId = json['department_id'];
-    agencyId = json['agency_id'];
-    creatorId = json['creator_id'];
-    makerPtjId = json['maker_ptj_id'];
-    locationId = json['location_id'];
-    sublocationId = json['sublocation_id'];
-    userIdentityTypeId = json['user_identity_type_id'];
-    countryId = json['country_id'];
-    stateId = json['state_id'];
-    cityId = json['city_id'];
-    districtId = json['district_id'];
-    identityCodeCategory = json['identity_code_category'];
-    identityCode = json['identity_code'];
-    previousIdentityCode = json['previous_identity_code'];
-    customerName = json['customer_name'];
-    customerReferenceNumber = json['customer_reference_number'];
-    address = json['address'];
-    postcode = json['postcode'];
-    stateName = json['state_name'];
-    cityName = json['city_name'];
-    districtName = json['district_name'];
-    telephone = json['telephone'];
-    email = json['email'];
-    detail = json['detail'];
-    referenceNumber = json['reference_number'];
-    recordSeqNumber = json['record_seq_number'];
-    documentSeqNumber = json['document_seq_number'];
-    documentNoSap = json['document_no_sap'];
-    documentNoOriginal = json['document_no_original'];
-    documentYear = json['document_year'];
-    invoiceNumber = json['invoice_number'];
-    invoiceNumberSap = json['invoice_number_sap'];
-    invoiceYear = json['invoice_year'];
-    billDate = json['bill_date'];
-    postingDate = json['posting_date'];
-    startAt = json['start_at'];
-    endAt = json['end_at'];
-    customerNote = json['customer_note'];
-    source = json['source'];
-    stagingBatchId = json['staging_batch_id'];
-    stagingBatchContentId = json['staging_batch_content_id'];
-    processCode = json['process_code'];
-    dataStatus = json['data_status'];
-    status = json['status'];
-    if (json['first_approver_id'] != null) {
-      firstApproverId = json['first_approver_id'];
-    }
-    secondApproverId = json['second_approver_id'];
-    if (json['first_approval_at'] != null) {
-      firstApprovalAt = json['first_approval_at'];
-    }
-    secondApprovalAt = json['second_approval_at'];
-    if (json['task_at'] != null) {
-      taskAt = json['task_at'];
-    }
-    queryRemarks = json['query_remarks'];
-    billNumber = json['bill_number'];
-    billMask = json['bill_mask'];
-    makerName = json['maker_name'];
-    makerPosition = json['maker_position'];
-    documentDatePrepared = json['document_date_prepared'];
-    approverName = json['approver_name'];
-    approverPosition = json['approver_position'];
-    approvalDate = json['approval_date'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
-    nettCalculations = json['nett_calculations'] != null
-        ? new NettCalculations.fromJson(json['nett_calculations'])
-        : null;
-    service = json['service'];
-    agency = json['agency'];
-    customer = json['customer'];
-    billType = json['bill_type'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['bill_type_id'] = this.billTypeId;
-    data['service_id'] = this.serviceId;
-    data['ministry_id'] = this.ministryId;
-    data['department_id'] = this.departmentId;
-    data['agency_id'] = this.agencyId;
-    data['creator_id'] = this.creatorId;
-    data['maker_ptj_id'] = this.makerPtjId;
-    data['location_id'] = this.locationId;
-    data['sublocation_id'] = this.sublocationId;
-    data['user_identity_type_id'] = this.userIdentityTypeId;
-    data['country_id'] = this.countryId;
-    data['state_id'] = this.stateId;
-    data['city_id'] = this.cityId;
-    data['district_id'] = this.districtId;
-    data['identity_code_category'] = this.identityCodeCategory;
-    data['identity_code'] = this.identityCode;
-    data['previous_identity_code'] = this.previousIdentityCode;
-    data['customer_name'] = this.customerName;
-    data['customer_reference_number'] = this.customerReferenceNumber;
-    data['address'] = this.address;
-    data['postcode'] = this.postcode;
-    data['state_name'] = this.stateName;
-    data['city_name'] = this.cityName;
-    data['district_name'] = this.districtName;
-    data['telephone'] = this.telephone;
-    data['email'] = this.email;
-    data['detail'] = this.detail;
-    data['reference_number'] = this.referenceNumber;
-    data['record_seq_number'] = this.recordSeqNumber;
-    data['document_seq_number'] = this.documentSeqNumber;
-    data['document_no_sap'] = this.documentNoSap;
-    data['document_no_original'] = this.documentNoOriginal;
-    data['document_year'] = this.documentYear;
-    data['invoice_number'] = this.invoiceNumber;
-    data['invoice_number_sap'] = this.invoiceNumberSap;
-    data['invoice_year'] = this.invoiceYear;
-    data['bill_date'] = this.billDate;
-    data['posting_date'] = this.postingDate;
-    data['start_at'] = this.startAt;
-    data['end_at'] = this.endAt;
-    data['customer_note'] = this.customerNote;
-    data['source'] = this.source;
-    data['staging_batch_id'] = this.stagingBatchId;
-    data['staging_batch_content_id'] = this.stagingBatchContentId;
-    data['process_code'] = this.processCode;
-    data['data_status'] = this.dataStatus;
-    data['status'] = this.status;
-    data['first_approver_id'] = this.firstApproverId;
-    data['second_approver_id'] = this.secondApproverId;
-    data['first_approval_at'] = this.firstApprovalAt;
-    data['second_approval_at'] = this.secondApprovalAt;
-    data['task_at'] = this.taskAt;
-    data['query_remarks'] = this.queryRemarks;
-    data['bill_number'] = this.billNumber;
-    data['bill_mask'] = this.billMask;
-    data['maker_name'] = this.makerName;
-    data['maker_position'] = this.makerPosition;
-    data['document_date_prepared'] = this.documentDatePrepared;
-    data['approver_name'] = this.approverName;
-    data['approver_position'] = this.approverPosition;
-    data['approval_date'] = this.approvalDate;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    if (this.nettCalculations != null) {
-      data['nett_calculations'] = this.nettCalculations!.toJson();
-    }
-    data['service'] = this.service;
-    data['agency'] = this.agency;
-    data['customer'] = this.customer;
-    data['bill_type'] = this.billType;
-    return data;
-  }
-}
-
-class Billsss {
-  int? id;
-  int? stagingPaymentId;
-  int? serviceId;
-  int? billTypeId;
-  int? ministryId;
-  int? makerControllingOfficerId;
-  int? makerPtjGroupId;
-  int? makerPtjId;
-  int? makerAccountingOfficeId;
-  int? chargedControllingOfficerId;
-  int? chargedPtjGroupId;
-  int? chargedPtjId;
-  int? departmentId;
-  int? agencyId;
-  Null productId;
-  Null subproductId;
-  BillType? billType;
-  String? processCode;
-  String? referenceNumber;
-  String? detail;
-  Null entityCode;
-  String? identityCode;
-  String? name1;
-  String? name2;
-  String? address1;
-  String? address2;
-  Null address3;
-  String? postcode;
-  String? city;
-  String? district;
-  String? state;
-  String? country;
-  String? telephone;
-  Null fax;
-  String? email;
-  String? description;
-  String? actualAmount;
-  String? paidAmount;
-  String? changedAmout;
-  String? amountWithoutTax;
-  String? discountType;
-  String? discountAmount;
-  String? amountWithDiscount;
-  String? taxAmount;
-  String? amountWithTax;
-  String? roundingAdjustment;
-  String? nettAmount;
-  String? nettAmountText;
-  String? collectionLocation;
-  String? centralisedLocation;
-  String? centralisedSublocation;
-  String? startAt;
-  String? endAt;
-  String? billMask;
-  String? billNumber;
-  String? calculations;
-  int? creatorId;
-  List<Null>? validationErrors;
-  Null remarks;
-  Null payerId;
-  Null customerId;
-  Null oldCustomerId;
-  int? amountWasChanged;
-  int? customerCharge;
-  String? cancellationCategory;
-  String? cancellationReason;
-  String? queryRemarks;
-  String? status;
-  String? source;
-  String? createdAt;
-  String? updatedAt;
-  Service? service;
-  Agency? agency;
-  Null customer;
-
-  Billsss(
-      {this.id,
-      this.stagingPaymentId,
-      this.serviceId,
-      this.billTypeId,
-      this.ministryId,
-      this.makerControllingOfficerId,
-      this.makerPtjGroupId,
-      this.makerPtjId,
-      this.makerAccountingOfficeId,
-      this.chargedControllingOfficerId,
-      this.chargedPtjGroupId,
-      this.chargedPtjId,
-      this.departmentId,
-      this.agencyId,
-      this.productId,
-      this.subproductId,
-      this.billType,
-      this.processCode,
-      this.referenceNumber,
-      this.detail,
-      this.entityCode,
-      this.identityCode,
-      this.name1,
-      this.name2,
-      this.address1,
-      this.address2,
-      this.address3,
-      this.postcode,
-      this.city,
-      this.district,
-      this.state,
-      this.country,
-      this.telephone,
-      this.fax,
-      this.email,
-      this.description,
-      this.actualAmount,
-      this.paidAmount,
-      this.changedAmout,
-      this.amountWithoutTax,
-      this.discountType,
-      this.discountAmount,
-      this.amountWithDiscount,
-      this.taxAmount,
-      this.amountWithTax,
-      this.roundingAdjustment,
-      this.nettAmount,
-      this.nettAmountText,
-      this.collectionLocation,
-      this.centralisedLocation,
-      this.centralisedSublocation,
-      this.startAt,
-      this.endAt,
-      this.billMask,
-      this.billNumber,
-      this.calculations,
-      this.creatorId,
-      this.validationErrors,
-      this.remarks,
-      this.payerId,
-      this.customerId,
-      this.oldCustomerId,
-      this.amountWasChanged,
-      this.customerCharge,
-      this.cancellationCategory,
-      this.cancellationReason,
-      this.queryRemarks,
-      this.status,
-      this.source,
-      this.createdAt,
-      this.updatedAt,
-      this.service,
-      this.agency,
-      this.customer});
-
-  Billsss.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    stagingPaymentId = json['staging_payment_id'];
-    serviceId = json['service_id'];
-    billTypeId = json['bill_type_id'];
-    ministryId = json['ministry_id'];
-    makerControllingOfficerId = json['maker_controlling_officer_id'];
-    makerPtjGroupId = json['maker_ptj_group_id'];
-    makerPtjId = json['maker_ptj_id'];
-    makerAccountingOfficeId = json['maker_accounting_office_id'];
-    chargedControllingOfficerId = json['charged_controlling_officer_id'];
-    chargedPtjGroupId = json['charged_ptj_group_id'];
-    chargedPtjId = json['charged_ptj_id'];
-    departmentId = json['department_id'];
-    agencyId = json['agency_id'];
-    productId = json['product_id'];
-    subproductId = json['subproduct_id'];
-    billType = json['bill_type'] != null
-        ? new BillType.fromJson(json['bill_type'])
-        : null;
-    processCode = json['process_code'];
-    referenceNumber = json['reference_number'];
-    detail = json['detail'];
-    entityCode = json['entity_code'];
-    identityCode = json['identity_code'];
-    name1 = json['name_1'];
-    name2 = json['name_2'];
-    address1 = json['address_1'];
-    address2 = json['address_2'];
-    address3 = json['address_3'];
-    postcode = json['postcode'];
-    city = json['city'];
-    district = json['district'];
-    state = json['state'];
-    country = json['country'];
-    telephone = json['telephone'];
-    fax = json['fax'];
-    email = json['email'];
-    description = json['description'];
-    actualAmount = json['actual_amount'];
-    paidAmount = json['paid_amount'];
-    changedAmout = json['changed_amout'];
-    amountWithoutTax = json['amount_without_tax'];
-    discountType = json['discount_type'];
-    discountAmount = json['discount_amount'];
-    amountWithDiscount = json['amount_with_discount'];
-    taxAmount = json['tax_amount'];
-    amountWithTax = json['amount_with_tax'];
-    roundingAdjustment = json['rounding_adjustment'];
-    nettAmount = json['nett_amount'];
-    nettAmountText = json['nett_amount_text'];
-    collectionLocation = json['collection_location'];
-    centralisedLocation = json['centralised_location'];
-    centralisedSublocation = json['centralised_sublocation'];
-    startAt = json['start_at'];
-    endAt = json['end_at'];
-    billMask = json['bill_mask'];
-    billNumber = json['bill_number'];
-    calculations = json['calculations'];
-    creatorId = json['creator_id'];
-    if (json['validation_errors'] != null) {
-      validationErrors = <Null>[];
-      json['validation_errors'].forEach((v) {
-        // validationErrors!.add(new Null.fromJson(v));
-      });
-    }
-    remarks = json['remarks'];
-    payerId = json['payer_id'];
-    customerId = json['customer_id'];
-    oldCustomerId = json['old_customer_id'];
-    amountWasChanged = json['amount_was_changed'];
-    customerCharge = json['customer_charge'];
-    cancellationCategory = json['cancellation_category'];
-    cancellationReason = json['cancellation_reason'];
-    queryRemarks = json['query_remarks'];
-    status = json['status'];
-    source = json['source'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    service =
-        json['service'] != null ? new Service.fromJson(json['service']) : null;
-    agency =
-        json['agency'] != null ? new Agency.fromJson(json['agency']) : null;
-    customer = json['customer'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['staging_payment_id'] = this.stagingPaymentId;
-    data['service_id'] = this.serviceId;
-    data['bill_type_id'] = this.billTypeId;
-    data['ministry_id'] = this.ministryId;
-    data['maker_controlling_officer_id'] = this.makerControllingOfficerId;
-    data['maker_ptj_group_id'] = this.makerPtjGroupId;
-    data['maker_ptj_id'] = this.makerPtjId;
-    data['maker_accounting_office_id'] = this.makerAccountingOfficeId;
-    data['charged_controlling_officer_id'] = this.chargedControllingOfficerId;
-    data['charged_ptj_group_id'] = this.chargedPtjGroupId;
-    data['charged_ptj_id'] = this.chargedPtjId;
-    data['department_id'] = this.departmentId;
-    data['agency_id'] = this.agencyId;
-    data['product_id'] = this.productId;
-    data['subproduct_id'] = this.subproductId;
-    if (this.billType != null) {
-      data['bill_type'] = this.billType!.toJson();
-    }
-    data['process_code'] = this.processCode;
-    data['reference_number'] = this.referenceNumber;
-    data['detail'] = this.detail;
-    data['entity_code'] = this.entityCode;
-    data['identity_code'] = this.identityCode;
-    data['name_1'] = this.name1;
-    data['name_2'] = this.name2;
-    data['address_1'] = this.address1;
-    data['address_2'] = this.address2;
-    data['address_3'] = this.address3;
-    data['postcode'] = this.postcode;
-    data['city'] = this.city;
-    data['district'] = this.district;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['telephone'] = this.telephone;
-    data['fax'] = this.fax;
-    data['email'] = this.email;
-    data['description'] = this.description;
-    data['actual_amount'] = this.actualAmount;
-    data['paid_amount'] = this.paidAmount;
-    data['changed_amout'] = this.changedAmout;
-    data['amount_without_tax'] = this.amountWithoutTax;
-    data['discount_type'] = this.discountType;
-    data['discount_amount'] = this.discountAmount;
-    data['amount_with_discount'] = this.amountWithDiscount;
-    data['tax_amount'] = this.taxAmount;
-    data['amount_with_tax'] = this.amountWithTax;
-    data['rounding_adjustment'] = this.roundingAdjustment;
-    data['nett_amount'] = this.nettAmount;
-    data['nett_amount_text'] = this.nettAmountText;
-    data['collection_location'] = this.collectionLocation;
-    data['centralised_location'] = this.centralisedLocation;
-    data['centralised_sublocation'] = this.centralisedSublocation;
-    data['start_at'] = this.startAt;
-    data['end_at'] = this.endAt;
-    data['bill_mask'] = this.billMask;
-    data['bill_number'] = this.billNumber;
-    data['calculations'] = this.calculations;
-    data['creator_id'] = this.creatorId;
-    if (this.validationErrors != null) {
-      // data['validation_errors'] =
-      //     this.validationErrors!.map((v) => v.toJson()).toList();
-    }
-    data['remarks'] = this.remarks;
-    data['payer_id'] = this.payerId;
-    data['customer_id'] = this.customerId;
-    data['old_customer_id'] = this.oldCustomerId;
-    data['amount_was_changed'] = this.amountWasChanged;
-    data['customer_charge'] = this.customerCharge;
-    data['cancellation_category'] = this.cancellationCategory;
-    data['cancellation_reason'] = this.cancellationReason;
-    data['query_remarks'] = this.queryRemarks;
-    data['status'] = this.status;
-    data['source'] = this.source;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.service != null) {
-      data['service'] = this.service!.toJson();
-    }
-    if (this.agency != null) {
-      data['agency'] = this.agency!.toJson();
-    }
-    data['customer'] = this.customer;
     return data;
   }
 }
@@ -3906,746 +2327,6 @@ class Setting {
   }
 }
 
-class Incomplete {
-  int? id;
-  // ignore: unnecessary_question_mark
-  Null transferDetailId;
-  int? gatewayId;
-  int? rmaId;
-  int? userId;
-  String? referenceNumber;
-  String? transactionReference;
-  String? amount;
-  String? paymentMethod;
-  String? paymentResponse;
-  int? count;
-  String? source;
-  String? customerName;
-  String? customerEmail;
-  String? customerPhoneNo;
-  String? status;
-  String? flag;
-  String? transactionFee;
-  int? settlement;
-  String? settledAt;
-  String? createdAt;
-  String? updatedAt;
-  List<ItemsIncomplete>? items;
-  Customer? user;
-
-  Incomplete(
-      {this.id,
-      this.transferDetailId,
-      this.gatewayId,
-      this.rmaId,
-      this.userId,
-      this.referenceNumber,
-      this.transactionReference,
-      this.amount,
-      this.paymentMethod,
-      this.paymentResponse,
-      this.count,
-      this.source,
-      this.customerName,
-      this.customerEmail,
-      this.customerPhoneNo,
-      this.status,
-      this.flag,
-      this.transactionFee,
-      this.settlement,
-      this.settledAt,
-      this.createdAt,
-      this.updatedAt,
-      this.items,
-      this.user});
-
-  Incomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    transferDetailId = json['transfer_detail_id'];
-    gatewayId = json['gateway_id'];
-    rmaId = json['rma_id'];
-    userId = json['user_id'];
-    referenceNumber = json['reference_number'];
-    transactionReference = json['transaction_reference'];
-    amount = json['amount'];
-    paymentMethod = json['payment_method'];
-    paymentResponse = json['payment_response'];
-    count = json['count'];
-    source = json['source'];
-    customerName = json['customer_name'];
-    customerEmail = json['customer_email'];
-    customerPhoneNo = json['customer_phone_no'];
-    status = json['status'];
-    flag = json['flag'];
-    transactionFee = json['transaction_fee'];
-    settlement = json['settlement'];
-    settledAt = json['settled_at'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    if (json['items'] != null) {
-      items = <ItemsIncomplete>[];
-      json['items'].forEach((v) {
-        items!.add(new ItemsIncomplete.fromJson(v));
-      });
-    }
-    user = json['user'] != null ? new Customer.fromJson(json['user']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['transfer_detail_id'] = this.transferDetailId;
-    data['gateway_id'] = this.gatewayId;
-    data['rma_id'] = this.rmaId;
-    data['user_id'] = this.userId;
-    data['reference_number'] = this.referenceNumber;
-    data['transaction_reference'] = this.transactionReference;
-    data['amount'] = this.amount;
-    data['payment_method'] = this.paymentMethod;
-    data['payment_response'] = this.paymentResponse;
-    data['count'] = this.count;
-    data['source'] = this.source;
-    data['customer_name'] = this.customerName;
-    data['customer_email'] = this.customerEmail;
-    data['customer_phone_no'] = this.customerPhoneNo;
-    data['status'] = this.status;
-    data['flag'] = this.flag;
-    data['transaction_fee'] = this.transactionFee;
-    data['settlement'] = this.settlement;
-    data['settled_at'] = this.settledAt;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v.toJson()).toList();
-    }
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
-    }
-    return data;
-  }
-}
-
-class ItemsIncomplete {
-  int? id;
-  int? transactionId;
-  int? billId;
-  int? customerId;
-  int? accountingOfficeId;
-  String? receiptNumber;
-  String? receiptDate;
-  int? receiptDownloadCount;
-  String? originalReceiptUrl;
-  String? copyReceiptUrl;
-  String? cancellationReceiptUrl;
-  String? paymentDescription;
-  int? serviceId;
-  int? ministryId;
-  int? departmentId;
-  int? agencyId;
-  int? ptjId;
-  // ignore: unnecessary_question_mark
-  Null preparerPtjId;
-  String? amount;
-  List<dynamic>? items;
-  List? extraFields;
-  // ignore: unnecessary_question_mark
-  Null transferDetailId;
-  String? status;
-  String? createdAt;
-  String? updatedAt;
-  Bills? bill;
-  ServiceIncompletes? service;
-  CustomerIncomplete? customer;
-
-  ItemsIncomplete(
-      {this.id,
-      this.transactionId,
-      this.billId,
-      this.customerId,
-      this.accountingOfficeId,
-      this.receiptNumber,
-      this.receiptDate,
-      this.receiptDownloadCount,
-      this.originalReceiptUrl,
-      this.copyReceiptUrl,
-      this.cancellationReceiptUrl,
-      this.paymentDescription,
-      this.serviceId,
-      this.ministryId,
-      this.departmentId,
-      this.agencyId,
-      this.ptjId,
-      this.preparerPtjId,
-      this.amount,
-      this.items,
-      this.extraFields,
-      this.transferDetailId,
-      this.status,
-      this.createdAt,
-      this.updatedAt,
-      this.bill,
-      this.service,
-      this.customer});
-
-  ItemsIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    transactionId = json['transaction_id'];
-    billId = json['bill_id'];
-    customerId = json['customer_id'];
-    accountingOfficeId = json['accounting_office_id'];
-    receiptNumber = json['receipt_number'];
-    receiptDate = json['receipt_date'];
-    receiptDownloadCount = json['receipt_download_count'];
-    originalReceiptUrl = json['original_receipt_url'];
-    copyReceiptUrl = json['copy_receipt_url'];
-    cancellationReceiptUrl = json['cancellation_receipt_url'];
-    paymentDescription = json['payment_description'];
-    serviceId = json['service_id'];
-    ministryId = json['ministry_id'];
-    departmentId = json['department_id'];
-    agencyId = json['agency_id'];
-    ptjId = json['ptj_id'];
-    preparerPtjId = json['preparer_ptj_id'];
-    amount = json['amount'];
-    items = json['items'] != null ? (json['items'] as List) : [];
-    // ignore: unnecessary_statements
-    json['extra_fields'] != null ? [] : [];
-    transferDetailId = json['transfer_detail_id'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    bill = json['bill'] != null ? new Bills.fromJson(json['bill']) : null;
-    service = json['service'] != null
-        ? ServiceIncompletes.fromJson(json['service'])
-        : null;
-    customer = json['customer'] != null
-        ? new CustomerIncomplete.fromJson(json['customer'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['transaction_id'] = this.transactionId;
-    data['bill_id'] = this.billId;
-    data['customer_id'] = this.customerId;
-    data['accounting_office_id'] = this.accountingOfficeId;
-    data['receipt_number'] = this.receiptNumber;
-    data['receipt_date'] = this.receiptDate;
-    data['receipt_download_count'] = this.receiptDownloadCount;
-    data['original_receipt_url'] = this.originalReceiptUrl;
-    data['copy_receipt_url'] = this.copyReceiptUrl;
-    data['cancellation_receipt_url'] = this.cancellationReceiptUrl;
-    data['payment_description'] = this.paymentDescription;
-    data['service_id'] = this.serviceId;
-    data['ministry_id'] = this.ministryId;
-    data['department_id'] = this.departmentId;
-    data['agency_id'] = this.agencyId;
-    data['ptj_id'] = this.ptjId;
-    data['preparer_ptj_id'] = this.preparerPtjId;
-    data['amount'] = this.amount;
-    if (this.items != null) {
-      data['items'] = this.items!.map((v) => v).toList();
-    }
-    if (this.extraFields != null) {
-      data['extra_fields'] = this.extraFields!.map((v) => v.toJson()).toList();
-    }
-    data['transfer_detail_id'] = this.transferDetailId;
-    data['status'] = this.status;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.bill != null) {
-      data['bill'] = this.bill!.toJson();
-    }
-    if (this.service != null) {
-      data['service'] = this.service!.toJson();
-    }
-    if (this.customer != null) {
-      data['customer'] = this.customer!.toJson();
-    }
-    return data;
-  }
-}
-
-class BillIncomplete {
-  int? id;
-  int? billTypeId;
-  int? serviceId;
-  int? ministryId;
-  int? departmentId;
-  int? agencyId;
-  int? creatorId;
-  int? makerPtjId;
-  int? locationId;
-  int? sublocationId;
-  int? userIdentityTypeId;
-  int? countryId;
-  // ignore: unnecessary_question_mark
-  int? stateId;
-  // ignore: unnecessary_question_mark
-  int? cityId;
-  // ignore: unnecessary_question_mark
-  int? districtId;
-  String? identityCodeCategory;
-  String? identityCode;
-  // ignore: unnecessary_question_mark
-  Null previousIdentityCode;
-  String? customerName;
-  String? customerReferenceNumber;
-  // ignore: unnecessary_question_mark
-  String? customerIdentityType;
-  String? address;
-  String? postcode;
-  String? stateName;
-  String? cityName;
-  String? districtName;
-  String? telephone;
-  String? email;
-  String? detail;
-  String? referenceNumber;
-  // ignore: unnecessary_question_mark
-  String? agencyReferenceNumber2;
-  // ignore: unnecessary_question_mark
-  String? agencyReason;
-  // ignore: unnecessary_question_mark
-  String? recordSeqNumber;
-  // ignore: unnecessary_question_mark
-  String? documentSeqNumber;
-  // ignore: unnecessary_question_mark
-  String? documentNoSap;
-  // ignore: unnecessary_question_mark
-  String? documentNoOriginal;
-  // ignore: unnecessary_question_mark
-  String? documentYear;
-  // ignore: unnecessary_question_mark
-  String? invoiceNumber;
-  // ignore: unnecessary_question_mark
-  String? invoiceNumberSap;
-  // ignore: unnecessary_question_mark
-  String? invoiceYear;
-  String? billDate;
-  // ignore: unnecessary_question_mark
-  String? documentDate;
-  // ignore: unnecessary_question_mark
-  String? postingDate;
-  String? startAt;
-  String? endAt;
-  // ignore: unnecessary_question_mark
-  String? startPaymentDate;
-  // ignore: unnecessary_question_mark
-  String? endPaymentDate;
-  String? customerNote;
-  String? source;
-  int? stagingBatchId;
-  int? stagingBatchContentId;
-  int? processCode;
-  String? dataStatus;
-  String? status;
-  int? firstApproverId;
-  int? secondApproverId;
-  String? firstApprovalAt;
-  String? secondApprovalAt;
-  String? taskAt;
-  String? queryRemarks;
-  String? billNumber;
-  String? billMask;
-  String? makerName;
-  String? makerPosition;
-  String? documentDatePrepared;
-  String? approverName;
-  String? approverPosition;
-  String? approvalDate;
-  String? createdAt;
-  String? updatedAt;
-  String? deletedAt;
-  NettCalculations? nettCalculations;
-  bool? favorite;
-  List<Chargelines>? chargelines;
-  List<Null>? amountChanges;
-  Service? service;
-  Agency? agency;
-  Customer? customer;
-  BillType? billType;
-
-  BillIncomplete(
-      {this.id,
-      this.billTypeId,
-      this.serviceId,
-      this.ministryId,
-      this.departmentId,
-      this.agencyId,
-      this.creatorId,
-      this.makerPtjId,
-      this.locationId,
-      this.sublocationId,
-      this.userIdentityTypeId,
-      this.countryId,
-      this.stateId,
-      this.cityId,
-      this.districtId,
-      this.identityCodeCategory,
-      this.identityCode,
-      this.previousIdentityCode,
-      this.customerName,
-      this.customerReferenceNumber,
-      this.customerIdentityType,
-      this.address,
-      this.postcode,
-      this.stateName,
-      this.cityName,
-      this.districtName,
-      this.telephone,
-      this.email,
-      this.detail,
-      this.referenceNumber,
-      this.agencyReferenceNumber2,
-      this.agencyReason,
-      this.recordSeqNumber,
-      this.documentSeqNumber,
-      this.documentNoSap,
-      this.documentNoOriginal,
-      this.documentYear,
-      this.invoiceNumber,
-      this.invoiceNumberSap,
-      this.invoiceYear,
-      this.billDate,
-      this.documentDate,
-      this.postingDate,
-      this.startAt,
-      this.endAt,
-      this.startPaymentDate,
-      this.endPaymentDate,
-      this.customerNote,
-      this.source,
-      this.stagingBatchId,
-      this.stagingBatchContentId,
-      this.processCode,
-      this.dataStatus,
-      this.status,
-      this.firstApproverId,
-      this.secondApproverId,
-      this.firstApprovalAt,
-      this.secondApprovalAt,
-      this.taskAt,
-      this.queryRemarks,
-      this.billNumber,
-      this.billMask,
-      this.makerName,
-      this.makerPosition,
-      this.documentDatePrepared,
-      this.approverName,
-      this.approverPosition,
-      this.approvalDate,
-      this.createdAt,
-      this.updatedAt,
-      this.deletedAt,
-      this.nettCalculations,
-      this.favorite,
-      this.chargelines,
-      this.amountChanges,
-      this.service,
-      this.agency,
-      this.customer,
-      this.billType});
-
-  BillIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    billTypeId = json['bill_type_id'];
-    serviceId = json['service_id'];
-    ministryId = json['ministry_id'];
-    departmentId = json['department_id'];
-    agencyId = json['agency_id'];
-    creatorId = json['creator_id'];
-    makerPtjId = json['maker_ptj_id'];
-    locationId = json['location_id'];
-    sublocationId = json['sublocation_id'];
-    userIdentityTypeId = json['user_identity_type_id'];
-    countryId = json['country_id'];
-    stateId = json['state_id'];
-    cityId = json['city_id'];
-    districtId = json['district_id'];
-    identityCodeCategory = json['identity_code_category'];
-    identityCode = json['identity_code'];
-    previousIdentityCode = json['previous_identity_code'];
-    customerName = json['customer_name'];
-    customerReferenceNumber = json['customer_reference_number'];
-    customerIdentityType = json['customer_identity_type'];
-    address = json['address'];
-    postcode = json['postcode'];
-    stateName = json['state_name'];
-    cityName = json['city_name'];
-    districtName = json['district_name'];
-    telephone = json['telephone'];
-    email = json['email'];
-    detail = json['detail'];
-    referenceNumber = json['reference_number'];
-    agencyReferenceNumber2 = json['agency_reference_number2'];
-    agencyReason = json['agency_reason'];
-    recordSeqNumber = json['record_seq_number'];
-    documentSeqNumber = json['document_seq_number'];
-    documentNoSap = json['document_no_sap'];
-    documentNoOriginal = json['document_no_original'];
-    documentYear = json['document_year'];
-    invoiceNumber = json['invoice_number'];
-    invoiceNumberSap = json['invoice_number_sap'];
-    invoiceYear = json['invoice_year'];
-    billDate = json['bill_date'];
-    documentDate = json['document_date'];
-    postingDate = json['posting_date'];
-    startAt = json['start_at'];
-    endAt = json['end_at'];
-    startPaymentDate = json['start_payment_date'];
-    endPaymentDate = json['end_payment_date'];
-    customerNote = json['customer_note'];
-    source = json['source'];
-    stagingBatchId = json['staging_batch_id'];
-    stagingBatchContentId = json['staging_batch_content_id'];
-    processCode = json['process_code'];
-    dataStatus = json['data_status'];
-    status = json['status'];
-    firstApproverId = json['first_approver_id'];
-    secondApproverId = json['second_approver_id'];
-    firstApprovalAt = json['first_approval_at'];
-    secondApprovalAt = json['second_approval_at'];
-    taskAt = json['task_at'];
-    queryRemarks = json['query_remarks'];
-    billNumber = json['bill_number'];
-    billMask = json['bill_mask'];
-    makerName = json['maker_name'];
-    makerPosition = json['maker_position'];
-    documentDatePrepared = json['document_date_prepared'];
-    approverName = json['approver_name'];
-    approverPosition = json['approver_position'];
-    approvalDate = json['approval_date'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    deletedAt = json['deleted_at'];
-    nettCalculations = json['nett_calculations'] != null
-        ? new NettCalculations.fromJson(json['nett_calculations'])
-        : null;
-    favorite = json['favorite'];
-    if (json['chargelines'] != null) {
-      chargelines = <Chargelines>[];
-      json['chargelines'].forEach((v) {
-        chargelines!.add(new Chargelines.fromJson(v));
-      });
-    }
-    if (json['amount_changes'] != null) {
-      // amountChanges = <Null>[];
-      // json['amount_changes'].forEach((v) {
-      //   amountChanges!.add(new Null.fromJson(v));
-      // });
-    }
-    service =
-        json['service'] != null ? new Service.fromJson(json['service']) : null;
-    agency =
-        json['agency'] != null ? new Agency.fromJson(json['agency']) : null;
-    customer = json['customer'];
-    billType = json['bill_type'] != null
-        ? new BillType.fromJson(json['bill_type'])
-        : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['bill_type_id'] = this.billTypeId;
-    data['service_id'] = this.serviceId;
-    data['ministry_id'] = this.ministryId;
-    data['department_id'] = this.departmentId;
-    data['agency_id'] = this.agencyId;
-    data['creator_id'] = this.creatorId;
-    data['maker_ptj_id'] = this.makerPtjId;
-    data['location_id'] = this.locationId;
-    data['sublocation_id'] = this.sublocationId;
-    data['user_identity_type_id'] = this.userIdentityTypeId;
-    data['country_id'] = this.countryId;
-    data['state_id'] = this.stateId;
-    data['city_id'] = this.cityId;
-    data['district_id'] = this.districtId;
-    data['identity_code_category'] = this.identityCodeCategory;
-    data['identity_code'] = this.identityCode;
-    data['previous_identity_code'] = this.previousIdentityCode;
-    data['customer_name'] = this.customerName;
-    data['customer_reference_number'] = this.customerReferenceNumber;
-    data['customer_identity_type'] = this.customerIdentityType;
-    data['address'] = this.address;
-    data['postcode'] = this.postcode;
-    data['state_name'] = this.stateName;
-    data['city_name'] = this.cityName;
-    data['district_name'] = this.districtName;
-    data['telephone'] = this.telephone;
-    data['email'] = this.email;
-    data['detail'] = this.detail;
-    data['reference_number'] = this.referenceNumber;
-    data['agency_reference_number2'] = this.agencyReferenceNumber2;
-    data['agency_reason'] = this.agencyReason;
-    data['record_seq_number'] = this.recordSeqNumber;
-    data['document_seq_number'] = this.documentSeqNumber;
-    data['document_no_sap'] = this.documentNoSap;
-    data['document_no_original'] = this.documentNoOriginal;
-    data['document_year'] = this.documentYear;
-    data['invoice_number'] = this.invoiceNumber;
-    data['invoice_number_sap'] = this.invoiceNumberSap;
-    data['invoice_year'] = this.invoiceYear;
-    data['bill_date'] = this.billDate;
-    data['document_date'] = this.documentDate;
-    data['posting_date'] = this.postingDate;
-    data['start_at'] = this.startAt;
-    data['end_at'] = this.endAt;
-    data['start_payment_date'] = this.startPaymentDate;
-    data['end_payment_date'] = this.endPaymentDate;
-    data['customer_note'] = this.customerNote;
-    data['source'] = this.source;
-    data['staging_batch_id'] = this.stagingBatchId;
-    data['staging_batch_content_id'] = this.stagingBatchContentId;
-    data['process_code'] = this.processCode;
-    data['data_status'] = this.dataStatus;
-    data['status'] = this.status;
-    data['first_approver_id'] = this.firstApproverId;
-    data['second_approver_id'] = this.secondApproverId;
-    data['first_approval_at'] = this.firstApprovalAt;
-    data['second_approval_at'] = this.secondApprovalAt;
-    data['task_at'] = this.taskAt;
-    data['query_remarks'] = this.queryRemarks;
-    data['bill_number'] = this.billNumber;
-    data['bill_mask'] = this.billMask;
-    data['maker_name'] = this.makerName;
-    data['maker_position'] = this.makerPosition;
-    data['document_date_prepared'] = this.documentDatePrepared;
-    data['approver_name'] = this.approverName;
-    data['approver_position'] = this.approverPosition;
-    data['approval_date'] = this.approvalDate;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['deleted_at'] = this.deletedAt;
-    if (this.nettCalculations != null) {
-      data['nett_calculations'] = this.nettCalculations!.toJson();
-    }
-    data['favorite'] = this.favorite;
-    if (this.chargelines != null) {
-      data['chargelines'] = this.chargelines!.map((v) => v.toJson()).toList();
-    }
-    if (this.amountChanges != null) {
-      // data['amount_changes'] =
-      //     this.amountChanges!.map((v) => v.toJson()).toList();
-    }
-    if (this.service != null) {
-      data['service'] = this.service!.toJson();
-    }
-    if (this.agency != null) {
-      data['agency'] = this.agency!.toJson();
-    }
-    data['customer'] = this.customer;
-    if (this.billType != null) {
-      data['bill_type'] = this.billType!.toJson();
-    }
-    return data;
-  }
-}
-
-class NettCalculationsIncomplete {
-  // ignore: unnecessary_question_mark
-  Null roundingData;
-  List<Null>? changesItems;
-  List<Null>? changesDraftItems;
-  List<Null>? paymentItems;
-  List<Null>? paymentDraftItems;
-  int? rounding;
-  int? original;
-  int? changes;
-  int? changesDraft;
-  int? total;
-  int? paid;
-  int? paidDraft;
-  int? due;
-  String? dueInWords;
-
-  NettCalculationsIncomplete(
-      {this.roundingData,
-      this.changesItems,
-      this.changesDraftItems,
-      this.paymentItems,
-      this.paymentDraftItems,
-      this.rounding,
-      this.original,
-      this.changes,
-      this.changesDraft,
-      this.total,
-      this.paid,
-      this.paidDraft,
-      this.due,
-      this.dueInWords});
-
-  NettCalculationsIncomplete.fromJson(Map<String, dynamic> json) {
-    roundingData = json['roundingData'];
-    if (json['changes_items'] != null) {
-      changesItems = <Null>[];
-      json['changes_items'].forEach((v) {
-        // changesItems!.add(new Null.fromJson(v));
-      });
-    }
-    if (json['changes_draft_items'] != null) {
-      changesDraftItems = <Null>[];
-      json['changes_draft_items'].forEach((v) {
-        // changesDraftItems!.add(new Null.fromJson(v));
-      });
-    }
-    if (json['payment_items'] != null) {
-      paymentItems = <Null>[];
-      json['payment_items'].forEach((v) {
-        // paymentItems!.add(new Null.fromJson(v));
-      });
-    }
-    if (json['payment_draft_items'] != null) {
-      paymentDraftItems = <Null>[];
-      json['payment_draft_items'].forEach((v) {
-        // paymentDraftItems!.add(new Null.fromJson(v));
-      });
-    }
-    rounding = json['rounding'];
-    original = json['original'];
-    changes = json['changes'];
-    changesDraft = json['changes_draft'];
-    total = json['total'];
-    paid = json['paid'];
-    paidDraft = json['paid_draft'];
-    due = json['due'];
-    dueInWords = json['due_in_words'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['roundingData'] = this.roundingData;
-    if (this.changesItems != null) {
-      // data['changes_items'] =
-      //     this.changesItems!.map((v) => v.toJson()).toList();
-    }
-    if (this.changesDraftItems != null) {
-      // data['changes_draft_items'] =
-      //     this.changesDraftItems!.map((v) => v.toJson()).toList();
-    }
-    if (this.paymentItems != null) {
-      // data['payment_items'] =
-      //     this.paymentItems!.map((v) => v.toJson()).toList();
-    }
-    if (this.paymentDraftItems != null) {
-      // data['payment_draft_items'] =
-      //     this.paymentDraftItems!.map((v) => v.toJson()).toList();
-    }
-    data['rounding'] = this.rounding;
-    data['original'] = this.original;
-    data['changes'] = this.changes;
-    data['changes_draft'] = this.changesDraft;
-    data['total'] = this.total;
-    data['paid'] = this.paid;
-    data['paid_draft'] = this.paidDraft;
-    data['due'] = this.due;
-    data['due_in_words'] = this.dueInWords;
-    return data;
-  }
-}
-
 class Project {
   int? id;
   String? financialYear;
@@ -4686,168 +2367,28 @@ class Project {
   }
 }
 
-class AccountCodeIncomplete {
-  int? id;
-  String? financialYear;
-  String? code;
-  int? ptjGroupId;
-  String? description;
-  int? isActive;
-  String? createdAt;
-  String? updatedAt;
-
-  AccountCodeIncomplete(
-      {this.id,
-      this.financialYear,
-      this.code,
-      this.ptjGroupId,
-      this.description,
-      this.isActive,
-      this.createdAt,
-      this.updatedAt});
-
-  AccountCodeIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    financialYear = json['financial_year'];
-    code = json['code'];
-    ptjGroupId = json['ptj_group_id'];
-    description = json['description'];
-    isActive = json['is_active'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['financial_year'] = this.financialYear;
-    data['code'] = this.code;
-    data['ptj_group_id'] = this.ptjGroupId;
-    data['description'] = this.description;
-    data['is_active'] = this.isActive;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    return data;
-  }
-}
-
-class ServiceIncomplete {
-  int? id;
-  int? menuId;
-  String? name;
-  String? serviceReferenceNumber;
-  String? cbyChargelines;
-  String? receiptType;
-  String? serviceChargeData;
-  String? taxData;
-  String? discountData;
-  String? chargelineData;
-  String? chargedTo;
-  String? status;
-  String? submittedAt;
-  String? approvalBaAt;
-  List<Null>? matrix;
-  String? allowThirdPartyPayment;
-  String? serviceCategory;
-  String? products;
-  AgencyIncomplete? agency;
-  Menu? menu;
-
-  ServiceIncomplete(
-      {this.id,
-      this.menuId,
-      this.name,
-      this.serviceReferenceNumber,
-      this.cbyChargelines,
-      this.receiptType,
-      this.serviceChargeData,
-      this.taxData,
-      this.discountData,
-      this.chargelineData,
-      this.chargedTo,
-      this.status,
-      this.submittedAt,
-      this.approvalBaAt,
-      this.matrix,
-      this.allowThirdPartyPayment,
-      this.serviceCategory,
-      this.products,
-      this.agency,
-      this.menu});
-
-  ServiceIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    menuId = json['menu_id'];
-    name = json['name'];
-    serviceReferenceNumber = json['service_reference_number'];
-    cbyChargelines = json['cby_chargelines'];
-    receiptType = json['receipt_type'];
-    serviceChargeData = json['service_charge_data'];
-    taxData = json['tax_data'];
-    discountData = json['discount_data'];
-    chargelineData = json['chargeline_data'];
-    chargedTo = json['charged_to'];
-    status = json['status'];
-    submittedAt = json['submitted_at'];
-    approvalBaAt = json['approval_ba_at'];
-    if (json['matrix'] != null) {
-      matrix = <Null>[];
-      json['matrix'].forEach((v) {
-        // matrix!.add(new Null.fromJson(v));
-      });
-    }
-    allowThirdPartyPayment = json['allow_third_party_payment'];
-    serviceCategory = json['service_category'];
-    products = json['products'];
-    agency = json['agency'] != null
-        ? new AgencyIncomplete.fromJson(json['agency'])
-        : null;
-    menu = json['menu'] != null ? new Menu.fromJson(json['menu']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['menu_id'] = this.menuId;
-    data['name'] = this.name;
-    data['service_reference_number'] = this.serviceReferenceNumber;
-    data['cby_chargelines'] = this.cbyChargelines;
-    data['receipt_type'] = this.receiptType;
-    data['service_charge_data'] = this.serviceChargeData;
-    data['tax_data'] = this.taxData;
-    data['discount_data'] = this.discountData;
-    data['chargeline_data'] = this.chargelineData;
-    data['charged_to'] = this.chargedTo;
-    data['status'] = this.status;
-    data['submitted_at'] = this.submittedAt;
-    data['approval_ba_at'] = this.approvalBaAt;
-    if (this.matrix != null) {
-      // data['matrix'] = this.matrix!.map((v) => v.toJson()).toList();
-    }
-    data['allow_third_party_payment'] = this.allowThirdPartyPayment;
-    data['service_category'] = this.serviceCategory;
-    data['products'] = this.products;
-    if (this.menu != null) {
-      data['menu'] = this.menu!.toJson();
-    }
-    return data;
-  }
-}
-
 class Menu {
   int? id;
   String? name;
   int? parentId;
-  Parent? parent;
+  Menu? parent;
+  List<Translatables> translatables = [];
 
-  Menu({this.id, this.name, this.parentId, this.parent});
+  var iconClass;
+
+  Menu({required this.id, this.name, this.parentId, this.parent});
 
   Menu.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id']!;
     name = json['name'];
     parentId = json['parent_id'];
-    parent =
-        json['parent'] != null ? new Parent.fromJson(json['parent']) : null;
+    iconClass = json['icon_class'];
+    parent = json['parent'] != null ? new Menu.fromJson(json['parent']) : null;
+    if (json['translatables'] != null) {
+      for (var item in json['translatables']) {
+        translatables.add(Translatables.fromJson(item));
+      }
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -4855,194 +2396,10 @@ class Menu {
     data['id'] = this.id;
     data['name'] = this.name;
     data['parent_id'] = this.parentId;
+    data['icon_class'] = this.iconClass;
     if (this.parent != null) {
       data['parent'] = this.parent!.toJson();
     }
-    return data;
-  }
-}
-
-class Parent {
-  int? id;
-  // ignore: unnecessary_question_mark
-  Null parentId;
-  int? lft;
-  int? rgt;
-  int? depth;
-  String? name;
-  // ignore: unnecessary_question_mark
-  Null icon;
-  String? createdAt;
-  String? updatedAt;
-  // ignore: unnecessary_question_mark
-  Null parent;
-
-  Parent(
-      {this.id,
-      this.parentId,
-      this.lft,
-      this.rgt,
-      this.depth,
-      this.name,
-      this.icon,
-      this.createdAt,
-      this.updatedAt,
-      this.parent});
-
-  Parent.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    parentId = json['parent_id'];
-    lft = json['lft'];
-    rgt = json['rgt'];
-    depth = json['depth'];
-    name = json['name'];
-    icon = json['icon'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    parent = json['parent'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['parent_id'] = this.parentId;
-    data['lft'] = this.lft;
-    data['rgt'] = this.rgt;
-    data['depth'] = this.depth;
-    data['name'] = this.name;
-    data['icon'] = this.icon;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['parent'] = this.parent;
-    return data;
-  }
-}
-
-class AgencyIncomplete {
-  int? id;
-  String? name;
-  String? code;
-  String? profile;
-  String? address;
-
-  AgencyIncomplete({this.id, this.name, this.code, this.profile, this.address});
-
-  AgencyIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    code = json['code'];
-    profile = json['profile'];
-    address = json['address'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['code'] = this.code;
-    data['profile'] = this.profile;
-    data['address'] = this.address;
-    return data;
-  }
-}
-
-class BillTypeIncomplete {
-  int? id;
-  String? type;
-
-  BillTypeIncomplete({this.id, this.type});
-
-  BillTypeIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    type = json['type'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['type'] = this.type;
-    return data;
-  }
-}
-
-class MenuIncomplete {
-  int? id;
-  int? parentId;
-  int? lft;
-  int? rgt;
-  int? depth;
-  String? name;
-  // ignore: unnecessary_question_mark
-  Null icon;
-  String? createdAt;
-  String? updatedAt;
-  Parent? parent;
-
-  MenuIncomplete(
-      {this.id,
-      this.parentId,
-      this.lft,
-      this.rgt,
-      this.depth,
-      this.name,
-      this.icon,
-      this.createdAt,
-      this.updatedAt,
-      this.parent});
-
-  MenuIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    parentId = json['parent_id'];
-    lft = json['lft'];
-    rgt = json['rgt'];
-    depth = json['depth'];
-    name = json['name'];
-    icon = json['icon'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    parent =
-        json['parent'] != null ? new Parent.fromJson(json['parent']) : null;
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['parent_id'] = this.parentId;
-    data['lft'] = this.lft;
-    data['rgt'] = this.rgt;
-    data['depth'] = this.depth;
-    data['name'] = this.name;
-    data['icon'] = this.icon;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    if (this.parent != null) {
-      data['parent'] = this.parent!.toJson();
-    }
-    return data;
-  }
-}
-
-class CustomerIncomplete {
-  int? id;
-  String? icNo;
-  String? firstName;
-  String? lastName;
-
-  CustomerIncomplete({this.id, this.icNo, this.firstName, this.lastName});
-
-  CustomerIncomplete.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    icNo = json['ic_no'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['ic_no'] = this.icNo;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
     return data;
   }
 }

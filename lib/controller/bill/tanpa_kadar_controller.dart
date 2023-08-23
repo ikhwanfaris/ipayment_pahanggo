@@ -4,11 +4,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutterbase/api/api.dart';
 import 'package:flutterbase/events/event.dart';
-import 'package:flutterbase/models/contents/add_cart_request.dart';
-import 'package:flutterbase/models/contents/service.dart';
-import 'package:flutterbase/models/payments/rounding.dart';
+import 'package:flutterbase/models/bills/bills.dart';
+import 'package:flutterbase/models/cart/add_cart_request.dart';
 import 'package:flutterbase/screens/auth/login.dart';
-import 'package:flutterbase/screens/content/home/summary.dart';
 import 'package:flutterbase/utils/helpers.dart';
 import 'package:get/get.dart';
 
@@ -28,9 +26,9 @@ class TanpaKadarController extends GetxController {
     ErrorResponse response = await api.getServiceDetail(serviceRefNum);
     if (response.data == null) return;
     log(jsonEncode(response.data));
-    ServiceModel data = ServiceModel.fromJson(response.data);
-    if (data.billType != null) log("Bill type: ${data.billType!.type}");
-    name.value = data.name;
+    Services data = Services.fromJson(response.data);
+ log("Bill type: ${data.billType.type}");
+    name.value = data.name!;
     serviceId = data.id.toString();
     super.onInit();
   }
@@ -49,7 +47,7 @@ class TanpaKadarController extends GetxController {
     ErrorResponse response = await api.roundingAdjustment(amount.text);
     var rounding = Rounding.fromJson(response.data);
     var parseAmount = num.parse(amount.text);
-    parseAmount += rounding.value;
+    parseAmount += rounding.value!;
     log(parseAmount.toStringAsFixed(2));
 
     var request = AddCartRequest(
@@ -86,15 +84,15 @@ class TanpaKadarController extends GetxController {
     // var parseAmount = num.parse(amount.text);
     // parseAmount += rounding.value;
 
-    Get.to(() => Summary(), arguments: {
-      "billType": 4,
-      "data": BayaranTanpaBilAmaun(
-        agencyName: Get.arguments["agencyName"],
-        serviceId: serviceId,
-        serviceName: name.value,
-        amount: amount.text,
-      )
-    });
+    // Get.to(() => Summary(), arguments: {
+    //   "billType": 4,
+    //   "data": BayaranTanpaBilAmaun(
+    //     agencyName: Get.arguments["agencyName"],
+    //     serviceId: serviceId,
+    //     serviceName: name.value,
+    //     amount: amount.text,
+    //   )
+    // });
   }
 }
 

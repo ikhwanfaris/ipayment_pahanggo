@@ -1132,7 +1132,6 @@ const Map<String, String> en = {
   "Special Approval": "Special Approval",
   "Start At": "Start At",
   "Start Date": "Start Date",
-  "Start Date2": "Start Date",
   "Start time": "Start time",
   "Start Time": "Start Time",
   "State": "State",
@@ -1376,7 +1375,6 @@ const Map<String, String> en = {
   "You are not authorized to access this page.":
       "You are not authorized to access this page.",
   "You have ": "You have ",
-  "You have @count bill(s) to be paid.": "You have @count bill(s) to be paid.",
   "You don't have bills to pay.": "You don't have bills to pay.",
   "You have :count bill(s) information records to be verify. Click the :link link to take furher action.":
       "You have :count bill(s) information records to be verify. Click the :link link to take furher action.",

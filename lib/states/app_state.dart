@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutterbase/models/contents/menu.dart';
+import 'package:flutterbase/models/bills/bills.dart';
 import 'package:flutterbase/models/users/inbox.dart';
 import 'package:flutterbase/models/users/user.dart';
 import 'package:flutterbase/states/inbox_state.dart';

@@ -8,9 +8,22 @@ import '../../utils/phosphor.dart';
 
 class RoundedAmountInput extends StatefulWidget {
   final Function(double) onSubmit;
+  final Function()? onDone;
   final String title;
+  final double initialValue;
+  final double? maxValue;
+  final bool autoFocus;
+  final bool hasAsterisk;
 
-  RoundedAmountInput(this.title, this.onSubmit);
+  RoundedAmountInput(
+    this.title,
+    this.onSubmit, {
+      this.maxValue,
+      this.onDone,
+      this.autoFocus = true,
+      this.initialValue = 0,
+      this.hasAsterisk = false
+    });
 
   @override
   State<RoundedAmountInput> createState() => _RoundedAmountInputState();
@@ -23,6 +36,7 @@ class _RoundedAmountInputState extends State<RoundedAmountInput> {
 
   @override
   void initState() {
+    amountController.value = TextEditingValue(text: widget.initialValue.toString());
     inputFocus.addListener(() {
       setState(() {
         hasFocus = inputFocus.hasFocus;
@@ -39,13 +53,19 @@ class _RoundedAmountInputState extends State<RoundedAmountInput> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16.0),
-          child: Text(
-              widget.title,
-              style: styles.heading10bold,
+          child: Row(
+            children: [
+              Text(
+                  widget.title,
+                  style: styles.heading10bold,
+              ),
+              if(widget.hasAsterisk)
+                Text('*', style: TextStyle(color: Colors.red),)
+            ],
           ),
         ),
         Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 8, 16, 16),
+          padding: const EdgeInsets.fromLTRB(16.0, 8, 16, 0),
           child: Focus(
             focusNode: inputFocus,
             onFocusChange: (value) {
@@ -65,21 +85,28 @@ class _RoundedAmountInputState extends State<RoundedAmountInput> {
               }
             },
             child: TextFormField(
+              autofocus: widget.autoFocus,
               controller: amountController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               textInputAction: TextInputAction.next,
               decoration: styles.inputDecoration.copyWith(
                 filled: true,
                 prefix: Text('RM'),
                 suffixIcon: (hasFocus) ? IconButton(onPressed: () async {
-                  inputFocus.unfocus();
                   if(amountController.text != '0') {
                     var round = await api.roundingAdjustment((double.tryParse(amountController.text) ?? 0.0).toStringAsFixed(2));
                     var value = (double.tryParse(amountController.text) ?? 0.0) + (double.tryParse(round.data['value'].toString()) ?? 0.00);
                     amountController.text = value.toStringAsFixed(2);
                     if(value > 0) {
+                      if(widget.maxValue != null && value > widget.maxValue!) {
+                        value = widget.maxValue!;
+                      }
                       widget.onSubmit(value);
                     }
+                  }
+                  inputFocus.unfocus();
+                  if(widget.onDone != null) {
+                    widget.onDone!();
                   }
                 }, icon: Icon(getIcon('check'))) : null,
               ),

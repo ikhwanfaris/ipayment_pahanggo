@@ -70,6 +70,7 @@ class AppStyles {
       fontSize: 16, color: constants.sixColor, fontWeight: FontWeight.bold);
   TextStyle heading14 = TextStyle(fontSize: 12, color: Colors.grey);
   TextStyle heading14sub = TextStyle(fontSize: 16, color: Colors.grey);
+  TextStyle heading14Primary = TextStyle(fontSize: 12, color: constants.primaryColor);
   TextStyle heading15 = TextStyle(fontSize: 16);
   TextStyle heading16 = TextStyle(fontSize: 16);
   TextStyle heading17 = TextStyle(fontSize: 24, fontWeight: FontWeight.bold);
@@ -91,6 +92,10 @@ class AppStyles {
   TextStyle errorStyleTicket = TextStyle(fontSize: 14, color: constants.errorColor);
   TextStyle headingTitlebold = TextStyle(
       fontSize: 24, color: constants.primaryColor, fontWeight: FontWeight.bold);
+  TextStyle headingSubTitlebold = TextStyle(
+      fontSize: 22, color: constants.primaryColor, fontWeight: FontWeight.bold);
+  TextStyle headingTitleboldWhite = TextStyle(
+      fontSize: 24, color: constants.paleWhite, fontWeight: FontWeight.bold);
 
   TextStyle titleHome = TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold);
   TextStyle descHome = TextStyle(fontSize: 12, color: Colors.black);

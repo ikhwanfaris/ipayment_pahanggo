@@ -1,5 +1,6 @@
 import 'package:flutterbase/helpers.dart';
-import 'package:flutterbase/models/models.dart';
+import 'package:flutterbase/models/bills/bills.dart';
+import 'package:flutterbase/models/cart/cart_matrix.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'cart_item.g.dart';
 
@@ -32,7 +33,7 @@ class CartItem {
   double amount;
   String status;
   @JsonKey(toJson: toNull)
-  Service? service;
+  Services? service;
   @JsonKey(toJson: toNull)
   Bill? bill;
 

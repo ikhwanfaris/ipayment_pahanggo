@@ -7,7 +7,7 @@ import 'package:flutterbase/screens/maintenance/maintenance.dart';
 // import 'package:flutterbase/screens/auth/login.dart';
 import 'package:flutterbase/utils/helpers.dart';
 // import 'package:flutterbase/screens/auth/login.dart';
-import 'package:flutterbase/screens/content/home/menu.dart';
+import 'package:flutterbase/screens/home/menu.dart';
 import 'package:flutterbase/states/app_state.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/rive_animation.dart';

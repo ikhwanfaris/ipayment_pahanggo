@@ -5,14 +5,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterbase/enums/enums.dart';
 import 'package:flutterbase/main.dart';
-import 'package:flutterbase/models/models.dart';
-import 'package:flutterbase/providers/providers.dart';
+import 'package:flutterbase/models/cart/cart_matrix.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:provider/provider.dart';
 
 void xlog(String text) {
   if (kDebugMode) developer.log(text, name: 'iPayment');
@@ -234,6 +232,10 @@ String moneyFormat(double value) {
   return NumberFormat("#,##0.00", "en_US").format(value);
 }
 
+String currencyFormat(double value) {
+  return moneyFormat(value);
+}
+
 Future<bool?> appConfimationDialog(
   String title,
   String message,
@@ -409,10 +411,6 @@ Future<bool?> appDialogPay(
   return result;
 }
 
-GuestCartProvider getGuestCart() {
-  return Provider.of<GuestCartProvider>(getContext(), listen: false);
-}
-
 bool isLoggedIn() {
   String _token = store.getItem(kStoreUserToken) ?? '';
   return _token.isNotEmpty;
@@ -464,4 +462,10 @@ String fixStatus(String string) {
       return "Bayaran Penuh";
   }
   return string;
+}
+extension Iterables<E> on Iterable<E> {
+  Map<K, List<E>> groupBy<K>(K Function(E) keyFunction) => fold(
+      <K, List<E>>{},
+      (Map<K, List<E>> map, E element) =>
+          map..putIfAbsent(keyFunction(element), () => <E>[]).add(element));
 }

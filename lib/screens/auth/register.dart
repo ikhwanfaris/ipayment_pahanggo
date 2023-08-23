@@ -1,12 +1,11 @@
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart';
 import 'package:flutterbase/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterbase/components/primary_button.dart';
 import 'package:flutterbase/models/users/auth_config.dart';
 import 'package:flutterbase/models/users/city.dart';
 import 'package:flutterbase/models/users/states.dart';
-import 'package:flutterbase/screens/content/home/tnc.dart';
+import 'package:flutterbase/screens/home/tnc.dart';
 import 'package:flutterbase/utils/helpers.dart';
 import 'package:flutterbase/models/users/identity_type.dart';
 import 'package:flutterbase/models/users/postcode_city.dart';
@@ -18,6 +17,7 @@ import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/rive_animation.dart';
 import 'package:get/get.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:slider_captcha/slider_captcha.dart';
 import 'package:flutterbase/screens/maintenance/maintenance.dart';
 
@@ -33,6 +33,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   // var maskFormatterCitizen = new MaskTextInputFormatter(
   //     mask: "#####-##-####", type: MaskAutoCompletionType.lazy);
+
+  var maskFormatterPhone = new MaskTextInputFormatter(mask: "", type: MaskAutoCompletionType.lazy);
+  var maskFormatterIdentityCode = new MaskTextInputFormatter(mask: "", type: MaskAutoCompletionType.lazy);
+  var maskFormatterIdentityCodeText = new MaskTextInputFormatter(mask: "", type: MaskAutoCompletionType.lazy);
+  var maskFormatterPostcode = new MaskTextInputFormatter(mask: "", type: MaskAutoCompletionType.lazy);
+  var maskFormatterPostcodeForeigner = new MaskTextInputFormatter(mask: "", type: MaskAutoCompletionType.lazy);
+  
+  
 
   TextEditingController dateinput = TextEditingController();
   TextEditingController phoneNo = TextEditingController();
@@ -104,7 +112,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   // bool _isPostCodeAuto = false;
   bool _isPostCodeNormal = true;
   int characterCount = 20;
-  bool _isFetching = false;
+  // bool _isFetching = false;
   String identityTypeLabel = 'Kad Pengenalan';
 
   var initialCountryValue = 'Malaysia';
@@ -342,7 +350,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         .addPostFrameCallback((_) => showLoadingBar(context));
     await api.getCharacterCount(identityTypeID!);
     Future.delayed(const Duration(seconds: 0)).then((value) => setState(() {
-          _isFetching = true;
+          // _isFetching = true;
           characterCount = store.getItem('characterCountLS');
           identityTypeLabel = store.getItem('typeLS');
 
@@ -440,6 +448,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    maskFormatterPhone.updateMask(mask: generateMask(20), filter: { "#": RegExp(r"^[+.]?\d+\b$|^[+.]$") });
+    maskFormatterIdentityCode.updateMask(mask: generateMask(characterCount));
+    maskFormatterIdentityCodeText.updateMask(mask: generateMask(characterCount), filter: { "#": RegExp(r'^[a-zA-Z0-9\s]{0,20}$') });
+    maskFormatterPostcode.updateMask(mask: generateMask(5), filter: { "#": RegExp(r'^\d{0,5}$') });
+    maskFormatterPostcodeForeigner.updateMask(mask: generateMask(10), filter: { "#": RegExp(r'^[a-zA-Z0-9\s]{0,10}$') });
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -506,16 +519,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   SizedBox(height: 20),
                   TextFormField(
                     // autovalidateMode: AutovalidateMode.onUserInteraction,
-                    maxLength: 20,
+                    // maxLength: 20,
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                        RegExp(r"^[+.]?\d+\b$|^[+.]$"),
-                      ),
+                    maskFormatterPhone
                     ],
                     decoration: styles.inputDecoration
-                        .copyWith(label: getRequiredLabel('Phone Number'.tr)),
+                        .copyWith(label: getRequiredLabel('Phone Number'.tr),
+                        hintText: generateHintText(20),),
                     controller: phoneNo,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -846,17 +858,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       padding: const EdgeInsets.only(top: 10),
                       child: TextFormField(
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        maxLength: _isFetching ? characterCount : null,
+                        // maxLength: _isFetching ? characterCount : null,
                         textInputAction: TextInputAction.next,
                         keyboardType: _isPassport
                             ? TextInputType.text
                             : TextInputType.number,
                         inputFormatters: _isPassport
-                            ? null
-                            : [FilteringTextInputFormatter.digitsOnly],
+                            ? [maskFormatterIdentityCodeText]
+                            : [maskFormatterIdentityCode],
                         decoration: styles.inputDecoration.copyWith(
                             label: getRequiredLabel(
-                                'Number '.tr + identityTypeLabel)),
+                                'Number '.tr + identityTypeLabel),
+                                hintText: generateHintText(characterCount),),
+                                
                         initialValue: identityNo,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -876,12 +890,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: _isVisibleEndDate ? 0 : 13),
+                  SizedBox(height: 20),
                   Visibility(
                     visible: _isVisibleEndDate,
                     child: Column(
                       children: [
-                        SizedBox(height: 7),
                         TextFormField(
                           controller: dateinput,
                           decoration: styles.inputDecoration.copyWith(
@@ -1060,14 +1073,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             print('Warganegara & Malaysia & true');
                             _isMalaysia = true;
                             _isNotMalaysia = false;
-                            _isPostCodeNormal = true;
+                            _isPostCodeNormal = false;
                             _isPostcodeMalaysia = true;
                           } else if (countryID == 458 &&
                               _isPostCodeNormal == false) {
                             print('Warganegara & Malaysia & false');
                             _isMalaysia = true;
                             _isNotMalaysia = false;
-                            _isPostCodeNormal = false;
+                            _isPostCodeNormal = true;
                             _isPostcodeMalaysia = true;
                           } else {
                             print('Warganegara & Bukan Malaysia');
@@ -1086,58 +1099,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // Postcode is malaysia
                   Visibility(
                     visible: _isPostcodeMalaysia,
-                    child: TextFormField(
-                      maxLength: 5,
-                      textAlign: TextAlign.start,
-                      initialValue: postcode,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: styles.inputDecoration.copyWith(
-                        label: getRequiredLabel('Postcode'.tr),
-                        errorMaxLines: 5,
-                        suffixIcon: _isPostCodeValid
-                            ? IconTheme(
-                                data: IconThemeData(color: Colors.green),
-                                child: Icon(
-                                  LineIcons.checkCircle,
-                                ))
-                            : IconTheme(
-                                data: IconThemeData(color: Colors.red),
-                                child: Icon(
-                                  LineIcons.timesCircle,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom:20),
+                      child: TextFormField(
+                        // maxLength: 5,
+                        textAlign: TextAlign.start,
+                        initialValue: postcode,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [maskFormatterPostcode],
+                        decoration: styles.inputDecoration.copyWith(
+                          hintText: generateHintText(5),
+                          label: getRequiredLabel('Postcode'.tr),
+                          errorMaxLines: 5,
+                          suffixIcon: _isPostCodeValid
+                              ? IconTheme(
+                                  data: IconThemeData(color: Colors.green),
+                                  child: Icon(
+                                    LineIcons.checkCircle,
+                                  ))
+                              : IconTheme(
+                                  data: IconThemeData(color: Colors.red),
+                                  child: Icon(
+                                    LineIcons.timesCircle,
+                                  ),
                                 ),
-                              ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'This field cannot be left blank.'.tr;
-                        } else if (!postcodeRE.hasMatch(value)) {
-                          return 'The postcode you entered is invalid. Please contact the system administrator'
-                              .tr;
-                        } else if (getPostcodeStatusLS == 'empty') {
-                          return 'The postcode you entered is invalid. Please contact the system administrator'
-                              .tr;
-                        }
-                        return null;
-                      },
-                      onChanged: (val) {
-                        setState(() {
-                          initialDistrictValue++;
-                          print(initialDistrictValue);
-                          postcode = val;
-                          onChangedPostcode(postcode.toString());
-                          postcode = postcode;
-                          if (postcode.length >= 5) {
-                            _getDataPostcodeCityState();
-                          } else {
-                            stateID = null;
-                            cityID = null;
-                            districtID = null;
-                            initialDistrictValue = 0;
+                                
+                        ),
+                        
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'This field cannot be left blank.'.tr;
+                          } else if (!postcodeRE.hasMatch(value)) {
+                            return 'The postcode you entered is invalid. Please contact the system administrator'
+                                .tr;
+                          } else if (getPostcodeStatusLS == 'empty') {
+                            return 'The postcode you entered is invalid. Please contact the system administrator'
+                                .tr;
                           }
-                        });
-                      },
+                          return null;
+                        },
+                        onChanged: (val) {
+                          setState(() {
+                            initialDistrictValue++;
+                            print(initialDistrictValue);
+                            postcode = val;
+                            onChangedPostcode(postcode.toString());
+                            postcode = postcode;
+                            if (postcode.length >= 5) {
+                              _getDataPostcodeCityState();
+                            } else {
+                              stateID = null;
+                              cityID = null;
+                              districtID = null;
+                              initialDistrictValue = 0;
+                            }
+                          });
+                        },
+                      ),
                     ),
                   ),
                   // Postcode not malaysia
@@ -1146,9 +1165,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: TextFormField(
-                        maxLength: 10,
+                        // maxLength: 10,
+                        inputFormatters: [maskFormatterPostcodeForeigner],
                         initialValue: postcode,
                         decoration: styles.inputDecoration.copyWith(
+                          hintText: generateHintText(10),
                           label: getRequiredLabel('Postcode'.tr),
                         ),
                         validator: (value) {
@@ -1168,7 +1189,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
+                  // SizedBox(height: 10),
                   // Negeri
                   Visibility(
                     visible: _isPostCodeNormal,
@@ -1572,7 +1593,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               style: styles.heading2,
                               children: [
                                 TextSpan(
-                                  text: 'Terms and Conditions'.tr,
+                                  text: 'Terms and Conditions.'.tr,
                                   style: styles.heading6bold,
                                 ),
                               ],

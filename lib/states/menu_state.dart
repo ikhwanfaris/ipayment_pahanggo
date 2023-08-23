@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbase/models/contents/menu.dart';
+import 'package:flutterbase/models/bills/bills.dart';
 
 class MenuDataState {
   List<Menu> data = [];

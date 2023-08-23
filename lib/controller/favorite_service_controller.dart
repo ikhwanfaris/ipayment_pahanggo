@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutterbase/api/api.dart';
-import 'package:flutterbase/models/contents/favorite.dart';
+import 'package:flutterbase/models/bills/favorite.dart';
 import 'package:get/get.dart';
 
 // import 'home_controller.dart';

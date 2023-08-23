@@ -2,6 +2,7 @@
     package="my.gov.agnm.ipaymentapp">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
+        android:usesCleartextTraffic="true"
         android:label="iPayment"
         android:icon="@mipmap/ic_launcher">
         <meta-data

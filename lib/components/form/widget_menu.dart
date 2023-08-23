@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbase/utils/constants.dart';
+import 'package:flutterbase/utils/helpers.dart';
 
 class CustomWidgetMenu extends StatelessWidget {
   final String counter;
@@ -40,10 +41,12 @@ class CustomWidgetMenu extends StatelessWidget {
                   Text(
                     counter,
                     style: counterTextStyle,
+                    textScaleFactor: ScaleSize.textScaleFactor(context),
                   ),
                   Text(
                     title,
                     style: styles.widgetMenuTitle, textAlign: TextAlign.center,
+                    textScaleFactor: ScaleSize.textScaleFactor(context),
                   ),
                 ],
               ),

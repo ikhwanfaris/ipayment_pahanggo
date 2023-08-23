@@ -4,13 +4,13 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutterbase/api/api.dart';
-import 'package:flutterbase/models/contents/service.dart';
+import 'package:flutterbase/models/bills/bills.dart';
 import 'package:get/get.dart';
 
 import '../utils/helpers.dart';
 
 class ServiceDetailController extends GetxController {
-  ServiceModel? service;
+  Services? service;
   RxString codeAgency = "".obs;
   RxString codeService = "".obs;
   RxString nameService = "".obs;
@@ -31,12 +31,12 @@ class ServiceDetailController extends GetxController {
     print(response.isSuccessful);
     if (response.isSuccessful) {
       print(response.data.toString());
-      service = ServiceModel.fromJson(response.data);
-      codeAgency.value = service!.agency!.code!;
-      codeService.value = service!.serviceReferenceNumber;
-      nameService.value = service!.name;
+      service = Services.fromJson(response.data);
+      codeAgency.value = service!.agency.code!;
+      codeService.value = service!.serviceReferenceNumber!;
+      nameService.value = service!.name!;
       typeService.value = service!.menu!.name!;
-      refNoService.value = service!.serviceReferenceNumber;
+      refNoService.value = service!.serviceReferenceNumber!;
     }
     Navigator.pop(Get.context!);
     super.onInit();

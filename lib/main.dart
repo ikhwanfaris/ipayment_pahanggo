@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutterbase/payments/bills/bill_without_amount/bill_without_amount.dart';
-import 'package:flutterbase/payments/bills/payment_without_bill/payment_without_bill_sale_animal.dart';
-import 'package:flutterbase/payments/bills/payment_without_bill/payment_without_bill_sale_book.dart';
-import 'package:flutterbase/payments/bills/payment_without_bill/payment_without_bill_toursim.dart';
-import 'package:flutterbase/payments/bills/payment_without_bill_and_amount/payment_without_bill_and_amount.dart';
-import 'package:flutterbase/payments/bills/rateless_payment/rateless_payment.dart';
-import 'package:flutterbase/payments/bills/single_multiple_bill/single_bill.dart';
-import 'package:flutterbase/providers/providers.dart';
+import 'package:flutterbase/components/loading_blocker.dart';
 import 'package:flutterbase/screens/onboarding/splash.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/localization.dart';
 import 'package:get/route_manager.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 
@@ -20,16 +12,7 @@ void main() async {
   debugPaintSizeEnabled = false;
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => GuestCartProvider(),
-        ),
-      ],
-      child: MyApp(),
-    ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -37,7 +20,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return LoadingBlocker(child: GetMaterialApp(
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -65,7 +48,7 @@ class MyApp extends StatelessWidget {
           titleTextStyle: const TextStyle(
               fontSize: 16,
               fontFamily: 'SfProDisplayBold'),
-          iconTheme: const IconThemeData(opacity: 0.4), 
+          iconTheme: const IconThemeData(opacity: 0.4),
         ),
         primarySwatch: constants.primaryColor,
         scaffoldBackgroundColor: const Color(0xffffffff),
@@ -97,19 +80,6 @@ class MyApp extends StatelessWidget {
         ),
       ),
       home: SplashScreen(),
-      routes: {
-        'bill': (context) => const SingleBillScreen(),
-        'bill_without_amount': (context) => const BillWithoutAmountScreen(),
-        'payment_without_bill_tourism': (context) =>
-            const PaymentWithoutBillTourismScreen(),
-        'payment_without_bill_sale_book': (context) =>
-            const PaymentWithoutBillSaleBookScreen(),
-        'payment_without_bill_sale_animal': (context) =>
-            const PaymentWithoutBillSaleAnimalScreen(),
-        'payment_without_bill_and_amount': (context) =>
-            const PaymentWithoutBillAndAmountScreen(),
-        'rateless_payment': (context) => const RatelessPaymentScreen(),
-      },
-    );
+    ));
   }
 }

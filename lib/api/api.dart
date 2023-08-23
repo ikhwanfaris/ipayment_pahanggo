@@ -5,23 +5,23 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutterbase/models/about_us/about_us.dart';
-import 'package:flutterbase/models/bills/bills.dart' as model;
-import 'package:flutterbase/models/contents/bank.dart';
+import 'package:flutterbase/helpers.dart';
+import 'package:flutterbase/models/cart/add_cart_request.dart';
+import 'package:flutterbase/models/chat/reassign_remark.dart';
+import 'package:flutterbase/models/contents/about_us.dart';
 import 'package:flutterbase/api/barrel/barrel.dart';
+import 'package:flutterbase/models/bills/bills.dart';
 import 'package:flutterbase/models/chat/message.dart';
 import 'package:flutterbase/models/enquiry/file_setting_enquiry.dart';
 import 'package:flutterbase/models/enquiry/list_enquiry.dart';
-import 'package:flutterbase/models/models.dart';
 import 'package:flutterbase/models/rating/faq.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterbase/models/contents/add_cart_request.dart';
 import 'package:flutterbase/models/payments/payments.dart';
 import 'package:flutterbase/models/users/add_member.dart';
 import 'package:flutterbase/models/users/auth_config.dart';
 import 'package:flutterbase/models/users/character_count.dart';
 import 'package:flutterbase/models/users/city.dart';
-import 'package:flutterbase/models/contents/menu.dart';
+import 'package:flutterbase/models/users/email_history.dart';
 import 'package:flutterbase/models/users/identity_type.dart';
 import 'package:flutterbase/models/organizations/list_organization_member.dart';
 import 'package:flutterbase/models/organizations/organization.dart';
@@ -39,7 +39,6 @@ import 'package:flutterbase/models/users/user_manual.dart';
 import 'package:flutterbase/states/app_state.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:get/get.dart' as getx;
-import 'package:get/get_core/src/get_main.dart';
 import '../models/enquiry/category_enquiry.dart';
 import '../utils/helpers.dart';
 
@@ -129,7 +128,6 @@ class Api {
                 .replaceAll("}", ""),
             e.response?.statusCode);
       } on Error catch (e) {
-        print('Test 123');
         return ErrorResponse(false, e.stackTrace.toString(), 0);
       }
     }
@@ -153,7 +151,7 @@ class Api {
         },
       ),
     );
-    print(response.data);
+    // print(response.data);
 
     if (response.data['message'] == 'Bahasa telah dikemas kini') {
       return ErrorResponse(true, response.data["message"], response.statusCode);
@@ -167,19 +165,23 @@ class Api {
   }
 
   Future<ErrorResponse> getBulletin({required bool isBulletin}) async {
-    Map<String, String> query = {"display_mode[]": "Hebahan"};
+    // Map<String, String> query = {"display_mode[]": "Bulletin"};
+    String displayMode = '';
+
     if (isBulletin) {
-      query["display_mode[]"] = "Buletin";
+      displayMode = 'display_mode[]=Bulletin';
+    } else {
+      displayMode = 'display_mode[]=Hebahan';
     }
     var response = await client().get(
-      '/api/bulletin',
+      '/api/bulletin?$displayMode',
       options: Options(
         validateStatus: (status) {
           return status! < 600;
         },
       ),
     );
-    print(response.data);
+    print('${response.data.length} bulletin');
 
     if (response.data['message'] == 'Successful') {
       return ErrorResponse(true, '', response.statusCode,
@@ -217,6 +219,72 @@ class Api {
     }
   }
 
+  Future<ErrorResponse> getFavoriteBills() async {
+    var response = await client().get(
+      '/api/bills/favorite',
+      options: Options(
+        validateStatus: (status) {
+          return status! < 600;
+        },
+      ),
+    );
+
+    if (response.data['message'] == 'Successful') {
+      return ErrorResponse(true, '', response.statusCode,
+          data: response.data["data"]);
+    } else {
+      return ErrorResponse(
+        false,
+        response.data["message"],
+        response.statusCode,
+        data: response.data["data"],
+      );
+    }
+  }
+
+  Future<Map<String, dynamic>> removeFavorite(
+      {int? serviceId, int? billId}) async {
+    Map<String, int> data = {};
+    if (billId != null) {
+      data['bill_id'] = billId;
+    }
+    if (serviceId != null) {
+      data['service_id'] = serviceId;
+    }
+    return (await client().post('/api/favorite/remove', options: Options(
+      validateStatus: (status) {
+        return status! < 600;
+      },
+    ), data: data))
+        .data['data'];
+  }
+
+  Future<Map<String, dynamic>> getFavoriteCount() async {
+    return (await client().get('/api/favorite/count', options: Options(
+      validateStatus: (status) {
+        return status! < 600;
+      },
+    )))
+        .data['data'];
+  }
+
+  Future<Map<String, dynamic>> addFavorite(
+      {int? serviceId, int? billId}) async {
+    Map<String, int> data = {};
+    if (billId != null) {
+      data['bill_id'] = billId;
+    }
+    if (serviceId != null) {
+      data['service_id'] = serviceId;
+    }
+    return (await client().post('/api/favorite/add', options: Options(
+      validateStatus: (status) {
+        return status! < 600;
+      },
+    ), data: data))
+        .data['data'];
+  }
+
   // Get authentication user for user & gov
   Future<List<AuthConfig>> getAuthConfig() async {
     List<AuthConfig> list = [];
@@ -233,9 +301,16 @@ class Api {
     return list;
   }
 
-  Future<ErrorResponse> getCarts() async {
+  Future<ErrorResponse> getCarts({List<int>? ids}) async {
+    Map<String, dynamic> params = {};
+
+    if (ids != null) {
+      params['ids[]'] = ids;
+    }
+
     var response = await client().get(
       '/api/carts',
+      queryParameters: params,
       options: Options(
         validateStatus: (status) {
           return status! < 600;
@@ -459,13 +534,19 @@ class Api {
   //   }
   // }
 
-  Future<ErrorResponse> searchService(String query) async {
+  Future<ErrorResponse> searchService(String query, {int? mid}) async {
+    var params = {
+      "keyword": query,
+      "from": "portal",
+    };
+
+    if (mid != null) {
+      params['menu_id'] = mid.toString();
+    }
+
     var response = await client().get(
       '/api/services/search',
-      queryParameters: {
-        "keyword": query,
-        "from": "portal",
-      },
+      queryParameters: params,
       options: Options(
         validateStatus: (status) {
           return status! < 500;
@@ -534,6 +615,29 @@ class Api {
     }
   }
 
+  Future<ErrorResponse> getEwalletList() async {
+    var response = await client().get(
+      '/api/payments/ewallet-network',
+      options: Options(
+        validateStatus: (status) {
+          return status! < 600;
+        },
+      ),
+    );
+
+    if (response.data['message'] == 'Successful') {
+      return ErrorResponse(true, '', response.statusCode,
+          data: response.data["data"]);
+    } else {
+      return ErrorResponse(
+        false,
+        response.data["message"],
+        response.statusCode,
+        data: response.data["data"],
+      );
+    }
+  }
+
   searchBill(String query, String serviceId) async {
     var response =
         await client().get('/api/services/search-bill', queryParameters: {
@@ -555,27 +659,17 @@ class Api {
     }
   }
 
-  Future<ErrorResponse> getBills(String? search,
-      {required bool public, String? identityCode}) async {
+  Future<ErrorResponse> getBills(int page, String search,
+      {bool individuals = true, bool organizations = true}) async {
     Map<String, dynamic> query = {};
     String url = "/api/bills";
 
-    if (public) {
-      url = "/api/public/bills";
-      query["search"] = search;
-      query["identity_code"] = identityCode;
-    } else {
-      query["search"] = search;
-      query["identity_code"] = identityCode;
-    }
-    // if (search != null) {
-    //   query["search"] = search;
-    // }
+    query["search"] = search;
+    query["page"] = page;
+    query["identity_code_categories[]"] = [];
+    if (individuals) query["identity_code_categories[]"].add('individu');
+    if (organizations) query["identity_code_categories[]"].add('organisasi');
 
-    print('test search bill');
-
-    log("Search Bill url: $url");
-    log("Search Bill query: $query");
     var response = await client().get(
       url,
       queryParameters: query,
@@ -585,7 +679,6 @@ class Api {
         },
       ),
     );
-    print(response.data);
 
     if (response.data['message'] == 'Successful') {
       return ErrorResponse(true, '', response.statusCode,
@@ -611,7 +704,7 @@ class Api {
     );
 
     if (response.data['message'] == 'Successful') {
-      log(response.data.toString());
+      // log(response.data.toString());
       return ErrorResponse(true, '', response.statusCode,
           data: response.data["data"]);
     } else {
@@ -624,9 +717,8 @@ class Api {
     }
   }
 
-  Future<List<model.Bills>> getBillByService(
-      {required String serviceId}) async {
-    List<model.Bills> list = [];
+  Future<List<Bill>> getBillByService({required String serviceId}) async {
+    List<Bill> list = [];
     var response = await client().get(
       '/api/bills/by-service?service_id=$serviceId',
       options: Options(
@@ -635,14 +727,9 @@ class Api {
         },
       ),
     );
-    print("response.data[message]");
-    print(response.data['message']);
-    print("response.data[data]");
-    print(response.data['data']);
     if (response.data['message'] == 'Successful') {
-      log(response.data.toString());
       for (var item in response.data['data']['data']) {
-        list.add(model.Bills.fromJson(item));
+        list.add(Bill.fromJson(item));
       }
     } else {
       return list;
@@ -810,7 +897,7 @@ class Api {
     try {
       var response = await client().get('/api/config');
 
-      var myLocaleLang = Get.locale?.languageCode;
+      var myLocaleLang = getx.Get.locale?.languageCode;
 
       if (response.data['data'] != null) {
         if (myLocaleLang.toString() == 'en') {
@@ -857,7 +944,7 @@ class Api {
     List<Menu> menus = [];
     try {
       var response = await client().get('/api/menu');
-      print(response);
+      // print(response);
       if (response.data['data'] != null) {
         for (var item in response.data['data']) {
           menus.add(Menu.fromJson(item));
@@ -917,15 +1004,15 @@ class Api {
   }
 
   // Get service detail by id
-  Future<List<model.Bills>> getBillDetail(String serviceRefNum) async {
-    List<model.Bills> list = [];
+  Future<List<Bill>> getBillDetail(String serviceRefNum) async {
+    List<Bill> list = [];
     try {
       var response = await client()
           .get('/api/public/bills/bill-mask/' + serviceRefNum.toString());
       // print(response);
 
       if (response.data['message'] == 'Successful') {
-        list.add(model.Bills.fromJson(response.data['data']));
+        list.add(Bill.fromJson(response.data['data']));
       }
     } on DioError catch (e) {
       print(e.message);
@@ -1052,9 +1139,6 @@ class Api {
     var response = await client().get('/api/user');
     print(response.data['data']['tnc_updated']);
     var refreshTnc = response.data['data']['tnc_updated'];
-
-    var getEmailHistory = response.data['data']['email_histories'];
-    store.setItem('getEmailHistoryLS', getEmailHistory);
 
     Locale locale =
         new Locale(response.data["data"]["profile"]["lang"] ?? "en");
@@ -1331,6 +1415,27 @@ class Api {
     return ErrorResponse(false, 'Server Error', 0);
   }
 
+  // Get email histories
+  Future<List<EmailHistory>> getEmailHistories() async {
+    List<EmailHistory> list = [];
+
+    print('hit api');
+
+    try {
+      var response = await client().get('/api/user');
+
+      if (response.data['message'] == 'Successful') {
+        List<dynamic> responseData = response.data['data']['email_histories'];
+
+        for (var item in responseData) {
+          var emailHistory = EmailHistory.fromJson([item]);
+          list.add(emailHistory);
+        }
+      }
+    } catch (_) {}
+    return list;
+  }
+
   // Get passport histories
   Future<List<PassportHistory>> getPassportHistories() async {
     List<PassportHistory> list = [];
@@ -1354,6 +1459,7 @@ class Api {
     String firstName,
     String lastName,
     String email,
+    String? personalEmail,
     String phoneNo,
     int citizenship,
     String address1,
@@ -1379,6 +1485,7 @@ class Api {
         'first_name': firstName,
         'last_name': lastName,
         'email': email,
+        'personal_email': personalEmail,
         'phone_no': phoneNo,
         'citizenship': citizenship,
         'address_1': address1,
@@ -1520,6 +1627,7 @@ class Api {
         store.setItem(
             'characterCountLS', response.data['data']['character_count']);
         store.setItem('typeLS', response.data['data']['type']);
+        store.setItem('codeLS', response.data['data']['code']);
       }
     } on DioError catch (_) {}
     return list;
@@ -1812,7 +1920,8 @@ class Api {
   // Add member to organization
   Future<ErrorResponse> addMember(
       int orgId, List<ListLocalAddMember> userInfo) async {
-    List<String> fillterIcNo = userInfo.map((model) => model.icNo).toList();
+    List<String> fillterIcNo =
+        userInfo.map<String>((model) => model.icNo).toList();
 
     try {
       var response = await client().post(
@@ -1845,12 +1954,12 @@ class Api {
   }
 
   // Get enquiry list
-  Future<List<Enquiry>> getEnquiry(int perPage) async {
+  Future<List<Enquiry>> getEnquiry(int? perPage, String sort) async {
     List<Enquiry> list = [];
 
     try {
-      var response =
-          await client().get('/api/rfm?per_page=' + perPage.toString());
+      var response = await client()
+          .get('/api/rfm?order=' + sort + '&per_page=' + perPage.toString());
 
       // print(response.data['total']);
 
@@ -1870,17 +1979,17 @@ class Api {
   }
 
   // Get reassgin enquiry list
-  Future<List<Enquiry>> getReassignEnquiry() async {
-    List<Enquiry> list = [];
+  Future<List<ReassignRemark>> getReassignRemarkEnquiry(int id) async {
+    List<ReassignRemark> list = [];
 
     try {
-      var response = await client().get('/api/rfm/get-reassign');
+      var response = await client()
+          .get('/api/rfm/get-reassign?enquiry_id=' + id.toString());
 
       if (response.data['message'] == 'Successful') {
         for (var item in response.data['data']) {
-          list.add(Enquiry.fromJson(item));
+          list.add(ReassignRemark.fromJson(item));
         }
-      
       }
     } on DioError catch (_) {}
     return list;
@@ -2241,8 +2350,8 @@ class Api {
   }
 
 // Get Bills
-  Future<List<model.Bills>> GetBills(String search, String id) async {
-    List<model.Bills> list = [];
+  Future<List<Bill>> GetBills(String search, String id) async {
+    List<Bill> list = [];
     try {
       // var response = await client().get('/api/bills?search=' +
       //     search +
@@ -2263,7 +2372,7 @@ class Api {
       // print(response.data.toString());
       if (response.data['data'] != null) {
         for (var item in response.data['data']['data']) {
-          list.add(model.Bills.fromJson(item));
+          list.add(Bill.fromJson(item));
         }
       } else if (response.data['message'] == "Not found") {
         return list;
@@ -2273,16 +2382,16 @@ class Api {
   }
 
   // Get Payment Gateway
-  Future<List<model.PaymentGateway>> GetPaymentGateway() async {
-    List<model.PaymentGateway> list = [];
+  Future<List<PaymentGateway>> GetPaymentGateway() async {
+    List<PaymentGateway> list = [];
     try {
       var response = await client().get('/api/payments/gateways');
 // + identity_code
       if (response.data['data'] != null) {
         print(response);
-
         for (var item in response.data['data']) {
-          list.add(model.PaymentGateway.fromJson(item));
+          if (item['translatables'].isNotEmpty)
+            list.add(PaymentGateway.fromJson(item));
         }
       } else if (response.data['message'] == "Not found") {
         return list;
@@ -2292,14 +2401,24 @@ class Api {
   }
 
   // Get Paynent Bank
-  Future<List<Bank>> GetPaynetBank() async {
-    List<Bank> list = [];
+  Future<List<Bank2>> GetPaynetBank() async {
+    List<Bank2> list = [];
     try {
       var response = await client().get('/api/payments/paynet-banks');
       if (response.data['data'] != null) {
-        for (var item in response.data['data']) {
-          list.add(Bank.fromJson(item));
-        }
+        print("GetPaynetBank");
+        print(response.data['data']);
+        log('data: $response');
+
+        // log(response);
+        // for (var item in response.data['data']) {
+        //   if (item['redirectUrls'] != null) {
+        //     for (var url in response.data['data']['redirectUrls']) {
+        //       if (url['type'] != null && url['url'] != null)
+        //         list.add(Bank2.fromJson(url['type'], url['url'], item));
+        //     }
+        //   }
+        // }
       } else if (response.data['message'] == "Not found") {
         return list;
       }
@@ -2311,120 +2430,147 @@ class Api {
 // //Add to cart
 
   // Get Payment History
-  Future GetPaymetHistory(
-    String search,
-    String xls,
-    String pdf,
-    String date_from,
-    String date_to,
-    String payment_category,
-  ) async {
+  Future GetPaymentHistoryByTransactionItem(
+    HistorySearchParams params,
+    HistoryItemList list, {
+    bool nextPage = false,
+    bool reset = false,
+  }) async {
     //  String search,String xls,String pdf,String date_from,String date_to,
-    List<model.HistoryItem> list = [];
+    // List<HistoryItem> list = [];
     try {
-      print('/api/payments/histories-items' +
-          '?search=' +
-          search +
-          '&xls=' +
-          xls +
-          '&pdf=' +
-          pdf +
-          '&date_from=' +
-          date_from +
-          '&date_to=' +
-          date_to +
-          '&payment_category=' +
-          payment_category +
-          '&per_page=100&order=desc');
-      var response = await client().get('/api/payments/histories-items' +
-          '?search=' +
-          search +
-          '&xls=' +
-          xls +
-          '&pdf=' +
-          pdf +
-          '&date_from=' +
-          date_from +
-          '&date_to=' +
-          date_to +
-          '&payment_category=' +
-          payment_category +
-          '&per_page=100&order=desc');
+      var _params = params.getQueryParams;
+      if (reset) {
+        list.page = 1;
+      }
+      _params['page'] = list.page;
+      if (nextPage && list.hasNextPage) {
+        list.page = list.page + 1;
+        _params['page'] = list.page;
+      }
+      var response = await client()
+          .get('/api/payments/histories-items', queryParameters: _params);
       if (response.data['data'] != null &&
           response.data['message'] == "Successful") {
-        for (var item in response.data['data']['data']) {
-          list.add(model.HistoryItem.fromJson(item));
+        if (!nextPage || reset) {
+          list.clear();
         }
-      } else if (response.data['message'] == "Not found") {
-        return list;
-      } else if (response.data['message'] == "Filter no result") {
-        return list;
-      } else if (response.data['message'] == "History in PDF") {
-        print("History in PDF");
-        return response.data['data'];
-      } else if (response.data['message'] == "History in CSV") {
-        print("History in CSV");
-        return response.data['data'];
+        list.lastPage = response.data['data']['last_page'];
+        for (var item in response.data['data']['data']) {
+          list.items.add(HistoryItem.fromJson(item));
+        }
       }
-    } on DioError catch (_) {}
+      // else if (response.data['message'] == "Not found") {
+      //   return list;
+      // } else if (response.data['message'] == "Filter no result") {
+      //   return list;
+      // } else if (response.data['message'] == "History in PDF") {
+      //   print("History in PDF");
+      //   return response.data['data'];
+      // } else if (response.data['message'] == "History in CSV") {
+      //   print("History in CSV");
+      //   return response.data['data'];
+      // }
+    } on DioError catch (_) {
+      xdd(_);
+    }
     return list;
   }
 
-  // Get Payment History
-  Future GetPaymetHistory2(
-    String search,
-    String xls,
-    String pdf,
-    String date_from,
-    String date_to,
+  Future GetPaymentHistoryDetails(
+    int historyId,
+    HistoryItemList list,
   ) async {
     //  String search,String xls,String pdf,String date_from,String date_to,
-    List<model.History> list = [];
+    // List<HistoryItem> list = [];
     try {
-      print('/api/payments/histories'
-              '?search=' +
-          search +
-          '&xls=' +
-          xls +
-          '&pdf=' +
-          pdf +
-          '&date_from=' +
-          date_from +
-          '&date_to=' +
-          date_to +
-          '&payment_category=' +
-          '&per_page=100&order=desc');
-      var response = await client().get('/api/payments/histories'
-              '?search=' +
-          search +
-          '&xls=' +
-          xls +
-          '&pdf=' +
-          pdf +
-          '&date_from=' +
-          date_from +
-          '&date_to=' +
-          date_to +
-          '&payment_category=' +
-          '&per_page=100&order=desc');
+      Map<String, dynamic> params = {
+        'per_page': 1000,
+        'order': 'desc',
+        'transaction_id': historyId,
+      };
+
+      var response = await client()
+          .get('/api/payments/histories-items', queryParameters: params);
       if (response.data['data'] != null &&
           response.data['message'] == "Successful") {
         for (var item in response.data['data']['data']) {
-          list.add(model.History.fromJson(item));
+          list.items.add(HistoryItem.fromJson(item));
         }
-      } else if (response.data['message'] == "Not found") {
-        return list;
-      } else if (response.data['message'] == "Filter no result") {
-        return list;
-      } else if (response.data['message'] == "History in PDF") {
-        print("History in PDF");
-        return response.data['data'];
-      } else if (response.data['message'] == "History in CSV") {
-        print("History in CSV");
-        return response.data['data'];
       }
-    } on DioError catch (_) {}
-    return list;
+    } on DioError catch (_) {
+      xdd(_);
+    }
+  }
+
+  Future GetTransactionItems(
+    int transactionId,
+    HistoryItemList list,
+  ) async {
+    //  String search,String xls,String pdf,String date_from,String date_to,
+    // List<HistoryItem> list = [];
+    try {
+      Map<String, dynamic> params = {
+        'transaction_id': transactionId,
+      };
+
+      var response = await client()
+          .get('/api/payments/transaction-items', queryParameters: params);
+      if (response.data['data'] != null &&
+          response.data['message'] == "Successful") {
+        for (var item in response.data['data']['data']) {
+          list.items.add(HistoryItem.fromJson(item));
+        }
+      }
+    } on DioError catch (_) {
+      xdd(_);
+    }
+  }
+
+  // Get Payment History
+  Future GetPaymentHistoryByTransaction(
+      HistorySearchParams params, HistoryList list,
+      {bool nextPage = false, bool reset = false}) async {
+    //  String search,String xls,String pdf,String date_from,String date_to,
+    // List<History> list = [];
+    try {
+      var _params = params.getQueryParams;
+      if (reset) {
+        list.page = 1;
+      }
+      _params['page'] = list.page;
+      if (nextPage && list.hasNextPage) {
+        list.page = list.page + 1;
+        _params['page'] = list.page;
+      }
+      print(_params);
+      var response = await client()
+          .get('/api/payments/histories', queryParameters: _params);
+      if (response.data['data'] != null &&
+          response.data['message'] == "Successful") {
+        if (!nextPage || reset) {
+          list.clear();
+        }
+        list.lastPage = response.data['data']['last_page'];
+        for (var item in response.data['data']['data']) {
+          list.items.add(History.fromJson(item));
+        }
+      }
+      // else if (response.data['message'] == "Not found") {
+      //   return list;
+      // } else if (response.data['message'] == "Filter no result") {
+      //   return list;
+      // } else if (response.data['message'] == "History in PDF") {
+      //   print("History in PDF");
+      //   return response.data['data'];
+      // } else if (response.data['message'] == "History in CSV") {
+      //   print("History in CSV");
+      //   return response.data['data'];
+      // }
+    } on DioError catch (_) {
+      xdd(_);
+    }
+    // return list;
   }
 
   Future GetDownloadReceipt(String id) async {
@@ -2437,18 +2583,20 @@ class Api {
       } else if (response.data['message'] == "Not found") {
         return list;
       }
-    } on DioError catch (_) {}
+    } on DioError catch (_) {
+      xdd(_);
+    }
     return list;
   }
 
   // Get Paynent Bank
-  Future<List<model.FavBills>> GetFavBills() async {
-    List<model.FavBills> list = [];
+  Future<List<FavBill>> GetFavBills() async {
+    List<FavBill> list = [];
     try {
       var response = await client().get('/api/bills/favorite');
       if (response.data['data'] != null) {
         for (var item in response.data['data']) {
-          list.add(model.FavBills.fromJson(item));
+          if (item['payment'] != null) list.add(FavBill.fromJson(item));
         }
       } else if (response.data['message'] == "Not found") {
         return list;
@@ -2461,7 +2609,7 @@ class Api {
   Future<Map> GetRounding(String value) async {
     Map list = {};
     try {
-      print('/api/config/rounding?value=' + value);
+      // print('/api/config/rounding?value=' + value);
       var response = await client().get('/api/config/rounding?value=' + value);
       if (response.data['data'] != null) {
         list.addAll(response.data['data']);
@@ -2473,17 +2621,17 @@ class Api {
   }
 
   // Get Incomplete Trans
-  Future<List<model.Incomplete>> GetIncomplete() async {
-    List<model.Incomplete> list = [];
+  Future<List<Payment>> GetIncomplete() async {
+    List<Payment> list = [];
     try {
-      print('/api/payments/incomplete?per_page=50');
-      var response = await client().get('/api/payments/incomplete?per_page=50');
-      print(response.data['data'].toString());
-      print(response.data['data']['current_page'].toString());
-      print(response.data['data']['data'].toString());
+      // print('/api/payments/incomplete?per_page=50');
+      var response = await client().get('/api/payments/incomplete?per_page=10');
+      // print(response.data['data'].toString());
+      // print(response.data['data']['current_page'].toString());
+      // print(response.data['data']['data'].toString());
       if (response.data['data'] != null) {
         for (var item in response.data['data']['data']) {
-          list.add(model.Incomplete.fromJson(item));
+          list.add(Payment.fromJson(item));
         }
       } else if (response.data['message'] == "Not found") {
         return list;
@@ -2523,8 +2671,8 @@ class Api {
         return ErrorResponse(true, '', response.statusCode);
       }
     } on DioError catch (e) {
-      print(e.message);
-      print(e.response?.data);
+      // print(e.message);
+      // print(e.response?.data);
 
       return ErrorResponse(
           false, e.response!.data['errors'].toString(), e.response?.statusCode);
@@ -2838,15 +2986,24 @@ class Api {
       var response = await client().get('/api/content/about-us');
 
       if (response.data['message'] == 'Successful') {
-        // will rework this api laler
+        // will rework this api later
+        await store.setItem('latLS', response.data['data']['lat']);
+        await store.setItem('longLS', response.data['data']['lng']);
         await store.setItem('phoneLS', response.data['data']['phone']);
         await store.setItem('emailLS', response.data['data']['email']);
         await store.setItem('webLinkLS', response.data['data']['web_link']);
-        await store.setItem('fbLinkLS', response.data['data']['fb_link']);
-        await store.setItem(
-            'twitterLinkLS', response.data['data']['twitter_link']);
-        await store.setItem(
-            'youtubeLinkLS', response.data['data']['youtube_link']);
+
+        if (response.data['data']['fb_link'] != null) {
+          await store.setItem('fbLinkLS', response.data['data']['fb_link']);
+        }
+        if (response.data['data']['twitter_link'] != null) {
+          await store.setItem(
+              'twitterLinkLS', response.data['data']['twitter_link']);
+        }
+        if (response.data['data']['youtube_link'] != null) {
+          await store.setItem(
+              'youtubeLinkLS', response.data['data']['youtube_link']);
+        }
 
         await store.setItem(
             'enTitleLS', response.data['data']['translatables'][0]['content']);
@@ -2881,17 +3038,12 @@ class Api {
   }
 
   // Get widget menu
-  Future<List> widgetMenu() async {
-    List list = [];
-
+  Future<Map<String, dynamic>> widgetMenu() async {
+    Map<String, dynamic> response = {};
     try {
       var response = await client().get('/api/dashboard');
 
       if (response.data['message'] == 'Successful') {
-        // Will rework soon
-
-        print(response);
-
         await store.setItem(
             'bilIndividualLS', response.data['data']['bill_individual_count']);
         await store.setItem('billOrganizationLS',
@@ -2899,18 +3051,17 @@ class Api {
         await store.setItem(
             'enquiryActiveLS', response.data['data']['rfm_count']);
         await store.setItem(
-            'serviceFavouriteLS', response.data['data']['service_count']);
-        await store.setItem(
-            'billFavouriteLS', response.data['data']['bill_count']);
-        await store.setItem(
             'paymentPendingLS', response.data['data']['payment_pending_count']);
+
+        return response.data['data'];
       }
     } on DioError catch (_) {}
-    return list;
+
+    return response;
   }
 
   Future<ErrorResponse> getBill(int id) async {
-    String url = "/api/bills/" + id.toString();
+    String url = "/api/bills/by-id/" + id.toString();
 
     var response = await client().get(
       url,
@@ -2932,6 +3083,84 @@ class Api {
         data: response.data["data"],
       );
     }
+  }
+
+  Future<String> exportFile(String format) async {
+    final response = await client().get("/api/rfm?$format");
+
+    if (response.statusCode == 200) {
+      return response.data['data'].toString();
+    } else {
+      throw Exception('Failed to load PDF');
+    }
+  }
+}
+
+class HistorySearchParams {
+  String type;
+  String term;
+  DateTime? from;
+  DateTime? to;
+  // bool isPdf = false;
+
+  HistorySearchParams(this.type, this.term, this.from, this.to);
+
+  static List<String> paymentCategories = <String>[
+    "By Transaction",
+    'Self Payment',
+    'Payment by Third Party',
+    'Payment for Third Party',
+  ];
+
+  Map<String, dynamic> get getQueryParams {
+    Map<String, dynamic> params = {
+      'per_page': 15,
+      'order': 'desc',
+    };
+    if (term.isNotEmpty) {
+      params['search'] = term;
+    }
+    if (from != null) {
+      params['date_from'] = dateFormatter.format(from!);
+    }
+    if (to != null) {
+      params['date_to'] = dateFormatter.format(to!);
+    }
+    // if(isPdf) {
+    //   params['pdf'] = 1;
+    // }
+    if (type != 'By Transaction') {
+      params['payment_category'] = paymentCategories.indexOf(type);
+    }
+    return params;
+  }
+}
+
+class HistoryList {
+  int page = 1;
+  int lastPage = 1;
+  getx.RxList<History> items = <History>[].obs;
+
+  bool get hasNextPage => page < lastPage;
+
+  void clear() {
+    page = 1;
+    lastPage = 1;
+    items.clear();
+  }
+}
+
+class HistoryItemList {
+  int page = 1;
+  int lastPage = 1;
+  getx.RxList<HistoryItem> items = <HistoryItem>[].obs;
+
+  bool get hasNextPage => page < lastPage;
+
+  void clear() {
+    page = 1;
+    lastPage = 1;
+    items.clear();
   }
 }
 

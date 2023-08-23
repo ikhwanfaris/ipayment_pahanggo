@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbase/api/api.dart';
-import 'package:flutterbase/models/contents/service.dart';
+import 'package:flutterbase/models/bills/bills.dart';
 import 'package:get/get.dart';
 
 
@@ -39,7 +39,7 @@ class SearchController extends GetxController {
   // RxList<SearchService> results = <SearchService>[].obs;
   // RxList<SearchService> showResults = <SearchService>[].obs;
   // RxList<ServiceModel> results = <ServiceModel>[].obs;
-  RxList<ServiceModel> showResults = <ServiceModel>[].obs;
+  RxList<Services> showResults = <Services>[].obs;
   RxList<SearchType> results = <SearchType>[].obs;
   // RxList<Menu> types = <Menu>[].obs;
   RxString controllerText = ''.obs;
@@ -48,6 +48,9 @@ class SearchController extends GetxController {
   // Rx<Menu> selectedMenu = Menu(id: 0, menuTitle: "menuTitle").obs;
   RxList<DropdownMenuItem<String>> menus = <DropdownMenuItem<String>>[].obs;
   RxString selectedMenu = "".obs;
+  Menu? menu;
+
+  SearchController({ this.menu });
 
   @override
   void onInit() async {
@@ -77,7 +80,12 @@ class SearchController extends GetxController {
   }
 
   doSearch() async {
-      ErrorResponse response = await api.searchService(controllerText.value);
+      late ErrorResponse response;
+      if(menu != null) {
+        response = await api.searchService(controllerText.value, mid: menu!.id);
+      } else {
+        response = await api.searchService(controllerText.value);
+      }
       isLoading(false);
       if(!response.isSuccessful) return;
 

@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import 'package:flutterbase/api/barrel/barrel.dart';
 import 'package:flutterbase/helpers.dart';
 import 'package:flutterbase/models/bills/bills.dart';
-import 'package:flutterbase/models/contents/bank.dart';
 
 class ApiPayment extends ApiClient {
   Future<List<Bank>> paynetBanks() async {
@@ -16,7 +15,12 @@ class ApiPayment extends ApiClient {
 
       if (response.data['data'] != null) {
         for (var item in response.data['data']) {
-          list.add(Bank.fromJson(item));
+          if(item['redirectUrls'] != null) {
+            for(var url in response.data['data']['redirectUrls']) {
+              if(url['type'] != null && url['url'] != null)
+              list.add(Bank.fromJson(url['type'], url['url'], item));
+            }
+          }
         }
       }
     } on DioError catch (_) {

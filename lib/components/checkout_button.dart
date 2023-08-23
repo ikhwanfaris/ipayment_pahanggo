@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbase/utils/constants.dart';
 
-class CheckoutButton extends StatelessWidget {
-  final void Function()? onPressed;
+class CheckoutButton extends StatefulWidget {
+  final Future Function()? onPressed;
   final String text;
   final String? subText;
-  final bool isLoading;
   final bool isEnabled;
 
   const CheckoutButton({
@@ -14,8 +13,15 @@ class CheckoutButton extends StatelessWidget {
     this.subText,
     required this.text,
     this.isEnabled = true,
-    this.isLoading = false,
   }) : super(key: key);
+
+  @override
+  State<CheckoutButton> createState() => _CheckoutButtonState();
+}
+
+class _CheckoutButtonState extends State<CheckoutButton> {
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +34,17 @@ class CheckoutButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
         ),
       ),
-      onPressed: (!isEnabled || isLoading) ? null : onPressed,
+      onPressed: (!widget.isEnabled || isLoading) ? null : () async {
+        setState(() {
+          isLoading = true;
+        });
+        if(widget.onPressed != null) {
+          await widget.onPressed!();
+        }
+        setState(() {
+          isLoading = false;
+        });
+      },
       child: isLoading
           ? const CircularProgressIndicator()
           : SizedBox(
@@ -39,7 +55,7 @@ class CheckoutButton extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      text,
+                      widget.text,
                       style: styles.checkoutButtonTextWhite,
                       textAlign: TextAlign.center,
                     ),

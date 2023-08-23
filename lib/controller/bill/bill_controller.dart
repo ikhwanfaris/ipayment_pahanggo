@@ -5,12 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutterbase/api/api.dart';
 import 'package:flutterbase/events/event.dart';
-import 'package:flutterbase/models/contents/add_cart_request.dart';
-import 'package:flutterbase/models/contents/bill.dart';
-import 'package:flutterbase/models/contents/service.dart';
-import 'package:flutterbase/models/payments/rounding.dart';
+import 'package:flutterbase/models/bills/bills.dart';
+import 'package:flutterbase/models/cart/add_cart_request.dart';
 import 'package:flutterbase/screens/auth/login.dart';
-import 'package:flutterbase/screens/content/home/summary.dart';
 import 'package:flutterbase/utils/helpers.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -42,36 +39,29 @@ class BillController extends GetxController {
     Navigator.pop(Get.context!);
     if (response.data == null) return;
     log(jsonEncode(response.data));
-    ServiceModel data = ServiceModel.fromJson(response.data);
+    Services data = Services.fromJson(response.data);
     isThirdPartyPayment.value =
         (data.allowThirdPartyPayment == "0") ? true : false;
     serviceId = data.id;
-    if (data.billType != null) log("Bill type: ${data.billType!.type}");
-    name.value = data.name;
+    log("Bill type: ${data.billType.type}");
+    name.value = data.name!;
     // firstSearch();
     searchBill();
   }
 
   firstSearch() async {
-    bool isPublic = true;
-    String _token = store.getItem('token').toString();
-    if (_token != "null") {
-      isPublic = false;
-    }
-
-    ErrorResponse response =
-        await api.getBills(serviceRefNum + ",", public: isPublic);
+    ErrorResponse response = await api.getBills(1, serviceRefNum);
     Navigator.pop(Get.context!);
     if (response.isSuccessful) {
-      List<dynamic> raw = response.data as List<dynamic>;
-      bills.value = raw.map((e) => Bill.fromJson(e)).map((e) {
-        log(e.billType!.id.toString());
-        e.isSelected = false.obs;
-        e.amountController = TextEditingController(text: "0.00");
-        // ignore: unrelated_type_equality_checks
-        e.isFavorite = RxBool((e.favorite == 1));
-        return e;
-      }).toList();
+      // List<dynamic> raw = response.data as List<dynamic>;
+      // bills.value = raw.map((e) => Bill.fromJson(e)).map((e) {
+      //   log(e.billType!.id.toString());
+      //   e.isSelected = false.obs;
+      //   e.amountController = TextEditingController(text: "0.00");
+      //   // ignore: unrelated_type_equality_checks
+      //   e.isFavorite = RxBool((e.favorite == 1));
+      //   return e;
+      // }).toList();
       // log(bills.first.status);
       // bills.first.status = "Tidak Aktif";
       // bills.first.service.chargedTo = "Pelanggan";
@@ -109,8 +99,8 @@ class BillController extends GetxController {
   onChangeAmount(String value, Bill element, bool isFirst) async {
     String newValue = value.replaceAll(',', '').replaceAll('.', '');
     if (value.isEmpty || newValue == '00') {
-      element.amountController?.text = "0.00";
-      element.amountController?.selection = TextSelection.collapsed(
+      element.amountController.text = "0.00";
+      element.amountController.selection = TextSelection.collapsed(
         offset: 4,
       );
       isFirst = true;
@@ -124,7 +114,7 @@ class BillController extends GetxController {
 
     log(value);
 
-    element.amountController?.value = TextEditingValue(
+    element.amountController.value = TextEditingValue(
       text: value,
       selection: TextSelection.collapsed(
         offset: value.length,
@@ -136,8 +126,8 @@ class BillController extends GetxController {
 
   calculateTotal() async {
     total.value = bills
-        .where((p0) => p0.amountController?.text != "")
-        .map((element) => num.parse(element.amountController?.text ?? "0"))
+        .where((p0) => p0.amountController.text != "")
+        .map((element) => num.parse(element.amountController.text))
         .toList()
         .reduce((value, element) => value + element)
         .toDouble();
@@ -145,7 +135,7 @@ class BillController extends GetxController {
 
     var response = await api.roundingAdjustment(total.value.toStringAsFixed(2));
     Rounding roundingAmount = Rounding.fromJson(response.data);
-    total.value = roundingAmount.value + total.value;
+    total.value = roundingAmount.value! + total.value;
   }
 
   searchBill() {
@@ -182,7 +172,7 @@ class BillController extends GetxController {
           e.isSelected = false.obs;
           e.amountController = TextEditingController(text: "0.00");
           // ignore: unrelated_type_equality_checks
-          e.isFavorite = RxBool((e.favorite == 1));
+          // e.isFavorite = RxBool((e.favorite == 1));
           return e;
         }).toList();
         // log(bills.first.status);
@@ -208,17 +198,17 @@ class BillController extends GetxController {
       selectedBills.add(bill!);
     } else {
       selectedBills =
-          bills.where((p0) => p0.isSelected?.value == true).toList();
+          bills.where((p0) => p0.isSelected.value == true).toList();
     }
 
     bool containKerajaan = selectedBills
-            .where((element) => element.service?.chargedTo == "Kerajaan")
+            .where((element) => element.service.chargedTo == "Kerajaan")
             .toList()
             .length >
         0;
 
     bool containPelanggan = selectedBills
-            .where((element) => element.service?.chargedTo == "Pelanggan")
+            .where((element) => element.service.chargedTo == "Pelanggan")
             .toList()
             .length >
         0;
@@ -245,17 +235,17 @@ class BillController extends GetxController {
       if (element.billTypeId == 1) {
         requests.add(
           AddCartRequest(
-            amount: (element.nettCalculations?.total ?? 0).toDouble(),
+            amount: (element.nettCalculations.total).toDouble(),
             billId: element.id.toString(),
           ),
         );
       } else if (element.billTypeId == 2) {
-        var amount = element.amountController?.text ?? "0";
+        var amount = element.amountController.text;
         var response = await api.roundingAdjustment(amount);
         var rounding = Rounding.fromJson(response.data);
         requests.add(
           AddCartRequest(
-            amount: (num.parse(amount) + rounding.value).toDouble(),
+            amount: (num.parse(amount) + rounding.value!).toDouble(),
             billId: element.id.toString(),
           ),
         );
@@ -296,15 +286,15 @@ class BillController extends GetxController {
     }
 
     var selectedBills =
-        bills.where((p0) => p0.isSelected!.value == true).toList();
+        bills.where((p0) => p0.isSelected.value == true).toList();
     bool containKerajaan = selectedBills
-            .where((element) => element.service?.chargedTo == "Kerajaan")
+            .where((element) => element.service.chargedTo == "Kerajaan")
             .toList()
             .length >
         0;
 
     bool containPelanggan = selectedBills
-            .where((element) => element.service?.chargedTo == "Pelanggan")
+            .where((element) => element.service.chargedTo == "Pelanggan")
             .toList()
             .length >
         0;
@@ -320,14 +310,14 @@ class BillController extends GetxController {
       return;
     }
 
-    Get.to(
-      () => Summary(),
-      arguments: {
-        "data": bills.where((p0) => p0.isSelected!.value == true).toList(),
-        "title": name.value,
-        "billType": (amountRequired.value) ? 2 : 1
-      },
-    );
+    // Get.to(
+    //   () => Summary(),
+    //   arguments: {
+    //     "data": bills.where((p0) => p0.isSelected.value == true).toList(),
+    //     "title": name.value,
+    //     "billType": (amountRequired.value) ? 2 : 1
+    //   },
+    // );
   }
 }
 

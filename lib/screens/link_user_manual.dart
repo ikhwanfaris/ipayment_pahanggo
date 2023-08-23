@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutterbase/api/api.dart';
 import 'package:flutterbase/models/users/user_manual.dart';
-import 'package:flutterbase/screens/content/profile/my_profile/faq_pdf_viewer.dart';
+import 'package:flutterbase/screens/profile/my_profile/faq_pdf_viewer.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:flutterbase/utils/helpers.dart';
 import 'package:get/get.dart';
@@ -68,32 +68,35 @@ class _LinkUserManualScreenState extends State<LinkUserManualScreen> {
         shrinkWrap: true,
         itemCount: _userManualModel.length,
         itemBuilder: (context, index) {
-          return Card(
-            color: constants.secondaryColor,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Text('${index + 1}.', style: styles.heading10bold),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: GestureDetector(
-                        onTap: () =>                   
-                        navigate(
-                              context,
-                              FaqPdfViewer(
-                                url: endpoint +
-                                    '/storage/' +
-                                    _userManualModel[index].filePath.toString(),
-                                pageName: "Attachment".tr,
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(12,12,12,0),
+            child: Card(
+              color: constants.secondaryColor,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Row(
+                  children: [
+                    Text('${index + 1}.', style: styles.heading10bold),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                          onTap: () =>
+                          navigate(
+                                context,
+                                FaqPdfViewer(
+                                  url: endpoint +
+                                      '/storage/' +
+                                      _userManualModel[index].filePath.toString(),
+                                  pageName: "Attachment".tr,
+                                ),
                               ),
-                            ),
-                        child: Text(
-                          _userManualModel[index].name.toString(),
-                          overflow: TextOverflow.ellipsis,
-                        )),
-                  ),
-                ],
+                          child: Text(
+                            _userManualModel[index].name.toString(),
+                            overflow: TextOverflow.ellipsis,
+                          )),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

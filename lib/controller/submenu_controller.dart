@@ -3,32 +3,31 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutterbase/api/api.dart';
-import 'package:flutterbase/controller/home_controller.dart';
-import 'package:flutterbase/models/contents/menu.dart';
-import 'package:flutterbase/models/contents/service_menu.dart';
+import 'package:flutterbase/models/bills/bills.dart';
 import 'package:flutterbase/models/shared/translatable.dart';
 import 'package:get/get.dart';
 
 class SubmenuController extends GetxController {
   RxString title = "".obs;
   RxList<Menu> submenus = <Menu>[].obs;
-  RxList<ServiceMenu> services = <ServiceMenu>[].obs;
+  RxList<Services> services = <Services>[].obs;
   RxBool isLoading = false.obs;
+  late Menu menu;
 
   @override
   void onInit() async {
+    menu = Get.arguments as Menu;
+    print("Menu ID: ${menu.id}" + " name: SubmenuController");
+    print("Menu ID: ${jsonEncode(menu)}" + " name:  SubmenuController");
     await setup();
     super.onInit();
   }
 
   Future<void> setup() async {
-    Menu menu = Get.arguments as Menu;
-    print("Menu ID: ${menu.id}" + " name: SubmenuController");
-    print("Menu ID: ${jsonEncode(menu)}" + " name:  SubmenuController");
-    if (menu.translatables!.isNotEmpty) {
+    if (menu.translatables.isNotEmpty) {
       String currentLocale = Get.locale?.languageCode ?? "en";
 
-      for (Translatables element in menu.translatables ?? []) {
+      for (Translatables element in menu.translatables) {
         if (element.language == currentLocale) {
           title.value = element.content ?? "";
         }
@@ -38,11 +37,11 @@ class SubmenuController extends GetxController {
       title.value = menu.name!;
     }
     isLoading(true);
-    submenus.value = await api.getSubmenu(menu.id);
-    ErrorResponse response = await api.getServicesForMenu(menu.id);
+    submenus.value = await api.getSubmenu(menu.id!);
+    ErrorResponse response = await api.getServicesForMenu(menu.id!);
     if (response.data != null) {
       var data = response.data as List<dynamic>;
-      services.value = data.map((e) => ServiceMenu.fromJson(e)).toList();
+      services.value = data.map((e) => Services.fromJson(e)).toList();
     }
     isLoading(false);
   }
@@ -52,7 +51,6 @@ class SubmenuController extends GetxController {
     // ignore: unused_local_variable
 
     ErrorResponse response = await api.favoriteService(serviceId);
-    await Get.find<HomeController>().setupFavorite();
     log("MESSAGE: $response.message", name: "SubmenuController");
 
     if (!response.message.contains("removed")) {

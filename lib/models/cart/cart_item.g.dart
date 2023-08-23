@@ -19,7 +19,7 @@ CartItem _$CartItemFromJson(Map<String, dynamic> json) => CartItem(
     )
       ..service = json['service'] == null
           ? null
-          : Service.fromJson(json['service'] as Map<String, dynamic>)
+          : Services.fromJson(json['service'] as Map<String, dynamic>)
       ..bill = json['bill'] == null
           ? null
           : Bill.fromJson(json['bill'] as Map<String, dynamic>);

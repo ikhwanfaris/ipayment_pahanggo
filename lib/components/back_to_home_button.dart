@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbase/screens/content/home/menu.dart';
+import 'package:flutterbase/screens/home/menu.dart';
 import 'package:flutterbase/utils/constants.dart';
 import 'package:line_icons/line_icons.dart';
 

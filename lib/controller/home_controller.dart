@@ -1,11 +1,8 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutterbase/api/api.dart';
-import 'package:flutterbase/models/bulletin/bulletin.dart';
-import 'package:flutterbase/models/contents/favorite.dart';
-import 'package:flutterbase/models/contents/menu.dart';
+import 'package:flutterbase/models/bills/bills.dart';
+import 'package:flutterbase/models/contents/bulletin/bulletin.dart';
+import 'package:flutterbase/models/bills/favorite.dart';
 import 'package:flutterbase/models/shared/translatable.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +19,6 @@ class HomeController extends GetxController {
   void onInit() async {
     setupBulletin();
     setupMenu();
-    setupFavorite();
     setupHebahan();
     super.onInit();
 
@@ -31,16 +27,16 @@ class HomeController extends GetxController {
 
   setupBulletin() async {
     var response = await api.getBulletin(isBulletin: true);
-    bulletinList.value =
-        (response.data as List).map((e) => Bulletin.fromJson(e)).toList();
-    log(jsonEncode(bulletinList));
+    if(response.data != null)
+      bulletinList.value =
+          (response.data as List).map((e) => Bulletin.fromJson(e)).toList();
   }
 
   setupHebahan() async {
     var response = await api.getBulletin(isBulletin: false);
-    hebahanList.value =
-        (response.data as List).map((e) => Bulletin.fromJson(e)).toList();
-    log(jsonEncode(bulletinList));
+    if(response.data != null)
+      hebahanList.value =
+          (response.data as List).map((e) => Bulletin.fromJson(e)).toList();
   }
 
   setupMenu() async {
@@ -50,7 +46,7 @@ class HomeController extends GetxController {
   String? handleTranslation(Menu menu) {
     String currentLocale = Get.locale?.languageCode ?? "en";
 
-    for (Translatables element in menu.translatables ?? []) {
+    for (Translatables element in menu.translatables) {
       if (element.language == currentLocale) {
         return element.content ?? menu.name;
       }
@@ -67,16 +63,5 @@ class HomeController extends GetxController {
       }
     }
     return "menu.name";
-  }
-
-  setupFavorite() async {
-    ErrorResponse response = await api.getFavoriteService();
-    if (response.data != null) {
-      List<dynamic> raw = response.data as List<dynamic>;
-      favoriteServices.value = raw.map((e) => Favorite.fromJson(e)).toList();
-      favoriteServices.forEach((element) => log(element.service!.name));
-      print("favoriteServices.length.toString() " +
-          favoriteServices.length.toString());
-    }
   }
 }

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutterbase/utils/constants.dart';
+import 'package:flutterbase/utils/rive_animation.dart';
+import 'package:line_icons/line_icons.dart';
 
-class AddToCartButton extends StatelessWidget {
-  final void Function()? onPressed;
-  final IconData icon;
-  final bool isLoading;
+class AddToCartButton extends StatefulWidget {
+  final Future Function()? onPressed;
   final bool isEnabled;
 
   const AddToCartButton({
     Key? key,
     this.onPressed,
-    required this.icon,
     this.isEnabled = true,
-    this.isLoading = false,
   }) : super(key: key);
+
+  @override
+  State<AddToCartButton> createState() => _AddToCartButtonState();
+}
+
+class _AddToCartButtonState extends State<AddToCartButton> {
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -21,15 +26,24 @@ class AddToCartButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         padding: EdgeInsets.zero,
         backgroundColor: Constants().sixColor,
-        minimumSize: const Size(300, 60),
+        disabledBackgroundColor: Colors.black12,
+        minimumSize: const Size(60, 60),
         elevation: 0,
         shape: RoundedRectangleBorder(),
       ),
-      onPressed: (!isEnabled || isLoading) ? null : onPressed,
+      onPressed: (!widget.isEnabled || isLoading) ? null : () async {
+        setState(() {
+          isLoading = true;
+        });
+        await widget.onPressed!();
+        setState(() {
+          isLoading = false;
+        });
+      },
       child: isLoading
-          ? const CircularProgressIndicator()
+          ? const DefaultLoadingBar()
           : SizedBox(
-              child: Icon(icon, size: 40),
+              child: Icon(LineIcons.addToShoppingCart, size: 40),
             ),
     );
   }
